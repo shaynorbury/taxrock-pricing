@@ -875,6 +875,9 @@ const LSKEY='taxrock.quotes.v1';
 const FIELD_IDS=[...document.querySelectorAll('.builder input,.builder select,.builder textarea')]
                   .map(n=>n.id).filter(Boolean);
 let SAVED=[], CURRENT=null, DIRTY=false, LOCAL=false, TIMER=null;
+/* Rows this browser has just written or removed. The server list can lag a
+   moment behind a write, so these keep the column honest until it catches up. */
+const PENDING=new Map(), REMOVED=new Set();
 
 const uid=()=>'q_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 const lsAll=()=>{try{return JSON.parse(localStorage.getItem(LSKEY)||'[]');}catch(e){return [];}};
@@ -986,7 +989,15 @@ async function checkStorage(){
 }
 
 async function refreshList(){
-  try{ SAVED=(await store.list()).map(r=>Object.assign({},r,{rep:r.rep||r.updatedBy})); }
+  try{
+    SAVED=(await store.list()).map(r=>Object.assign({},r,{rep:r.rep||r.updatedBy}));
+    SAVED=SAVED.filter(r=>!REMOVED.has(r.id));
+    PENDING.forEach((row,id)=>{
+      const seen=SAVED.find(r=>r.id===id);
+      if(!seen) SAVED.push(row);                                   // server has not caught up
+      else if((seen.updatedAt||0)>=(row.updatedAt||0)) PENDING.delete(id);   // it has
+    });
+  }
   catch(e){
     if(!LOCAL&&isAbsent(e)){ LOCAL=true; return refreshList(); }
     el('navList').innerHTML='<div class="nav-empty">Could not load saved quotes.</div>';
@@ -1006,6 +1017,12 @@ async function saveQuote(){
     const saved=await store.save(rec);
     CURRENT=saved.id; DIRTY=false;
     setState('Saved '+rel(saved.updatedAt));
+    // show it in the column straight away, then reconcile with the server
+    const row={id:saved.id,name:saved.name,vertical:saved.vertical,price:saved.price,
+               rep:saved.updatedBy,updatedAt:saved.updatedAt};
+    PENDING.set(row.id,row); REMOVED.delete(row.id);
+    SAVED=[row].concat(SAVED.filter(r=>r.id!==row.id));
+    drawList();
     await refreshList();
   }catch(e){
     if(!LOCAL&&isAbsent(e)){ LOCAL=true; return saveQuote(); }
@@ -1061,6 +1078,8 @@ el('navList').addEventListener('click',async ev=>{
     try{
       await store.del(id);
       if(CURRENT===id){ CURRENT=null; setState('That quote was deleted. The form still holds it.'); }
+      REMOVED.add(id); PENDING.delete(id);
+      SAVED=SAVED.filter(r=>r.id!==id); drawList();
       await refreshList();
     }catch(e){ setState('Could not delete: '+e.message,'err'); }
     return;

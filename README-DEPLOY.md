@@ -106,6 +106,11 @@ Two failures have real fixes:
   that mode it does not pass Blobs its credentials on its own. `connectLambda`
   at the top of `openStore()` does it. If that line is ever removed, this error
   comes straight back.
+- *A quote saves but does not appear in the list.* Netlify Blobs is eventually
+  consistent by default: a record written a moment ago can take up to a minute
+  to show up in a listing. The store is opened with `consistency: 'strong'` to
+  stop that, and the page also shows a just-saved quote straight away rather
+  than waiting for the server to agree. Removing either would bring this back.
 - *A missing-module error in the deploy log.* The build did not install the
   dependency. Setting the build command to `npm install` fixes it, and the
   committed `netlify.toml` already does this.

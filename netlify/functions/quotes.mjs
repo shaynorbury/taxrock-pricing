@@ -40,6 +40,13 @@ async function whoIsCalling(event, context) {
 
 const STORE = 'taxrock-quotes';
 
+/* Blobs defaults to eventual consistency: a record written a moment ago is not
+ * guaranteed to appear in list() for up to 60 seconds, which made a just-saved
+ * quote missing from the left column. Reads on this store are strongly
+ * consistent instead. Slower per read, but a sales tool has to show the thing
+ * the rep just saved, and the volume here is trivial. */
+const STORE_OPTS = { name: STORE, consistency: 'strong' };
+
 /* This function uses the classic handler signature, because that is what gives it
  * the signed-in Identity user. Netlify calls that Lambda compatibility mode, and in
  * that mode it does NOT hand Blobs its credentials automatically — getStore then
@@ -49,12 +56,12 @@ function openStore(event) {
   try {
     // event.blobs is the config Netlify attaches to the request in this mode
     if (event && event.blobs) connectLambda(event);
-    return getStore(STORE);
+    return getStore({ ...STORE_OPTS });
   } catch (err) {
     // last resort: explicit credentials, if the site has been given them
     const siteID = process.env.NETLIFY_BLOBS_SITE_ID || process.env.SITE_ID;
     const token = process.env.NETLIFY_BLOBS_TOKEN;
-    if (siteID && token) return getStore({ name: STORE, siteID, token });
+    if (siteID && token) return getStore({ ...STORE_OPTS, siteID, token });
     throw err;
   }
 }
