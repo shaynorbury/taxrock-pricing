@@ -91,6 +91,10 @@ textarea{min-height:54px;resize:vertical;}
 .tab:hover{color:var(--ink);border-color:#cfd8e8;}
 .tab.on{background:var(--navy);border-color:var(--navy);color:#fff;}
 .tabbar .sp{flex:1;}
+/* the mode switch and both export buttons travel together, and stay right-aligned
+   even when the bar has to wrap on a narrow screen */
+.tb-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.tb-actions .btn{padding:9px 16px;font-size:13px;}
 .modeseg{display:inline-flex;background:#dde3ee;border-radius:999px;padding:3px;gap:3px;}
 .modeseg button{border:none;background:transparent;font-family:'Inter Tight';font-weight:600;font-size:12.5px;color:#69748c;padding:7px 15px;border-radius:999px;cursor:pointer;}
 .modeseg button.on{background:#fff;color:var(--ink);box-shadow:0 2px 8px -3px rgba(12,30,80,.28);}
@@ -251,6 +255,9 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
   .sheet[hidden]{display:none!important;}
   .pg{page-break-after:always;break-after:page;box-shadow:none;}
   .pg:last-child{page-break-after:auto;break-after:auto;}
+  /* package export: the proposal's last page must still break, or the agreement
+     would start on it */
+  body.pkg #propSheet .pg:last-child{page-break-after:always;break-after:page;}
   .feebox,.note,.rule,.rhd,.draftmark span,.pgfoot{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 }
 @media screen and (max-width:1100px){
@@ -374,12 +381,15 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
     <button class="tab on" data-tab="proposal">Pricing Proposal</button>
     <button class="tab" data-tab="msa">Master Subscription Agreement</button>
     <button class="tab int" data-tab="matrix">Pricing matrix <span class="intbadge">Internal</span></button>
-    <span class="sp"></span>
-    <span class="modeseg" id="modeSeg" style="display:none;">
-      <button data-mode="draft">Draft</button>
-      <button data-mode="exec" class="on">For signature</button>
+    <span class="tb-actions">
+      <span class="modeseg" id="modeSeg" style="display:none;">
+        <button data-mode="draft">Draft</button>
+        <button data-mode="exec" class="on">For signature</button>
+      </span>
+      <button class="btn ghost" id="pkgBtn" type="button"
+              title="Both documents in one PDF, Pricing Proposal first, ready to upload for signature">Export package</button>
+      <button class="btn" id="exportBtn" type="button">Export PDF</button>
     </span>
-    <button class="btn" id="exportBtn" onclick="window.print()">Export PDF</button>
   </div>
 
   <div class="sheet" id="propSheet"></div>
@@ -814,18 +824,21 @@ document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
   el('matrixPane').hidden= t!=='matrix';
   el('modeSeg').style.display = t==='msa' ? 'inline-flex' : 'none';
   el('exportBtn').style.display = t==='matrix' ? 'none' : 'inline-flex';
+  el('pkgBtn').style.display    = t==='matrix' ? 'none' : 'inline-flex';
 }));
 document.querySelectorAll('#modeSeg button').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('#modeSeg button').forEach(x=>x.classList.toggle('on',x===b));
   document.body.dataset.mode=b.dataset.mode;
+  stampPkgLabel();
 }));
 
 /* ---------- export filename ----------
    Browsers name a printed PDF after document.title, so the title is swapped for
    the duration of the print dialog and put back afterwards. */
 const PAGE_TITLE=document.title;
+let PKG=false, PKG_UNDO=null;
 function exportName(){
-  const kind = document.body.dataset.doc==='msa' ? 'MSA' : 'PP';
+  const kind = PKG ? 'TaxRock-Agreement' : (document.body.dataset.doc==='msa' ? 'MSA' : 'PP');
   const raw  = (el('cName').value||'Customer')
                  .replace(/[‘’“”]/g,'')
                  .replace(/&/g,'and')
@@ -836,12 +849,37 @@ function exportName(){
   return kind+'-'+(raw||'Customer')+'-'+iso;
 }
 window.addEventListener('beforeprint',()=>{ document.title=exportName(); });
-window.addEventListener('afterprint', ()=>{ document.title=PAGE_TITLE; });
+window.addEventListener('afterprint', ()=>{ document.title=PAGE_TITLE; if(PKG_UNDO) PKG_UNDO(); });
 el('exportBtn').addEventListener('click',()=>{
   // Safari fires neither print event reliably, so the title is set before the call too
   document.title=exportName();
+  window.print();
   setTimeout(()=>{ document.title=PAGE_TITLE; },3000);
 });
+
+/* Both documents in one PDF. Printing takes whatever is on screen, so the
+   package export simply shows both sheets for the duration of the print and puts
+   the stage back afterwards. Each document keeps its own page numbering, which is
+   what you want: the agreement still reads Page 1 of 5. */
+el('pkgBtn').addEventListener('click',()=>{
+  if(PKG) return;
+  const was={p:el('propSheet').hidden, m:el('msaSheet').hidden, x:el('matrixPane').hidden};
+  PKG=true; document.body.classList.add('pkg');
+  el('propSheet').hidden=false; el('msaSheet').hidden=false; el('matrixPane').hidden=true;
+  PKG_UNDO=()=>{
+    el('propSheet').hidden=was.p; el('msaSheet').hidden=was.m; el('matrixPane').hidden=was.x;
+    document.body.classList.remove('pkg'); PKG=false; PKG_UNDO=null; document.title=PAGE_TITLE;
+  };
+  document.title=exportName();
+  window.print();
+  // afterprint does the restoring; this only catches a browser that never fires it
+  setTimeout(()=>{ if(PKG_UNDO) PKG_UNDO(); },60000);
+});
+
+// the package always contains the agreement, so the button says which version it will carry
+function stampPkgLabel(){
+  el('pkgBtn').textContent = document.body.dataset.mode==='draft' ? 'Export package · draft' : 'Export package';
+}
 
 /* ---------- phone formatting ---------- */
 function formatPhone(v){
@@ -1102,7 +1140,7 @@ window.__DEMO__ = false;
     gate.style.display='none';
     app.classList.remove('app-hidden');
     el('who-email').innerHTML = email ? ('Signed in as <b>'+email+'</b>') : '';
-    render(); buildMatrix(); refreshList(); setState('Not saved yet.');
+    render(); buildMatrix(); refreshList(); stampPkgLabel(); setState('Not saved yet.');
   }
   function showGate(){ gate.style.display='grid'; app.classList.add('app-hidden'); }
 
