@@ -43,13 +43,28 @@ Keep this as its own Netlify site, separate from taxrock.com.
 
 **Step 3. Turn on Identity**
 
-1. In the site, go to **Integrations → Identity** (older accounts show a
-   top-level **Identity** tab) and click **Enable Identity**.
+You do not need a database, and you do not need to connect any other service.
+Netlify Identity stores the user accounts itself, per site. Enabling it is the
+whole setup.
+
+1. In the site, go to **Site configuration → Identity** and click
+   **Enable Identity**. Some accounts show this under **Integrations → Identity**
+   or as a top-level **Identity** tab; Netlify moves it around, but it is the
+   same feature.
 2. Open **Identity → Settings and usage**.
 3. Under **Registration**, choose **Invite only**. This is the important one. If
    you leave it open, anyone can create an account.
 4. Under **External providers**, leave everything off unless you want Google
    login for staff.
+
+Until this step is done the sign-in button has nothing to talk to and the gate
+will not let anyone through. That is expected, not a fault in the page.
+
+> **A note on Identity's status.** Netlify announced in 2025 that Identity would
+> be deprecated in favour of an Auth0 extension. That decision was **reversed on
+> 19 February 2026**; Identity is a supported option again, is included on all
+> credit-based plans at no extra cost, and existing implementations keep working.
+> If you find the older deprecation notices while searching, they are out of date.
 
 **Step 4. Invite your people**
 
