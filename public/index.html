@@ -255,18 +255,18 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 
   <div class="fs">
     <div class="fs-t">Customer</div>
-    <label>Legal entity name</label><input id="cName" value="Sample Tax &amp; Advisory, LLC">
-    <div class="row2"><div><label>Contact</label><input id="cContact" value="Jane Preparer"></div><div><label>Title</label><input id="cTitle" value="Managing Partner"></div></div>
-    <div class="row2"><div><label>Email</label><input id="cEmail" value="jane@sampletax.com"></div><div><label>Phone</label><input id="cPhone" type="tel" inputmode="tel" placeholder="(555) 010-2030" value="(555) 010-2030"></div></div>
-    <label>Billing contact (for invoices)</label><input id="cBill" value="ap@sampletax.com">
-    <label>Street address</label><input id="cAddr1" value="1200 Harbor Boulevard, Suite 210">
-    <label>City, state, ZIP</label><input id="cAddr2" value="Oceanside, CA 92054">
+    <label>Legal entity name</label><input id="cName" placeholder="Exact name on the customer's formation documents">
+    <div class="row2"><div><label>Contact</label><input id="cContact" placeholder="Full name"></div><div><label>Title</label><input id="cTitle" placeholder="Managing Partner"></div></div>
+    <div class="row2"><div><label>Email</label><input id="cEmail" placeholder="name@firm.com"></div><div><label>Phone</label><input id="cPhone" type="tel" inputmode="tel" placeholder="(555) 010-2030"></div></div>
+    <label>Billing contact (for invoices)</label><input id="cBill" placeholder="ap@firm.com">
+    <label>Street address</label><input id="cAddr1" placeholder="Street and suite">
+    <label>City, state, ZIP</label><input id="cAddr2" placeholder="City, ST 00000">
     <div class="row2"><div><label>Signatory (if not the contact)</label><input id="cSigner" placeholder="Defaults to contact"></div><div><label>Signatory title</label><input id="cSignerTitle" placeholder="Defaults to title"></div></div>
   </div>
 
   <div class="fs">
     <div class="fs-t">Practice</div>
-    <label>Active client relationships</label><input id="count" type="number" min="1" value="420">
+    <label>Active client relationships</label><input id="count" type="number" min="1" placeholder="e.g. 420">
     <div class="hint">One engagement billed to one payer counts once. Taken from the prior-year client list.</div>
   </div>
 
@@ -297,6 +297,9 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
   </div>
 
   <div class="pill"><div class="l">Quoted</div><div class="v" id="pillPrice"></div><div class="s" id="pillPlan"></div></div>
+
+  <button class="btn ghost" id="clearBtn" type="button" style="width:100%;justify-content:center;margin-top:14px;">Clear all</button>
+  <div class="hint" style="margin-top:6px;">Empties the customer, practice, pricing and document fields. Your name and the TaxRock signatory stay.</div>
 
   <div class="hint" style="margin-top:10px;line-height:1.5;"><b>When exporting:</b> set Margins to <b>None</b> and uncheck <b>Headers and footers</b>. Only the open tab is exported.</div>
 </div>
@@ -514,59 +517,75 @@ const LETTERHEAD=`<div class="hd"><img class="logo" src="${LOGO}">
   <div class="co"><b>TaxRock LLC</b><br>5901 Priestly Dr #100, Carlsbad, CA 92008<br>support@taxrock.com</div>
 </div><div class="rule"></div>`;
 
-/* ---------- auto-paginator: flows a source block into fixed letter pages ---------- */
+/* ---------- auto-paginator: flows a source block into fixed letter pages ----------
+   The footer is created with the page and measured, rather than reserved by a
+   guessed number. A too-small reserve pushes the footer past the page clip and
+   it vanishes, which is what happened before. */
 function paginate(sheet, source, opts){
-  // a hidden sheet measures as zero, so measure it off-screen then restore
   const wasHidden=sheet.hidden;
   if(wasHidden){sheet.hidden=false;sheet.style.position='absolute';sheet.style.left='-10000px';sheet.style.top='0';}
+  // nothing can be measured while the app itself is hidden (pre sign-in); render() re-runs after the gate opens
+  if(!sheet.offsetParent && !sheet.getClientRects().length){
+    if(wasHidden){sheet.hidden=true;sheet.style.position='';sheet.style.left='';sheet.style.top='';}
+    return false;
+  }
   sheet.innerHTML='';
   const nodes=[...source.children].map(n=>n.cloneNode(true));
-  let page=null, body=null, idx=0;
+  let body=null, grow=null, foot=null, idx=0;
 
   const newPage=()=>{
-    page=document.createElement('div'); page.className='pg';
+    const page=document.createElement('div'); page.className='pg';
     if(opts.draftmark) page.insertAdjacentHTML('beforeend','<div class="draftmark"><span>DRAFT</span></div>');
     body=document.createElement('div'); body.className='pgbody';
     body.insertAdjacentHTML('beforeend', idx===0 ? LETTERHEAD
       : `<div class="rhd"><span class="c">${opts.runHead}</span><span>${opts.runRight||''}</span></div>`);
     if(idx===0 && opts.title) body.insertAdjacentHTML('beforeend', opts.title);
+    grow=document.createElement('div'); grow.className='grow';
+    foot=document.createElement('div'); foot.className='pgfoot';
+    foot.innerHTML='<span>Proprietary and confidential</span><span class="pgno"></span>';
+    body.appendChild(grow); body.appendChild(foot);
     page.appendChild(body); sheet.appendChild(page); idx++;
-    return body;
   };
   newPage();
 
+  const SAFETY=10;   // absorbs small font-metric differences between browsers
+  // clientHeight includes the body's own padding, which content cannot use
   const capacity=()=>{
-    const r=body.getBoundingClientRect();
-    return r.height - 34; // leave room for the footer strip
+    const cs=getComputedStyle(body);
+    return body.clientHeight - parseFloat(cs.paddingTop||0) - parseFloat(cs.paddingBottom||0)
+           - foot.offsetHeight - SAFETY;
   };
   const used=()=>{
-    let h=0; for(const c of body.children) h+=c.getBoundingClientRect().height +
-      parseFloat(getComputedStyle(c).marginTop||0)+parseFloat(getComputedStyle(c).marginBottom||0);
+    let h=0;
+    for(const c of body.children){
+      if(c===grow||c===foot) continue;
+      const cs=getComputedStyle(c);
+      h+=c.getBoundingClientRect().height+parseFloat(cs.marginTop||0)+parseFloat(cs.marginBottom||0);
+    }
     return h;
   };
+  const contentCount=()=>body.children.length-2;   // excludes grow and foot
 
   const isHeading=n=>n.tagName==='H2'&&n.classList.contains('sec');
   for(const node of nodes){
-    body.appendChild(node);
-    if(used()>capacity() && body.children.length>2){
+    body.insertBefore(node,grow);
+    if(used()>capacity() && contentCount()>1){
       body.removeChild(node);
       // a heading stranded at the foot of a page travels with its content
-      const prev=body.lastElementChild;
       let carried=null;
-      if(prev && isHeading(prev)){ carried=prev; body.removeChild(prev); }
+      const last=grow.previousElementSibling;
+      if(last && isHeading(last)){ carried=last; body.removeChild(last); }
       newPage();
-      if(carried) body.appendChild(carried);
-      body.appendChild(node);
+      if(carried) body.insertBefore(carried,grow);
+      body.insertBefore(node,grow);
     }
   }
-  // footers, now that page count is known
+  const total=sheet.children.length;
   [...sheet.children].forEach((pg,i)=>{
-    const b=pg.querySelector('.pgbody');
-    b.insertAdjacentHTML('beforeend','<div class="grow"></div>');
-    b.insertAdjacentHTML('beforeend',
-      `<div class="pgfoot"><span>Proprietary and confidential</span><span>${opts.docId} &middot; Page ${i+1} of ${sheet.children.length}</span></div>`);
+    pg.querySelector('.pgno').textContent=opts.docId+' \u00B7 Page '+(i+1)+' of '+total;
   });
   if(wasHidden){sheet.hidden=true;sheet.style.position='';sheet.style.left='';sheet.style.top='';}
+  return true;
 }
 
 /* ---------- internal pricing matrix ---------- */
@@ -626,19 +645,24 @@ window.addEventListener('beforeprint',()=>{
 
 /* ---------- render ---------- */
 function render(){
-  const n=Math.max(1,parseInt(el('count').value||1));
-  const p=planFor(n), isEnt=p.mo===null;
+  // the practice size starts blank, so nothing is priced until it is entered
+  const rawCount=el('count').value.trim();
+  const n=rawCount===''?null:Math.max(1,parseInt(rawCount,10)||1);
+  const p=n===null?{cap:null,mo:null}:planFor(n);
+  const isEnt=n!==null&&p.mo===null;                 // past the top band
   const ov=parseFloat(el('override').value); const hasOv=isFinite(ov)&&ov>=0;
   const mo=hasOv?ov:p.mo;
+  const DASH='—';
 
   const w=el('warnBox');
-  if(hasOv&&isEnt){w.style.display='block';w.textContent='Override in use on an enterprise-size practice.';}
-  else if(hasOv&&!isEnt){w.style.display='block';w.textContent='Override in use. Standard price for this practice size is '+money(p.mo)+' per month.';}
+  if(hasOv&&p.mo!==null){w.style.display='block';w.textContent='Override in use. Standard price for this practice size is '+money(p.mo)+' per month.';}
+  else if(hasOv&&isEnt){w.style.display='block';w.textContent='Override in use on an enterprise-size practice.';}
+  else if(hasOv){w.style.display='block';w.textContent='Override in use. No practice size entered, so there is no standard price to compare it to.';}
   else{w.style.display='none';}
 
   const src=el('srcProposal');
   const nm=el('cName').value;
-  src.querySelector('#hTitle').textContent=nm;
+  src.querySelector('#hTitle').textContent=nm||'____________________';
   const L=nm.length;
   const titleSize = L>58?'20px':L>44?'22px':'';
   src.querySelector('#hTitle').style.fontSize = titleSize;
@@ -672,15 +696,17 @@ function render(){
   const valid=new Date(prep);valid.setDate(valid.getDate()+Math.max(1,parseInt(el('dValid').value||30)));
   src.querySelector('#oPrep').textContent=fmtDate(prep);
   src.querySelector('#oValid').textContent=fmtDate(valid);
-  src.querySelector('#oCount').textContent=n.toLocaleString()+' Active Client Relationships';
+  src.querySelector('#oCount').textContent=n===null?DASH:n.toLocaleString()+' Active Client Relationships';
   src.querySelector('#oBill').textContent='On execution, then monthly';
 
-  const planName=isEnt?'Enterprise':'Up to '+p.cap.toLocaleString()+' Active Client Relationships';
+  const planName=n===null?DASH:isEnt?'Enterprise':'Up to '+p.cap.toLocaleString()+' Active Client Relationships';
   src.querySelector('#qPlan').textContent=isEnt?'TaxRock Enterprise':'TaxRock Subscription';
-  src.querySelector('#qPlanSub').textContent=planName+'  ·  month to month';
-  src.querySelector('#qPrice').innerHTML=mo==null?'Custom':money(mo)+' <span>/ month</span>';
+  src.querySelector('#qPlanSub').textContent=n===null?'Enter the practice size to price this proposal':planName+'  ·  month to month';
+  src.querySelector('#qPrice').innerHTML=mo==null?(n===null?DASH:'Custom'):money(mo)+' <span>/ month</span>';
+  const capCell=n===null?DASH:isEnt?'As scoped with Customer':'Up to '+p.cap.toLocaleString();
+  const feeCell=mo==null?(n===null?DASH:'Quoted to scope'):money(mo)+'.00 per month';
   src.querySelector('#qTable').innerHTML=
-    '<tr><td class="u">Active Client Relationship</td><td>'+(isEnt?'As scoped with Customer':'Up to '+p.cap.toLocaleString())+'</td><td class="r">'+(mo==null?'Quoted to scope':money(mo)+'.00 per month')+'</td></tr>'+
+    '<tr><td class="u">Active Client Relationship</td><td>'+capCell+'</td><td class="r">'+feeCell+'</td></tr>'+
     '<tr><td class="u">Authorized Users</td><td>Unlimited</td><td class="r">No charge</td></tr>'+
     '<tr><td class="u">Implementation</td><td>Included in Subscription Fee</td><td class="r">No charge</td></tr>';
 
@@ -701,8 +727,8 @@ function render(){
   el('vertHint').textContent = vv.inherits
     ? vv.label+' currently uses '+vv.inherits+' pricing. Documents are coded TR-…-'+vv.code+'-11.'
     : 'Documents are coded TR-…-'+vv.code+'-11.';
-  el('pillPrice').textContent=mo==null?'Custom':money(mo)+' / month';
-  el('pillPlan').textContent=planName+(hasOv?'  ·  override applied':'');
+  el('pillPrice').textContent=mo==null?(n===null?DASH:'Custom'):money(mo)+' / month';
+  el('pillPlan').textContent=(n===null?'No practice size entered':planName)+(hasOv?'  ·  override applied':'');
 
   paginate(el('propSheet'), src, {docId:'TR-PP-'+V().code+'-11', runHead:'TaxRock Pricing Proposal', runRight:nm});
   paginate(el('msaSheet'), m, {docId:'TR-MSA-'+V().code+'-11', runHead:'Master Subscription Agreement', runRight:nm,
@@ -729,6 +755,39 @@ document.querySelectorAll('#modeSeg button').forEach(b=>b.addEventListener('clic
   document.querySelectorAll('#modeSeg button').forEach(x=>x.classList.toggle('on',x===b));
   document.body.dataset.mode=b.dataset.mode;
 }));
+
+/* ---------- export filename ----------
+   Browsers name a printed PDF after document.title, so the title is swapped for
+   the duration of the print dialog and put back afterwards. */
+const PAGE_TITLE=document.title;
+function exportName(){
+  const kind = document.body.dataset.doc==='msa' ? 'MSA' : 'PP';
+  const raw  = (el('cName').value||'Customer')
+                 .replace(/[‘’“”]/g,'')
+                 .replace(/&/g,'and')
+                 .replace(/[^A-Za-z0-9]+/g,'-')
+                 .replace(/^-+|-+$/g,'');
+  const d = el('dPrep').value ? new Date(el('dPrep').value+'T12:00:00') : new Date();
+  const iso = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  return kind+'-'+(raw||'Customer')+'-'+iso;
+}
+window.addEventListener('beforeprint',()=>{ document.title=exportName(); });
+window.addEventListener('afterprint', ()=>{ document.title=PAGE_TITLE; });
+el('exportBtn').addEventListener('click',()=>{
+  // Safari fires neither print event reliably, so the title is set before the call too
+  document.title=exportName();
+  setTimeout(()=>{ document.title=PAGE_TITLE; },3000);
+});
+
+/* ---------- clear all ---------- */
+el('clearBtn').addEventListener('click',()=>{
+  ['cName','cContact','cTitle','cEmail','cPhone','cBill','cAddr1','cAddr2','cSigner','cSignerTitle',
+   'count','override','ovrWhy','special'].forEach(id=>{ const f=el(id); if(f) f.value=''; });
+  el('dValid').value=30;
+  el('dPrep').value='';          // blank means today, the same as on first load
+  el('cName').focus();
+  render();
+});
 
 /* ---------- phone formatting ---------- */
 function formatPhone(v){
