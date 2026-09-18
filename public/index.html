@@ -50,7 +50,9 @@ h1,h2,h3,h4,th,label,button{font-family:'Inter Tight',system-ui,sans-serif;}
 .qi.confirm{background:#FFF1F3;border-color:#F6D4DA;}
 .qi.confirm .qi-x{opacity:1;background:#EE4A62;color:#fff;font-size:10px;}
 .nav-empty{font-size:12px;color:var(--muted);line-height:1.5;padding:14px 10px;}
-.nav-foot{border-top:1px solid var(--line);margin-top:10px;padding-top:9px;font-size:10.5px;color:var(--muted);}
+.nav-foot{border-top:1px solid var(--line);margin-top:10px;padding-top:9px;font-size:10.5px;color:var(--muted);line-height:1.45;}
+.diagbtn{display:block;margin-top:4px;padding:0;border:none;background:none;cursor:pointer;
+         font-family:'Inter Tight';font-weight:600;font-size:10.5px;color:var(--btn);text-decoration:underline;}
 
 /* ---------------- save row ---------------- */
 .saverow{display:flex;align-items:center;gap:10px;margin-top:14px;}
@@ -884,7 +886,12 @@ async function api(method,qs,body){
   const ni=window.netlifyIdentity, u=ni&&ni.currentUser&&ni.currentUser();
   if(u){ try{ h.Authorization='Bearer '+(await u.jwt()); }catch(e){} }
   const r=await fetch(API+(qs||''),{method,headers:h,body:body?JSON.stringify(body):undefined});
-  if(!r.ok){ const t=await r.text(); const e=new Error(r.status+': '+t.slice(0,120)); e.status=r.status; throw e; }
+  if(!r.ok){
+    const t=await r.text();
+    let parsed=null; try{ parsed=JSON.parse(t); }catch(_){}
+    const e=new Error(parsed&&parsed.error?parsed.error:(r.status+': '+t.slice(0,120)));
+    e.status=r.status; e.code=parsed&&parsed.code; throw e;
+  }
   return r.status===204?null:r.json();
 }
 // a missing function means we are running outside Netlify, not that saving is broken
@@ -908,6 +915,13 @@ const store={
 };
 
 function setState(msg,cls){ const s=el('saveState'); s.textContent=msg||''; s.className='savestate'+(cls?' '+cls:''); }
+// turns a server error into something a salesperson can act on
+function explain(e){
+  if(e.status===401) return 'Your session expired. Sign out and back in, then save again.';
+  if(e.status===503||e.code==='blobs-unavailable')
+    return 'Saved quotes are not connected to storage yet. Everything else still works. Use Check storage at the bottom of the left column for the reason.';
+  return 'Could not save: '+e.message;
+}
 function rel(ms){
   if(!ms) return '';
   const d=Math.round((Date.now()-ms)/1000);
@@ -943,9 +957,32 @@ function drawList(){
                                                shortRep(r.rep), rel(r.updatedAt)].filter(Boolean).join('  ·  ');
     });
   }
-  el('navFoot').textContent = LOCAL
-    ? 'Preview mode: saved in this browser only.'
-    : SAVED.length+(SAVED.length===1?' quote':' quotes')+', shared with everyone signed in.';
+  footNote(LOCAL
+    ? 'Saved in this browser only: this page is not being served by Netlify, or the quotes function has not deployed yet.'
+    : SAVED.length+(SAVED.length===1?' quote':' quotes')+', shared with everyone signed in.');
+}
+
+// the footer always carries a way to ask the server what is wrong
+function footNote(text){
+  const f=el('navFoot');
+  f.textContent='';
+  const s=document.createElement('span'); s.textContent=text; f.appendChild(s);
+  const b=document.createElement('button'); b.className='diagbtn'; b.type='button'; b.textContent='Check storage';
+  b.addEventListener('click',checkStorage); f.appendChild(b);
+}
+async function checkStorage(){
+  const f=el('navFoot');
+  f.textContent='Checking…';
+  try{
+    const d=await api('GET','?diag=1');
+    footNote(d.storage&&d.storage.ok
+      ? 'Storage is connected. '+d.storage.savedQuotes+' saved on the server, signed in as '+d.signedInAs+'.'
+      : 'Storage is not connected. '+((d.storage&&d.storage.meaning)||'')+' '+((d.storage&&d.storage.error)||''));
+  }catch(e){
+    footNote(e.status===404||isAbsent(e)
+      ? 'The quotes function is not deployed on this site, so saving falls back to this browser.'
+      : 'Check failed: '+e.message);
+  }
 }
 
 async function refreshList(){
@@ -953,7 +990,7 @@ async function refreshList(){
   catch(e){
     if(!LOCAL&&isAbsent(e)){ LOCAL=true; return refreshList(); }
     el('navList').innerHTML='<div class="nav-empty">Could not load saved quotes.</div>';
-    el('navFoot').textContent=e.message; return;
+    footNote(explain(e)); return;
   }
   drawList();
 }
@@ -972,7 +1009,7 @@ async function saveQuote(){
     await refreshList();
   }catch(e){
     if(!LOCAL&&isAbsent(e)){ LOCAL=true; return saveQuote(); }
-    setState(e.status===401?'Your session expired. Sign out and back in to save.':'Could not save: '+e.message,'err');
+    setState(explain(e),'err');
   }
 }
 

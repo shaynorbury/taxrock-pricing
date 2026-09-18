@@ -93,11 +93,22 @@ Two things to know:
   handful of reps this is unlikely to bite; if it ever does, say so and the
   function can warn instead of overwriting.
 
-If the left column ever says it could not load saved quotes, open
-**Site configuration → Functions** and check the last deploy log for
-`quotes`. A missing-module error there means the build did not install the
-dependency; setting the build command to `npm install` fixes it, and the
-committed `netlify.toml` already does this.
+If the left column ever says it could not load saved quotes, press **Check
+storage** at the bottom of that column. It asks the server what is wrong and
+answers in words: storage connected, storage not connected, or the function is
+not deployed at all.
+
+Two failures have real fixes:
+
+- *"The environment has not been configured to use Netlify Blobs."* This
+  function uses the classic handler signature, because that is what hands it the
+  signed-in Identity user. Netlify calls that Lambda compatibility mode, and in
+  that mode it does not pass Blobs its credentials on its own. `connectLambda`
+  at the top of `openStore()` does it. If that line is ever removed, this error
+  comes straight back.
+- *A missing-module error in the deploy log.* The build did not install the
+  dependency. Setting the build command to `npm install` fixes it, and the
+  committed `netlify.toml` already does this.
 
 ---
 

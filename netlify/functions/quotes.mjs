@@ -1,4 +1,4 @@
-import { getStore } from '@netlify/blobs';
+import { connectLambda, getStore } from '@netlify/blobs';
 
 /* Saved quotes for the TaxRock document builder.
  *
@@ -38,15 +38,76 @@ async function whoIsCalling(event, context) {
   }
 }
 
+const STORE = 'taxrock-quotes';
+
+/* This function uses the classic handler signature, because that is what gives it
+ * the signed-in Identity user. Netlify calls that Lambda compatibility mode, and in
+ * that mode it does NOT hand Blobs its credentials automatically — getStore then
+ * fails with MissingBlobsEnvironmentError. connectLambda passes the request through
+ * and sets them up. It must run before getStore, on every invocation. */
+function openStore(event) {
+  try {
+    // event.blobs is the config Netlify attaches to the request in this mode
+    if (event && event.blobs) connectLambda(event);
+    return getStore(STORE);
+  } catch (err) {
+    // last resort: explicit credentials, if the site has been given them
+    const siteID = process.env.NETLIFY_BLOBS_SITE_ID || process.env.SITE_ID;
+    const token = process.env.NETLIFY_BLOBS_TOKEN;
+    if (siteID && token) return getStore({ name: STORE, siteID, token });
+    throw err;
+  }
+}
+
 export const handler = async (event, context) => {
   const email = await whoIsCalling(event, context);
   if (!email) return json(401, { error: 'Sign in to use saved quotes.' });
+
+  let store = null, storeError = null;
+  try { store = openStore(event); } catch (err) { storeError = err; }
+
+  if (event.queryStringParameters?.diag) return diagnose(email, store, storeError);
+
+  if (!store) {
+    return json(503, {
+      error: 'Saved quotes storage is not available: ' + String(storeError?.message || storeError),
+      code: 'blobs-unavailable'
+    });
+  }
   try {
-    return await route(event, email, getStore('taxrock-quotes'));
+    return await route(event, email, store);
   } catch (err) {
     return json(500, { error: String(err?.message || err) });
   }
 };
+
+/* /.netlify/functions/quotes?diag=1 — says in plain terms which half is broken */
+async function diagnose(email, store, storeError) {
+  const out = {
+    signedInAs: email,
+    node: process.version,
+    site: process.env.SITE_NAME || null,
+    url: process.env.URL || null,
+    storage: { ok: false }
+  };
+  if (!store) {
+    out.storage = {
+      ok: false,
+      error: String(storeError?.message || storeError),
+      meaning: /has not been configured/i.test(String(storeError?.message))
+        ? 'The function reached Netlify Blobs but was not given credentials for it.'
+        : 'The function could not open the blob store.'
+    };
+    return json(200, out);
+  }
+  try {
+    const { blobs } = await store.list();
+    out.storage = { ok: true, store: STORE, savedQuotes: blobs.length };
+  } catch (err) {
+    out.storage = { ok: false, error: String(err?.message || err), meaning: 'The store exists but could not be read.' };
+  }
+  return json(200, out);
+}
 
 // separated from the handler so it can be exercised against a stub store
 export async function route(event, email, store) {
