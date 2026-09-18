@@ -18,9 +18,11 @@ You do not need to write code. Everything below happens in GitHub and Netlify.
   the internal pricing matrix.
 - `public/netlify-identity.js` — the login widget, bundled locally so the page
   works even if a CDN is blocked.
-- `netlify.toml` — tells Netlify to publish `/public`, and adds `noindex` so the
-  page never turns up in a search engine.
-- `package.json` — a marker file so Netlify treats this as a project.
+- `netlify/functions/quotes.mjs` — the only server code. It saves and loads the
+  team's saved quotes, and refuses anyone who is not signed in.
+- `netlify.toml` — tells Netlify to publish `/public`, where the function lives,
+  and adds `noindex` so the page never turns up in a search engine.
+- `package.json` — the one dependency the function needs.
 - `local-preview.js` — previewing on a developer's computer only. Not used online.
 
 ---
@@ -73,6 +75,30 @@ will not let anyone through. That is expected, not a fault in the page.
 3. To remove someone later, delete them from the same list. They lose access on
    their next page load.
 
+**Step 5. Saved quotes — nothing to do**
+
+The left column of the builder keeps every quote the team has saved, newest
+first. Those records live in **Netlify Blobs**, a store that is part of Netlify
+itself. There is no database to sign up for, no keys to paste, and no monthly
+bill. Deploying the repository is the whole setup: Netlify sees
+`netlify/functions/quotes.mjs`, installs its one dependency, and the store
+appears the first time someone presses Save.
+
+Two things to know:
+
+- **Everyone signed in shares one list.** Any rep can open, re-export, edit or
+  delete any customer's quote. That is deliberate, so nobody is stuck when the
+  rep who built a quote is out. Deleting is two clicks and cannot be undone.
+- **If two people edit the same quote at once, the last save wins.** With a
+  handful of reps this is unlikely to bite; if it ever does, say so and the
+  function can warn instead of overwriting.
+
+If the left column ever says it could not load saved quotes, open
+**Site configuration → Functions** and check the last deploy log for
+`quotes`. A missing-module error there means the build did not install the
+dependency; setting the build command to `npm install` fixes it, and the
+committed `netlify.toml` already does this.
+
 ---
 
 ## Part 2 — Day to day
@@ -108,7 +134,10 @@ Proposal</div>`. Edit the words, commit, done. Page breaks re-flow on their own.
 npm run preview
 ```
 
-then open http://localhost:8788. The login is skipped in preview only.
+then open http://localhost:8788. The login is skipped in preview only, and
+because the Netlify function is not running there, saved quotes fall back to
+your own browser's storage. The left column says so when it does. To exercise
+the real store locally, use `npx netlify dev` instead.
 
 ---
 
@@ -119,7 +148,8 @@ the builder or the pricing matrix, and the site is marked `noindex` so it will
 not appear in search results.
 
 **Not protected.** Once a person is signed in, everything in the page is on their
-computer, including the pricing matrix. Anyone signed in can view source. That is
+computer, including the pricing matrix and every saved quote. Anyone signed in
+can view source, and the quotes function answers any signed-in account. That is
 fine for staff, and it is a real improvement on emailing the HTML file around,
 but it is not a barrier against someone who already has access.
 
@@ -135,6 +165,8 @@ word and that is a small change.
   every PDF export, so it cannot reach a customer by accident.
 - The MSA's **For signature** mode carries Ron's countersignature. Treat those
   exports as executed documents. Use **Draft** for anything sent for review.
+- **Saved quotes are a shared record, not a CRM.** They hold what was quoted and
+  who quoted it. They do not sync to HubSpot, and nothing expires them.
 - Both documents carry version codes by vertical: `TR-PP-TP-11`,
   `TR-MSA-TP-11`, and the `FA` and `LN` equivalents. If you revise the contract
   language, bump `11` so you can tell versions apart later.

@@ -3,8 +3,15 @@
 
 [build]
   publish = "public"
+  # there is no site to compile; this only installs the function's dependency
+  command = "npm install"
 
-# Identity handles auth; there is no build step and no server code.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Identity handles auth. The only server code is netlify/functions/quotes.mjs,
+# which stores saved quotes in Netlify Blobs.
 [[headers]]
   for = "/*"
   [headers.values]

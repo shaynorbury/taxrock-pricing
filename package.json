@@ -1,10 +1,13 @@
 {
   "name": "taxrock-document-builder",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "TaxRock pricing proposal and MSA builder. Internal, invite-only.",
   "license": "UNLICENSED",
   "scripts": {
     "preview": "node local-preview.js"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^11.1.0"
   }
 }
