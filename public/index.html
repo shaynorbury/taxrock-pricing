@@ -979,7 +979,8 @@ async function checkStorage(){
   try{
     const d=await api('GET','?diag=1');
     footNote(d.storage&&d.storage.ok
-      ? 'Storage is connected. '+d.storage.savedQuotes+' saved on the server, signed in as '+d.signedInAs+'.'
+      ? 'Storage is connected'+(d.storage.consistency==='eventual'?' (a new quote can take up to a minute to reach other people)':'')
+        +'. '+d.storage.savedQuotes+' saved on the server, signed in as '+d.signedInAs+'.'
       : 'Storage is not connected. '+((d.storage&&d.storage.meaning)||'')+' '+((d.storage&&d.storage.error)||''));
   }catch(e){
     footNote(e.status===404||isAbsent(e)

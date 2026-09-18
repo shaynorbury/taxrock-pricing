@@ -100,17 +100,21 @@ not deployed at all.
 
 Two failures have real fixes:
 
-- *"The environment has not been configured to use Netlify Blobs."* This
-  function uses the classic handler signature, because that is what hands it the
-  signed-in Identity user. Netlify calls that Lambda compatibility mode, and in
-  that mode it does not pass Blobs its credentials on its own. `connectLambda`
-  at the top of `openStore()` does it. If that line is ever removed, this error
-  comes straight back.
+- *"The environment has not been configured to use Netlify Blobs",* or *"failed
+  to perform a read using strong consistency ... uncachedEdgeURL".* Both mean the
+  function has been written with the old `export const handler` signature, which
+  Netlify runs in Lambda compatibility mode. In that mode Blobs is not configured
+  at all, and even once it is, strongly consistent reads are impossible. The
+  function uses the modern `export default async (req, context)` form instead,
+  and gets its signed-in user by checking the request's token against Identity.
+  Converting it back to a classic handler brings both errors with it.
 - *A quote saves but does not appear in the list.* Netlify Blobs is eventually
   consistent by default: a record written a moment ago can take up to a minute
   to show up in a listing. The store is opened with `consistency: 'strong'` to
   stop that, and the page also shows a just-saved quote straight away rather
   than waiting for the server to agree. Removing either would bring this back.
+  If an environment ever refuses strong reads, the function drops back to
+  eventual rather than failing, and Check storage says so.
 - *A missing-module error in the deploy log.* The build did not install the
   dependency. Setting the build command to `npm install` fixes it, and the
   committed `netlify.toml` already does this.
