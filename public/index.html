@@ -240,6 +240,11 @@ body[data-mode="draft"] #msaSheet .autodate{visibility:hidden;}
    it is white: viewers, selection and text extraction all bring it back, which is
    not acceptable on a document a customer signs. */
 .sigrow .cap{font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+/* Where the signer's billing method is captured. "Billing method" appears nowhere
+   else in either document, so an e-signature platform can anchor its payment field
+   to it and land here every time, whatever the rest of the page says. */
+.paym{margin-top:24px;width:calc(50% - 22px);break-inside:avoid;page-break-inside:avoid;}
+.pmn{font-size:9.5px;line-height:1.5;color:var(--muted);margin:7px 0 0;}
 
 /* DRAFT wash */
 .draftmark{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;z-index:5;}
@@ -561,6 +566,11 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
     <div class="sigrow"><div class="ln">5901 Priestly Dr #100</div></div>
     <div class="sigrow"><div class="ln">Carlsbad, CA 92008</div><div class="cap">Address</div></div>
   </div>
+</div>
+
+<div class="paym">
+  <div class="sigrow"><div class="ln"></div><div class="cap">Billing method</div></div>
+  <p class="pmn">TaxRock charges the Subscription Fee to the method provided here on execution and monthly thereafter, as set out in Section 6.5.</p>
 </div>
 </div>
 
