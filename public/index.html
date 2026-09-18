@@ -243,8 +243,11 @@ body[data-mode="draft"] #msaSheet .autodate{visibility:hidden;}
 /* Where the signer's billing method is captured. "Billing method" appears nowhere
    else in either document, so an e-signature platform can anchor its payment field
    to it and land here every time, whatever the rest of the page says. */
-.paym{margin-top:24px;width:calc(50% - 22px);break-inside:avoid;page-break-inside:avoid;}
-.pmn{font-size:9.5px;line-height:1.5;color:var(--muted);margin:7px 0 0;}
+.paym{margin-top:16px;break-inside:avoid;page-break-inside:avoid;}
+.pmn{font-size:9.5px;line-height:1.5;color:var(--muted);margin:6px 0 0;}
+/* the signature block and the billing method belong to the same act, so they are
+   one unit to the paginator and can never end up on separate pages */
+.execblock{break-inside:avoid;page-break-inside:avoid;}
 
 /* DRAFT wash */
 .draftmark{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;z-index:5;}
@@ -437,7 +440,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
   <div class="amt" id="qPrice"></div>
 </div>
 <table class="t">
-  <thead><tr><th style="width:38%">Billing unit</th><th>Coverage</th><th class="r">Subscription fee</th></tr></thead>
+  <thead><tr><th style="width:38%">Billing unit</th><th>Coverage</th><th class="r">Fee</th></tr></thead>
   <tbody id="qTable"></tbody>
 </table>
 <p class="defn"><b>Billing unit.</b> One Active Client Relationship is one engagement billed to one payer: typically a household or a business, together with everything filed under it. A married couple filing jointly counts as one. Active Client Relationships are defined in Section 2.5 of the MSA, which controls.</p>
@@ -448,6 +451,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
   <li><b>Billing.</b> The Subscription Fee is charged on execution of the MSA and monthly thereafter on the same day, to the payment method on file. Fees are exclusive of applicable taxes. All amounts are in USD.</li>
   <li><b>Term.</b> Month to month. No minimum term and no renewal date. Either party may cancel on thirty (30) days&rsquo; written notice. TaxRock may update the Subscription Fee on thirty (30) days&rsquo; written notice, and Customer may cancel without penalty before the change takes effect.</li>
   <li><b>Included capacity.</b> The Subscription Fee includes up to the number of Active Client Relationships stated above, which Customer may provision at any time. If needs grow beyond that capacity, TaxRock and Customer will establish revised capacity and pricing through an updated Pricing Proposal, and the additional capacity becomes available on execution.</li>
+  <li><b>Implementation &amp; training.</b> The subscription includes one initial 30-day implementation and training period. After that period, Customer may keep adding clients within its included capacity with no further implementation fees. If Customer asks for another TaxRock-led implementation or training engagement, a fee of <span id="oImplFee"></span> applies per additional 30-day engagement.</li>
   <li><b>Precedence.</b> In the event of a conflict, this Pricing Proposal controls with respect to the Subscription Fee, included capacity, and other expressly stated commercial terms. The MSA controls in all other respects. The terms of this Pricing Proposal are confidential.</li>
 </ol>
 
@@ -495,7 +499,8 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 <p class="cl"><b>4.3 User-Level Acceptance of TOS:</b> Customer&rsquo;s Authorized Users and Customer&rsquo;s clients must accept the TOS upon first login. Acceptance forms a direct agreement between the user and TaxRock governing platform use.</p>
 <p class="cl"><b>4.4 Restrictions:</b> Customer may not sublicense, resell, assign, or transfer access to the Services without TaxRock&rsquo;s prior written consent.</p>
 <p class="cl"><b>4.5 Customer Support:</b> TaxRock will provide support via email and in-platform messaging during normal business hours (Monday&ndash;Friday, 9:00 a.m. to 5:00 p.m. PST). TaxRock does not provide live phone support or custom consulting unless otherwise agreed in writing. Response times are provided on a commercially reasonable basis.</p>
-<p class="cl"><b>4.6 Client Relationship Changes:</b> Customer may provision Monitored Clients and Monitored Taxpayers up to the number of Active Client Relationships included in its subscription, and may deactivate them at any time. Adding capacity beyond that number is governed by Section 6.3. Deactivation or cancellation stops monitoring and related Services. Form 8821 and equivalent authorizations remain on file to allow for streamlined reactivation of Services, unless Customer requests their withdrawal.</p>
+<p class="cl"><b>4.6 Implementation and Training:</b> Customer&rsquo;s subscription includes one initial thirty (30)-day implementation and training period beginning on the Effective Date. During this period, TaxRock will provide onboarding assistance and training on client provisioning and use of the Services. Following the initial implementation period, Customer may continue to provision clients within its included capacity. Additional TaxRock-led implementation or training services requested by Customer may be subject to additional fees as set forth in the applicable Pricing Proposal.</p>
+<p class="cl"><b>4.7 Client Relationship Changes:</b> Customer may provision Monitored Clients and Monitored Taxpayers up to the number of Active Client Relationships included in its subscription, and may deactivate them at any time. Adding capacity beyond that number is governed by Section 6.3. Deactivation or cancellation stops monitoring and related Services. Form 8821 and equivalent authorizations remain on file to allow for streamlined reactivation of Services, unless Customer requests their withdrawal.</p>
 
 <h2 class="sec">5. Responsibilities of the Parties</h2>
 <p class="cl"><b>5.1 Customer Responsibilities:</b> Customer agrees to:</p>
@@ -512,7 +517,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 <h2 class="sec">6. Fees &amp; Payment</h2>
 <p class="cl"><b>6.1 Fees:</b> The subscription fee for the Services is a flat monthly fee stated in the Pricing Proposal (the &ldquo;Subscription Fee&rdquo;). Pricing is scoped individually to each Customer based on the requirements of its practice.</p>
 <p class="cl"><b>6.2 Measurement:</b> TaxRock&rsquo;s system records are the authoritative source for the number of Active Client Relationships provisioned in Customer&rsquo;s account. TaxRock does not audit Customer&rsquo;s books, client list, or practice.</p>
-<p class="cl"><b>6.3 Included Capacity and Pricing Adjustments:</b> The Subscription Fee includes up to the number of Active Client Relationships specified in the applicable Pricing Proposal, which Customer may provision at any time. If Customer&rsquo;s needs grow beyond that capacity, TaxRock and Customer will establish revised capacity and pricing through an updated Pricing Proposal, and the additional capacity becomes available for provisioning upon Customer&rsquo;s written acceptance of it. Any revised Subscription Fee will take effect beginning with the first billing cycle following that acceptance and will not decrease based on reductions in Customer&rsquo;s actual usage. This Section governs changes arising from Customer requiring capacity beyond the amount included in its Pricing Proposal; Section 6.7 governs changes initiated by TaxRock to the Subscription Fee for Customer&rsquo;s existing capacity.</p>
+<p class="cl"><b>6.3 Included Capacity and Pricing Adjustments:</b> The Subscription Fee includes up to the number of Active Client Relationships specified in the applicable Pricing Proposal, which Customer may provision at any time. The Subscription Fee is based on that included capacity and does not vary based on the number of Active Client Relationships provisioned at any particular time, whether Customer provisions its capacity gradually or all at once. If Customer&rsquo;s needs grow beyond that capacity, TaxRock and Customer will establish revised capacity and pricing through an updated Pricing Proposal, and the additional capacity becomes available for provisioning upon Customer&rsquo;s written acceptance of it. Any revised Subscription Fee will take effect beginning with the first billing cycle following that acceptance and will not decrease based on reductions in Customer&rsquo;s actual usage. This Section governs changes arising from Customer requiring capacity beyond the amount included in its Pricing Proposal; Section 6.7 governs changes initiated by TaxRock to the Subscription Fee for Customer&rsquo;s existing capacity.</p>
 <p class="cl"><b>6.4 Pricing Structure:</b> There are no platform fees, seat-based fees, or minimum commitments unless otherwise agreed in writing.</p>
 <p class="cl"><b>6.5 Billing &amp; Payment:</b> Subscription Fees are invoiced and charged monthly in advance on Customer&rsquo;s Billing Date and are due upon receipt. Customer will maintain a valid payment method on file and authorizes TaxRock to charge that method for all undisputed amounts on each Billing Date. Fees are exclusive of sales, use, VAT, GST, and similar taxes, which are Customer&rsquo;s responsibility where applicable. All amounts are in USD.</p>
 <p class="cl"><b>6.6 Suspension for Non-Payment:</b> If payment fails, TaxRock may suspend access to the Services until all outstanding amounts are paid in full. Suspension does not relieve Customer of its obligation to pay fees due.</p>
@@ -545,6 +550,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 <p class="cl"><b>9.7 No Reliance:</b> Each party acknowledges that it has not relied on any statements, representations, or warranties not expressly included in this Agreement, the Pricing Proposal, or the TOS.</p>
 
 <p class="cl" style="margin-top:14px;">By signing, both parties agree to the terms outlined in this Agreement. By executing this Agreement, Customer also accepts the <b>Pricing Proposal <span id="mPPRef"></span></b> delivered with this Agreement, which is incorporated herein by reference and sets out Customer&rsquo;s Subscription Fee and included capacity.</p>
+<div class="execblock">
 <div class="sig">
   <div>
     <h4 id="mCo"></h4>
@@ -570,7 +576,8 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 
 <div class="paym">
   <div class="sigrow"><div class="ln"></div><div class="cap">Billing method</div></div>
-  <p class="pmn">TaxRock charges the Subscription Fee to the method provided here on execution and monthly thereafter, as set out in Section 6.5.</p>
+  <p class="pmn">TaxRock charges the Subscription Fee to the method provided here monthly, as set out in Section 6.5.</p>
+</div>
 </div>
 </div>
 
@@ -586,10 +593,12 @@ const RON_SIG="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAaQAAACWCAYAAACRifw
 --------------------------------------------------------------------------- */
 const TAXPRO_BANDS=[[50,99],[150,159],[300,199],[500,349],[1000,499],[2500,799]];
 
+/* implFee: an additional TaxRock-led 30-day implementation or training engagement,
+   requested after the included initial one. Nothing to do with capacity. */
 const VERTICALS={
-  taxpro:{label:'Tax Pro', code:'TP', bands:TAXPRO_BANDS, inherits:null},
-  factor:{label:'Factor', code:'FA', bands:TAXPRO_BANDS, inherits:'Tax Pro'},
-  lender:{label:'Lender', code:'LN', bands:TAXPRO_BANDS, inherits:'Tax Pro'}
+  taxpro:{label:'Tax Pro', code:'TP', bands:TAXPRO_BANDS, implFee:499, inherits:null},
+  factor:{label:'Factor', code:'FA', bands:TAXPRO_BANDS, implFee:499, inherits:'Tax Pro'},
+  lender:{label:'Lender', code:'LN', bands:TAXPRO_BANDS, implFee:499, inherits:'Tax Pro'}
 };
 const V=()=>VERTICALS[(document.getElementById('vertical')||{}).value||'taxpro'];
 const BANDS_FOR=()=>V().bands;
@@ -790,10 +799,14 @@ function render(){
   src.querySelector('#qPrice').innerHTML=mo==null?(n===null?DASH:'Custom'):money(mo)+' <span>/ month</span>';
   const capCell=n===null?DASH:isEnt?'As scoped with Customer':'Up to '+p.cap.toLocaleString();
   const feeCell=mo==null?(n===null?DASH:'Quoted to scope'):money(mo)+'.00 per month';
+  const impl=V().implFee;
   src.querySelector('#qTable').innerHTML=
     '<tr><td class="u">Active Client Relationship</td><td>'+capCell+'</td><td class="r">'+feeCell+'</td></tr>'+
     '<tr><td class="u">Authorized Users</td><td>Unlimited</td><td class="r">No charge</td></tr>'+
-    '<tr><td class="u">Implementation</td><td>Included in Subscription Fee</td><td class="r">No charge</td></tr>';
+    '<tr><td class="u">Initial implementation &amp; training</td><td>One 30-day implementation and training period</td><td class="r">Included</td></tr>'+
+    '<tr><td class="u">Additional implementation &amp; training</td><td>Additional 30-day TaxRock-led implementation and training engagement</td><td class="r">'+money(impl)+' per engagement</td></tr>';
+
+  src.querySelector('#oImplFee').textContent=money(impl);
 
   const sp=el('special').value.trim();
   src.querySelector('#specialBox').style.display=sp?'block':'none';
