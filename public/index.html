@@ -171,8 +171,8 @@ textarea{min-height:54px;resize:vertical;}
 .hd .co b{color:var(--navy);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;font-family:'Inter Tight';}
 .rule{height:3px;background:var(--blue);margin:9px 0 0;}
 .rhd{display:flex;justify-content:space-between;align-items:baseline;font-family:'Inter Tight';font-size:9px;
-     font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding-bottom:9px;
-     border-bottom:2px solid var(--navy);}
+     font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding-bottom:6px;
+     border-bottom:2px solid var(--navy);margin-bottom:9px;}
 .rhd .c{color:var(--navy);}
 .pgfoot{margin-top:auto;display:flex;justify-content:space-between;font-size:8.5px;letter-spacing:.16em;
         text-transform:uppercase;color:#A9B2C2;border-top:1px solid var(--line);padding:11px 0 22px;}
@@ -222,7 +222,7 @@ ol.tl b{font-family:'Inter Tight';color:var(--navy);}
 .note b{font-family:'Inter Tight';color:var(--navy);}
 
 /* MSA clause type */
-p.cl{font-size:11.6px;line-height:1.55;margin:0 0 7px;color:var(--body);}
+p.cl{font-size:11.6px;line-height:1.55;margin:0 0 6px;color:var(--body);}
 p.cl b{font-family:'Inter Tight';color:var(--ink);font-weight:600;}
 p.bl{font-size:11.6px;line-height:1.55;margin:0 0 5px 0;padding-left:22px;color:var(--body);}
 p.bl b{font-family:'Inter Tight';color:var(--ink);font-weight:600;}
@@ -451,7 +451,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
   <li><b>Billing.</b> The Subscription Fee is charged on execution of the MSA and monthly thereafter on the same day, to the payment method on file. Fees are exclusive of applicable taxes. All amounts are in USD.</li>
   <li><b>Term.</b> Month to month. No minimum term and no renewal date. Either party may cancel on thirty (30) days&rsquo; written notice. TaxRock may update the Subscription Fee on thirty (30) days&rsquo; written notice, and Customer may cancel without penalty before the change takes effect.</li>
   <li><b>Included capacity.</b> The Subscription Fee includes up to the number of Active Client Relationships stated above, which Customer may provision at any time. If needs grow beyond that capacity, TaxRock and Customer will establish revised capacity and pricing through an updated Pricing Proposal, and the additional capacity becomes available on execution.</li>
-  <li><b>Implementation &amp; onboarding.</b> The subscription includes a guided 60-day implementation period beginning on the Effective Date. TaxRock will work with Customer to configure its practice, begin client provisioning, and train its team on use of the platform. Customer may continue provisioning clients within its included capacity after implementation. <span id="oImplTerm"></span></li>
+  <li><b>Guided Implementation.</b> The subscription includes a 60-day Guided Implementation beginning on the Effective Date. TaxRock will work with Customer to configure its practice, begin client provisioning, and train its team on use of the platform. Customer may continue provisioning clients within its included capacity after the Guided Implementation. <span id="oImplTerm"></span></li>
   <li><b>Precedence.</b> In the event of a conflict, this Pricing Proposal controls with respect to the Subscription Fee, included capacity, and other expressly stated commercial terms. The MSA controls in all other respects. The terms of this Pricing Proposal are confidential.</li>
 </ol>
 
@@ -499,7 +499,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 <p class="cl"><b>4.3 User-Level Acceptance of TOS:</b> Customer&rsquo;s Authorized Users and Customer&rsquo;s clients must accept the TOS upon first login. Acceptance forms a direct agreement between the user and TaxRock governing platform use.</p>
 <p class="cl"><b>4.4 Restrictions:</b> Customer may not sublicense, resell, assign, or transfer access to the Services without TaxRock&rsquo;s prior written consent.</p>
 <p class="cl"><b>4.5 Customer Support:</b> TaxRock will provide support via email and in-platform messaging during normal business hours (Monday&ndash;Friday, 9:00 a.m. to 5:00 p.m. PST). TaxRock does not provide live phone support or custom consulting unless otherwise agreed in writing. Response times are provided on a commercially reasonable basis.</p>
-<p class="cl"><b>4.6 Implementation and Onboarding:</b> Customer&rsquo;s subscription includes a guided sixty (60)-day implementation period beginning on the Effective Date. During this period, TaxRock will work with Customer to configure its practice, begin client provisioning, and train its team on use of the Services. Following the implementation period, Customer may continue to provision clients within its included capacity. Additional TaxRock-led implementation or training services requested by Customer may be subject to additional fees as set forth in the applicable Pricing Proposal.</p>
+<p class="cl"><b>4.6 Guided Implementation:</b> Customer&rsquo;s subscription includes a guided sixty (60)-day implementation period beginning on the Effective Date (the &ldquo;Guided Implementation&rdquo;). During the Guided Implementation, TaxRock will work with Customer to configure its practice, begin client provisioning, and train its team on use of the Services. Following the Guided Implementation, Customer may continue to provision clients within its included capacity. Additional TaxRock-led implementation or training services requested by Customer may be subject to additional fees as set forth in the applicable Pricing Proposal.</p>
 <p class="cl"><b>4.7 Client Relationship Changes:</b> Customer may provision Monitored Clients and Monitored Taxpayers up to the number of Active Client Relationships included in its subscription, and may deactivate them at any time. Adding capacity beyond that number is governed by Section 6.3. Deactivation or cancellation stops monitoring and related Services. Form 8821 and equivalent authorizations remain on file to allow for streamlined reactivation of Services, unless Customer requests their withdrawal.</p>
 
 <h2 class="sec">5. Responsibilities of the Parties</h2>
@@ -807,8 +807,8 @@ function render(){
   src.querySelector('#qTable').innerHTML=
     '<tr><td class="u">Active Client Relationship</td><td>'+capCell+'</td><td class="r">'+feeCell+'</td></tr>'+
     '<tr><td class="u">Authorized Users</td><td>Unlimited</td><td class="r">No charge</td></tr>'+
-    '<tr><td class="u">Initial implementation &amp; onboarding</td><td>Guided 60-day implementation to configure your practice, provision clients, and prepare your team to use TaxRock.</td><td class="r">Included</td></tr>'+
-    '<tr><td class="u">Additional implementation services</td><td>Additional TaxRock-led implementation or training requested after initial onboarding.</td><td class="r">'+implCell+'</td></tr>';
+    '<tr><td class="u">Guided Implementation</td><td>60 days to configure your practice, provision clients, and prepare your team to use TaxRock.</td><td class="r">Included</td></tr>'+
+    '<tr><td class="u">Additional implementation services</td><td>Additional TaxRock-led implementation or training requested after the Guided Implementation.</td><td class="r">'+implCell+'</td></tr>';
 
   src.querySelector('#oImplTerm').textContent = impl==null
     ? 'Additional TaxRock-led implementation or training requested by Customer may be quoted separately based on scope.'
