@@ -451,7 +451,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
   <li><b>Billing.</b> The Subscription Fee is charged on execution of the MSA and monthly thereafter on the same day, to the payment method on file. Fees are exclusive of applicable taxes. All amounts are in USD.</li>
   <li><b>Term.</b> Month to month. No minimum term and no renewal date. Either party may cancel on thirty (30) days&rsquo; written notice. TaxRock may update the Subscription Fee on thirty (30) days&rsquo; written notice, and Customer may cancel without penalty before the change takes effect.</li>
   <li><b>Included capacity.</b> The Subscription Fee includes up to the number of Active Client Relationships stated above, which Customer may provision at any time. If needs grow beyond that capacity, TaxRock and Customer will establish revised capacity and pricing through an updated Pricing Proposal, and the additional capacity becomes available on execution.</li>
-  <li><b>Implementation &amp; training.</b> The subscription includes one initial 30-day implementation and training period. After that period, Customer may keep adding clients within its included capacity with no further implementation fees. <span id="oImplTerm"></span></li>
+  <li><b>Implementation &amp; training.</b> The subscription includes one initial 30-day implementation and training period, during which TaxRock provides onboarding assistance and training on client provisioning and use of the platform. After that period, Customer may keep adding clients within its included capacity with no further implementation fees. <span id="oImplTerm"></span></li>
   <li><b>Precedence.</b> In the event of a conflict, this Pricing Proposal controls with respect to the Subscription Fee, included capacity, and other expressly stated commercial terms. The MSA controls in all other respects. The terms of this Pricing Proposal are confidential.</li>
 </ol>
 
@@ -809,7 +809,7 @@ function render(){
   src.querySelector('#qTable').innerHTML=
     '<tr><td class="u">Active Client Relationship</td><td>'+capCell+'</td><td class="r">'+feeCell+'</td></tr>'+
     '<tr><td class="u">Authorized Users</td><td>Unlimited</td><td class="r">No charge</td></tr>'+
-    '<tr><td class="u">Initial implementation &amp; training</td><td>One 30-day implementation and training period</td><td class="r">Included</td></tr>'+
+    '<tr><td class="u">Initial implementation &amp; training</td><td>One 30-day period of onboarding assistance and training on client provisioning and platform use</td><td class="r">Included</td></tr>'+
     '<tr><td class="u">Additional implementation &amp; training</td><td>'+implCover+'</td><td class="r">'+implCell+'</td></tr>';
 
   src.querySelector('#oImplTerm').textContent = impl==null
