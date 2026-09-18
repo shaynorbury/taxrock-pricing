@@ -228,6 +228,12 @@ p.bl b{font-family:'Inter Tight';color:var(--ink);font-weight:600;}
 .execsig{max-height:36px;width:auto;position:absolute;bottom:2px;left:2px;display:none;}
 body[data-mode="exec"] #msaSheet .execsig[src]{display:block;}
 body[data-mode="draft"] #msaSheet .autodate{visibility:hidden;}
+/* Markers e-signature platforms anchor the customer's fields to. White, tiny, and
+   present only in For signature mode: invisible on the page and in the PDF, but
+   still real text, so the signature and date fields land on the right lines
+   however the document reflows. A draft carries none. */
+.anchor{display:none;font-size:8px;letter-spacing:0;word-spacing:0;line-height:1;color:#fff;-webkit-user-select:none;user-select:none;}
+body[data-mode="exec"] #msaSheet .anchor{display:inline;}
 .sigrow .cap{font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
 
 /* DRAFT wash */
@@ -526,10 +532,10 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 <div class="sig">
   <div>
     <h4 id="mCo"></h4>
-    <div class="sigrow"><div class="ln"></div><div class="cap">Signature</div></div>
+    <div class="sigrow"><div class="ln"><span class="anchor">#tr-sign#</span></div><div class="cap">Signature</div></div>
     <div class="sigrow"><div class="ln" id="mName"></div><div class="cap">Printed name</div></div>
     <div class="sigrow"><div class="ln" id="mTitle"></div><div class="cap">Title</div></div>
-    <div class="sigrow"><div class="ln"></div><div class="cap">Date</div></div>
+    <div class="sigrow"><div class="ln"><span class="anchor">#tr-date#</span></div><div class="cap">Date</div></div>
     <div class="sigrow"><div class="ln" id="mEmail"></div><div class="cap">Email</div></div>
     <div class="sigrow"><div class="ln" id="mA1"></div></div>
     <div class="sigrow"><div class="ln" id="mA2"></div><div class="cap">Address</div></div>
