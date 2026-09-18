@@ -1,0 +1,13 @@
+# TaxRock document builder
+# Static page in /public, gated by Netlify Identity (invite only).
+
+[build]
+  publish = "public"
+
+# Identity handles auth; there is no build step and no server code.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Referrer-Policy = "same-origin"
+    X-Frame-Options = "SAMEORIGIN"

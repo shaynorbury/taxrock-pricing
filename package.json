@@ -1,0 +1,10 @@
+{
+  "name": "taxrock-document-builder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TaxRock pricing proposal and MSA builder. Internal, invite-only.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "preview": "node local-preview.js"
+  }
+}
