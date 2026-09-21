@@ -165,7 +165,8 @@ industry vocabulary out of the contract wording and this stays true for the next
 vertical as well.
 
 **Changing contract wording.** Both documents are plain HTML inside
-`public/index.html`. The MSA is the block beginning `<h2 class="sec">1. Agreement
+`public/index.html`. Bump `ver` for the affected verticals whenever you do
+(see Part 4). The MSA is the block beginning `<h2 class="sec">1. Agreement
 Overview</h2>`; the proposal is the block beginning `<div class="kicker">Pricing
 Proposal</div>`. Edit the words, commit, done. Page breaks re-flow on their own.
 
@@ -208,6 +209,11 @@ word and that is a small change.
   exports as executed documents. Use **Draft** for anything sent for review.
 - **Saved quotes are a shared record, not a CRM.** They hold what was quoted and
   who quoted it. They do not sync to HubSpot, and nothing expires them.
-- Both documents carry version codes by vertical: `TR-PP-TP-11`,
-  `TR-MSA-TP-11`, and the `FA` and `LN` equivalents. If you revise the contract
-  language, bump `11` so you can tell versions apart later.
+- **Version codes are per vertical**, and the verticals are not on the same
+  number. Tax Pro and Factor are at 11; **Lender is at 12**, because
+  `TR-MSA-LN-11` is already signed and in the portal under an annual term and
+  per-taxpayer pricing, and two different agreements sharing one code would be a
+  real problem in a dispute. The number lives in `ver` on each entry of
+  `VERTICALS`, and both documents plus the page footers read from it. **If you
+  change the contract language, bump `ver` on every vertical the change touches**,
+  in the same commit.

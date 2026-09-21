@@ -499,6 +499,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 <p class="bl"><b>b)</b> TaxRock stops all transcript retrieval, monitoring, notifications, and related automated processing for Customer and its Monitored Clients and Monitored Taxpayers on the Effective Termination Date.</p>
 <p class="bl"><b>c)</b> TaxRock does not provide data exports upon cancellation. IRS transcripts and related information can be obtained directly from the IRS at any time by Customer or its clients.</p>
 <p class="bl"><b>d)</b> All unpaid fees accrued through the Effective Termination Date become immediately due and payable.</p>
+<p class="cl"><b>3.6 Survival:</b> Sections 2 (Definitions), 6 (Fees &amp; Payment) with respect to amounts accrued through the Effective Termination Date, 7 (Confidentiality), 8 (Limitation of Liability), and 9 (General Provisions) survive cancellation or termination of this Agreement.</p>
 
 <h2 class="sec">4. Services &amp; Access</h2>
 <p class="cl"><b>4.1 Services:</b> &ldquo;Services&rdquo; means access to the TaxRock platform made available to Customer under this Agreement and the TOS. Customer acknowledges that the Services may evolve over time and that TaxRock may modify or update the platform without prior notice, provided such changes do not materially degrade overall functionality. TaxRock does not warrant or guarantee the availability of any particular feature, workflow, or functionality.</p>
@@ -608,11 +609,22 @@ const FACTOR_BANDS=[[10,99],[25,199],[50,399],[100,499]];
    null publishes no amount: the proposal says an additional fee may apply depending
    on scope. Set it to a number (499) and the amount, the per-engagement wording and
    the per-engagement wording all come back. */
+/* ver: the document version stamped on both documents, per vertical, because the
+   verticals were not all at the same version when this builder took over.
+   Tax Pro succeeds TR-MSA-TP-10, so it is 11.
+   Factor is a new series; there has never been an FA document, so it starts at 11
+   alongside Tax Pro.
+   Lender is 12, not 11. TR-MSA-LN-11 is already signed and sitting in the portal
+   with an annual term and per-taxpayer pricing. Two different agreements both
+   called LN-11 would be a genuine problem in a dispute, so this generation is 12.
+   Bump a vertical's number here whenever its contract language changes. */
 const VERTICALS={
-  taxpro:{label:'Tax Pro', code:'TP', bands:TAXPRO_BANDS, implFee:null, inherits:null},
-  factor:{label:'Factor', code:'FA', bands:FACTOR_BANDS, implFee:null, inherits:null},
-  lender:{label:'Lender', code:'LN', bands:FACTOR_BANDS, implFee:null, inherits:'Factor'}
+  taxpro:{label:'Tax Pro', code:'TP', ver:11, bands:TAXPRO_BANDS, implFee:null, inherits:null},
+  factor:{label:'Factor', code:'FA', ver:11, bands:FACTOR_BANDS, implFee:null, inherits:null},
+  lender:{label:'Lender', code:'LN', ver:12, bands:FACTOR_BANDS, implFee:null, inherits:'Factor'}
 };
+/* full document code, e.g. TR-MSA-LN-12 */
+const DOC=kind=>'TR-'+kind+'-'+V().code+'-'+V().ver;
 
 /* "Active Client Relationship" is the billing unit in every vertical, but what counts
    as one differs, so MSA Section 2.5 is written per vertical too: `msaDefn` is the
@@ -872,18 +884,18 @@ function render(){
   const rs=m.querySelector('#mTSig'); if(rs&&RON_SIG) rs.src=RON_SIG;
   // countersigning date is the date the document is exported
   const ppref=m.querySelector('#mPPRef');
-  if(ppref) ppref.textContent='dated '+fmtDate(prep)+' (TR-PP-'+V().code+'-11)';
+  if(ppref) ppref.textContent='dated '+fmtDate(prep)+' ('+DOC('PP')+')';
   stampDates(src); stampDates(m);
 
   const vv=V();
   el('vertHint').textContent = vv.inherits
-    ? vv.label+' currently uses '+vv.inherits+' pricing. Documents are coded TR-…-'+vv.code+'-11.'
-    : 'Documents are coded TR-…-'+vv.code+'-11.';
+    ? vv.label+' currently uses '+vv.inherits+' pricing. Documents are coded TR-…-'+vv.code+'-'+vv.ver+'.'
+    : 'Documents are coded TR-…-'+vv.code+'-'+vv.ver+'.';
   el('pillPrice').textContent=mo==null?(n===null?DASH:'Custom'):money(mo)+' / month';
   el('pillPlan').textContent=(n===null?'No '+sizeWord+' entered':planName)+(hasOv?'  ·  override applied':'');
 
-  paginate(el('propSheet'), src, {docId:'TR-PP-'+V().code+'-11', runHead:'TaxRock Pricing Proposal', runRight:nm});
-  paginate(el('msaSheet'), m, {docId:'TR-MSA-'+V().code+'-11', runHead:'Master Subscription Agreement', runRight:nm,
+  paginate(el('propSheet'), src, {docId:DOC('PP'), runHead:'TaxRock Pricing Proposal', runRight:nm});
+  paginate(el('msaSheet'), m, {docId:DOC('MSA'), runHead:'Master Subscription Agreement', runRight:nm,
     draftmark:true,
     title:`<div class="kicker">Master Subscription Agreement</div><h1 class="t" style="font-size:${titleSize}">${nm||'____________________'}</h1>
       <p class="bind">This <b>Master Subscription Agreement (&ldquo;Agreement&rdquo;)</b> is entered into by and between
