@@ -39,15 +39,22 @@ h1,h2,h3,h4,th,label,button{font-family:'Inter Tight',system-ui,sans-serif;}
 .nav-new:hover{background:#DCEBFF;}
 .nav-q{padding:7px 11px;font-size:12.5px;border-radius:9px;}
 .nav-list{margin-top:10px;overflow-y:auto;flex:1 1 auto;min-height:60px;margin-right:-6px;padding-right:6px;}
-.qi{display:block;position:relative;width:100%;text-align:left;padding:9px 26px 9px 10px;border-radius:11px;
-    cursor:pointer;border:1.5px solid transparent;margin-bottom:2px;}
-.qi:hover{background:var(--paper);border-color:var(--line);}
-.qi.on{background:var(--wash);border-color:#CFE4FF;}
+.qi{display:block;position:relative;width:100%;text-align:left;padding:10px 26px 10px 11px;border-radius:11px;
+    cursor:pointer;border:1.5px solid var(--line);background:#fff;margin-bottom:7px;transition:.13s;
+    box-shadow:0 1px 2px rgba(12,30,80,.05);}
+.qi:hover{border-color:#C9DCF7;box-shadow:0 7px 16px -11px rgba(12,30,80,.5);transform:translateY(-1px);}
+.qi.on{background:var(--wash);border-color:#9FC8FF;box-shadow:0 7px 16px -12px rgba(8,129,255,.55);}
+/* which vertical the quote was priced under, so it is visible without opening it */
+.vb{display:inline-block;font-family:'Inter Tight';font-size:8.5px;font-weight:700;letter-spacing:.11em;
+    text-transform:uppercase;padding:2px 7px;border-radius:999px;margin-bottom:5px;}
+.vb.taxpro{background:#EAF3FF;color:#0060C8;}
+.vb.factor{background:#F1E9FF;color:#4F00C3;}
+.vb.lender{background:#FFF3DC;color:#8A5E08;}
 .qi-n{display:block;font-family:'Inter Tight';font-weight:600;font-size:13px;color:var(--ink);
       line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .qi-m{display:block;font-size:11px;color:var(--muted);margin-top:2px;
       overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.qi-x{position:absolute;right:6px;top:8px;width:19px;height:19px;border-radius:50%;line-height:18px;
+.qi-x{position:absolute;right:6px;top:9px;width:19px;height:19px;border-radius:50%;line-height:18px;
       text-align:center;font-size:14px;color:var(--muted);opacity:0;transition:.12s;}
 .qi:hover .qi-x{opacity:1;}
 .qi-x:hover{background:#FFE7EA;color:#D03A50;}
@@ -345,9 +352,9 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
   </div>
 
   <div class="fs">
-    <div class="fs-t">Practice</div>
-    <label>Active client relationships</label><input id="count" type="number" min="1" placeholder="e.g. 420">
-    <div class="hint">One engagement billed to one payer counts once. Taken from the prior-year client list.</div>
+    <div class="fs-t" id="sizeSection">Practice</div>
+    <label id="sizeLabel">Active client relationships</label><input id="count" type="number" min="1" placeholder="e.g. 420">
+    <div class="hint" id="sizeHint">One engagement billed to one payer counts once. Taken from the prior-year client list.</div>
   </div>
 
   <div class="fs">
@@ -430,7 +437,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 <div class="meta">
   <div><div class="lab">Date prepared</div><div class="v" id="oPrep"></div></div>
   <div><div class="lab">Valid through</div><div class="v" id="oValid"></div></div>
-  <div><div class="lab">Practice size</div><div class="v" id="oCount"></div></div>
+  <div><div class="lab" id="oCountLab">Practice size</div><div class="v" id="oCount"></div></div>
   <div><div class="lab">Billing starts</div><div class="v" id="oBill"></div></div>
 </div>
 
@@ -443,7 +450,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
   <thead><tr><th style="width:38%">Billing unit</th><th>Coverage</th><th class="r">Fee</th></tr></thead>
   <tbody id="qTable"></tbody>
 </table>
-<p class="defn"><b>Billing unit.</b> One Active Client Relationship is one engagement billed to one payer: typically a household or a business, together with everything filed under it. A married couple filing jointly counts as one. Active Client Relationships are defined in Section 2.5 of the MSA, which controls.</p>
+<p class="defn"><b>Billing unit.</b> <span id="oDefn"></span> Active Client Relationships are defined in Section 2.5 of the MSA, which controls.</p>
 <div class="note" id="specialBox" style="display:none;"><b>Additional terms.</b> <span id="oSpecial"></span></div>
 
 <h2 class="sec">Key terms</h2>
@@ -499,7 +506,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 <p class="cl"><b>4.3 User-Level Acceptance of TOS:</b> Customer&rsquo;s Authorized Users and Customer&rsquo;s clients must accept the TOS upon first login. Acceptance forms a direct agreement between the user and TaxRock governing platform use.</p>
 <p class="cl"><b>4.4 Restrictions:</b> Customer may not sublicense, resell, assign, or transfer access to the Services without TaxRock&rsquo;s prior written consent.</p>
 <p class="cl"><b>4.5 Customer Support:</b> TaxRock will provide support via email and in-platform messaging during normal business hours (Monday&ndash;Friday, 9:00 a.m. to 5:00 p.m. PST). TaxRock does not provide live phone support or custom consulting unless otherwise agreed in writing. Response times are provided on a commercially reasonable basis.</p>
-<p class="cl"><b>4.6 Guided Implementation:</b> Customer&rsquo;s subscription includes a guided sixty (60)-day implementation period beginning on the Effective Date (the &ldquo;Guided Implementation&rdquo;). During the Guided Implementation, TaxRock will work with Customer to configure its practice, begin client provisioning, and train its team on use of the Services. Following the Guided Implementation, Customer may continue to provision clients within its included capacity. Additional TaxRock-led implementation or training services requested by Customer may be subject to additional fees as set forth in the applicable Pricing Proposal.</p>
+<p class="cl"><b>4.6 Guided Implementation:</b> Customer&rsquo;s subscription includes a guided sixty (60)-day implementation period beginning on the Effective Date (the &ldquo;Guided Implementation&rdquo;). During the Guided Implementation, TaxRock will work with Customer to configure its <span id="mImplNoun"></span>, begin client provisioning, and train its team on use of the Services. Following the Guided Implementation, Customer may continue to provision clients within its included capacity. Additional TaxRock-led implementation or training services requested by Customer may be subject to additional fees as set forth in the applicable Pricing Proposal.</p>
 <p class="cl"><b>4.7 Client Relationship Changes:</b> Customer may provision Monitored Clients and Monitored Taxpayers up to the number of Active Client Relationships included in its subscription, and may deactivate them at any time. Adding capacity beyond that number is governed by Section 6.3. Deactivation or cancellation stops monitoring and related Services. Form 8821 and equivalent authorizations remain on file to allow for streamlined reactivation of Services, unless Customer requests their withdrawal.</p>
 
 <h2 class="sec">5. Responsibilities of the Parties</h2>
@@ -592,6 +599,9 @@ const RON_SIG="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAaQAAACWCAYAAACRifw
    internal matrix all read from here.
 --------------------------------------------------------------------------- */
 const TAXPRO_BANDS=[[50,99],[150,159],[300,199],[500,349],[1000,499],[2500,799]];
+/* Factoring and lending. Penetration ladder approved September 2026: books are far
+   smaller than a tax practice's, so the bands are tighter. Over 100 is quoted. */
+const FACTOR_BANDS=[[10,99],[25,199],[50,399],[100,499]];
 
 /* implFee: an additional TaxRock-led implementation or training engagement, requested
    after the included initial one. Nothing to do with capacity.
@@ -600,9 +610,28 @@ const TAXPRO_BANDS=[[50,99],[150,159],[300,199],[500,349],[1000,499],[2500,799]]
    the per-engagement wording all come back. */
 const VERTICALS={
   taxpro:{label:'Tax Pro', code:'TP', bands:TAXPRO_BANDS, implFee:null, inherits:null},
-  factor:{label:'Factor', code:'FA', bands:TAXPRO_BANDS, implFee:null, inherits:'Tax Pro'},
-  lender:{label:'Lender', code:'LN', bands:TAXPRO_BANDS, implFee:null, inherits:'Tax Pro'}
+  factor:{label:'Factor', code:'FA', bands:FACTOR_BANDS, implFee:null, inherits:null},
+  lender:{label:'Lender', code:'LN', bands:FACTOR_BANDS, implFee:null, inherits:'Factor'}
 };
+
+/* The billing unit is the same in every vertical, because the MSA defines it once in
+   Section 2.5. Only the words around it change: a factor does not have a "practice"
+   and does not file joint returns. */
+const TERMS={
+  taxpro:{section:'Practice', label:'Active client relationships', metaLab:'Practice size',
+    noun:'practice', implNoun:'practice',
+    hint:'One engagement billed to one payer counts once. Taken from the prior-year client list.',
+    defn:'One Active Client Relationship is one engagement billed to one payer: typically a household or a business, together with everything filed under it. A married couple filing jointly counts as one.'},
+  factor:{section:'Book', label:'Active client relationships', metaLab:'Book size',
+    noun:'book', implNoun:'operation',
+    hint:'Clients on the book. One client under one factoring agreement counts once, however many invoices or debtors sit under it.',
+    defn:'One Active Client Relationship is one client billed under one factoring agreement, together with every entity and taxpayer identification number served under that agreement, however many invoices or account debtors are involved.'},
+  lender:{label:'Active client relationships', section:'Portfolio', metaLab:'Portfolio size',
+    noun:'portfolio', implNoun:'operation',
+    hint:'Borrowers in the portfolio. One borrower under one facility counts once, however many entities or guarantors sit under it.',
+    defn:'One Active Client Relationship is one borrower under one facility, together with every entity and taxpayer identification number served under that facility, however many obligations are involved.'}
+};
+const T=()=>TERMS[(document.getElementById('vertical')||{}).value||'taxpro']||TERMS.taxpro;
 const V=()=>VERTICALS[(document.getElementById('vertical')||{}).value||'taxpro'];
 const BANDS_FOR=()=>V().bands;
 const el=id=>document.getElementById(id);
@@ -714,7 +743,7 @@ function buildMatrix(){
     const k=Math.min(2,B.length-2);                 // a representative boundary
     const justOver=B[k][0]+1;
     notes+='<b>Reading the last column.</b> A firm sitting just above a band boundary pays the most per '+
-           'relationship. A practice at '+justOver.toLocaleString()+' pays '+money2(B[k+1][1]/justOver)+
+           'relationship. A '+T().noun+' at '+justOver.toLocaleString()+' pays '+money2(B[k+1][1]/justOver)+
            ' each against '+money2(B[k][1]/B[k][0])+' at '+B[k][0].toLocaleString()+
            ', so counts near a boundary are worth confirming before quoting.';
     const bumps=[];
@@ -793,6 +822,12 @@ function render(){
   const valid=new Date(prep);valid.setDate(valid.getDate()+Math.max(1,parseInt(el('dValid').value||30)));
   src.querySelector('#oPrep').textContent=fmtDate(prep);
   src.querySelector('#oValid').textContent=fmtDate(valid);
+  const tm=T();
+  el('sizeSection').textContent=tm.section;
+  el('sizeLabel').textContent=tm.label;
+  el('sizeHint').textContent=tm.hint;
+  src.querySelector('#oCountLab').textContent=tm.metaLab;
+  src.querySelector('#oDefn').textContent=tm.defn;
   src.querySelector('#oCount').textContent=n===null?DASH:n.toLocaleString()+' Active Client Relationships';
   src.querySelector('#oBill').textContent='On execution, then monthly';
 
@@ -807,7 +842,7 @@ function render(){
   src.querySelector('#qTable').innerHTML=
     '<tr><td class="u">Active Client Relationship</td><td>'+capCell+'</td><td class="r">'+feeCell+'</td></tr>'+
     '<tr><td class="u">Authorized Users</td><td>Unlimited</td><td class="r">No charge</td></tr>'+
-    '<tr><td class="u">Guided Implementation</td><td>60 days to configure your practice, provision clients, and prepare your team to use TaxRock.</td><td class="r">Included</td></tr>'+
+    '<tr><td class="u">Guided Implementation</td><td>60 days to configure your '+tm.implNoun+', provision clients, and prepare your team to use TaxRock.</td><td class="r">Included</td></tr>'+
     '<tr><td class="u">Additional implementation services</td><td>Additional TaxRock-led implementation or training requested after the Guided Implementation.</td><td class="r">'+implCell+'</td></tr>';
 
   src.querySelector('#oImplTerm').textContent = impl==null
@@ -821,6 +856,7 @@ function render(){
   // MSA fields
   const m=el('srcMsa');
   fillSig(m,'m');
+  const mi=m.querySelector('#mImplNoun'); if(mi) mi.textContent=tm.implNoun;
   const rs=m.querySelector('#mTSig'); if(rs&&RON_SIG) rs.src=RON_SIG;
   // countersigning date is the date the document is exported
   const ppref=m.querySelector('#mPPRef');
@@ -1025,10 +1061,14 @@ function drawList(){
   } else {
     list.innerHTML=rows.map(r=>'<div class="qi'+(r.id===CURRENT?' on':'')+'" data-id="'+
       String(r.id).replace(/[^A-Za-z0-9_]/g,'')+'">'+
-      '<span class="qi-n"></span><span class="qi-m"></span><span class="qi-x">×</span></div>').join('');
+      '<span class="vb"></span><span class="qi-n"></span><span class="qi-m"></span><span class="qi-x">×</span></div>').join('');
     // names and meta are set as text, never as markup, so a customer name cannot inject anything
     [...list.children].forEach((node,i)=>{
       const r=rows[i];
+      const vk=VERTICALS[r.vertical]?r.vertical:'taxpro';
+      const badge=node.querySelector('.vb');
+      badge.className='vb '+vk;
+      badge.textContent=VERTICALS[vk].label;
       node.querySelector('.qi-n').textContent=r.name||'Untitled';
       node.querySelector('.qi-m').textContent=[r.price&&r.price!=='—'?r.price.replace(' / month','/mo'):null,
                                                shortRep(r.rep), rel(r.updatedAt)].filter(Boolean).join('  ·  ');
