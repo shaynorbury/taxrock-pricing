@@ -386,7 +386,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
   <div class="pill"><div class="l">Quoted</div><div class="v" id="pillPrice"></div><div class="s" id="pillPlan"></div></div>
 
   <button class="btn ghost" id="clearBtn" type="button" style="width:100%;justify-content:center;margin-top:14px;">Clear all</button>
-  <div class="hint" style="margin-top:6px;">Starts a fresh quote and empties the customer, practice, pricing and document fields. Your name and the TaxRock signatory stay, and anything already saved stays saved.</div>
+  <div class="hint" style="margin-top:6px;">Starts a fresh quote and empties the customer, sizing, pricing and document fields. Your name and the TaxRock signatory stay, and anything already saved stays saved.</div>
 
   <div class="hint" style="margin-top:10px;line-height:1.5;"><b>When exporting:</b> set Margins to <b>None</b> and uncheck <b>Headers and footers</b>. Only the open tab is exported.</div>
 </div>
@@ -458,7 +458,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
   <li><b>Billing.</b> The Subscription Fee is charged on execution of the MSA and monthly thereafter on the same day, to the payment method on file. Fees are exclusive of applicable taxes. All amounts are in USD.</li>
   <li><b>Term.</b> Month to month. No minimum term and no renewal date. Either party may cancel on thirty (30) days&rsquo; written notice. TaxRock may update the Subscription Fee on thirty (30) days&rsquo; written notice, and Customer may cancel without penalty before the change takes effect.</li>
   <li><b>Included capacity.</b> The Subscription Fee includes up to the number of Active Client Relationships stated above, which Customer may provision at any time. If needs grow beyond that capacity, TaxRock and Customer will establish revised capacity and pricing through an updated Pricing Proposal, and the additional capacity becomes available on execution.</li>
-  <li><b>Guided Implementation.</b> The subscription includes a 60-day Guided Implementation beginning on the Effective Date. TaxRock will work with Customer to configure its practice, begin client provisioning, and train its team on use of the platform. Customer may continue provisioning clients within its included capacity after the Guided Implementation. <span id="oImplTerm"></span></li>
+  <li><b>Guided Implementation.</b> The subscription includes a 60-day Guided Implementation beginning on the Effective Date. TaxRock will work with Customer to configure its account, begin client provisioning, and train its team on use of the platform. Customer may continue provisioning clients within its included capacity after the Guided Implementation. <span id="oImplTerm"></span></li>
   <li><b>Precedence.</b> In the event of a conflict, this Pricing Proposal controls with respect to the Subscription Fee, included capacity, and other expressly stated commercial terms. The MSA controls in all other respects. The terms of this Pricing Proposal are confidential.</li>
 </ol>
 
@@ -473,7 +473,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 <div id="srcMsa" style="display:none">
 <h2 class="sec">1. Agreement Overview</h2>
 <p class="cl"><b>1.1 Purpose:</b> This Agreement establishes the commercial and legal relationship between TaxRock and Customer with respect to Customer&rsquo;s use of the TaxRock platform and related services (&ldquo;Services&rdquo;).</p>
-<p class="cl"><b>1.2 Pricing:</b> Subscription fees are set forth in Section 6 of this Agreement and in the Pricing Proposal incorporated into this Agreement, and consist of a flat monthly fee scoped to Customer&rsquo;s practice.</p>
+<p class="cl"><b>1.2 Pricing:</b> Subscription fees are set forth in Section 6 of this Agreement and in the Pricing Proposal incorporated into this Agreement, and consist of a flat monthly fee scoped to Customer&rsquo;s included capacity.</p>
 <p class="cl"><b>1.3 Terms of Service:</b> All access to the Services by Customer&rsquo;s staff and Customer&rsquo;s clients is subject to the <b>TaxRock Terms of Service (&ldquo;TOS&rdquo;)</b>, which everyone must accept upon first login and controls all platform-level rights and obligations and may be updated by TaxRock from time to time.</p>
 <p class="cl"><b>1.4 Order of Precedence:</b> If there is any conflict between this Agreement and the TOS, this Agreement controls as between TaxRock and Customer. In the event of a conflict, the Pricing Proposal controls with respect to the Subscription Fee, included capacity, and other expressly stated commercial terms. This Agreement controls in all other respects. The TOS governs individual end-users&rsquo; and Monitored Clients&rsquo; use of the platform.</p>
 
@@ -482,7 +482,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 <p class="cl"><b>2.2 &ldquo;Seats&rdquo;:</b> A single permitted login and access right for one Authorized User. Seats govern platform access only and are not the basis for subscription fees.</p>
 <p class="cl"><b>2.3 &ldquo;Monitored Clients&rdquo;:</b> Individuals or business entities who are clients of Customer and who are provisioned within Customer&rsquo;s account through the Services. Monitored Clients are clients whose IRS account information, transcripts, notices, or other tax-related data is retrieved, processed, or monitored through the Services. Monitored Clients represent the Customer&rsquo;s client relationship and may be associated with one or more Monitored Taxpayers for purposes of the Services. Monitored Clients are not customers of TaxRock.</p>
 <p class="cl"><b>2.4 &ldquo;Monitored Taxpayers&rdquo;:</b> Individual taxpayers, including individuals or business entities with distinct taxpayer identification numbers, who are provisioned within Customer&rsquo;s account through the Services. Monitored Taxpayers are the underlying taxpayers associated with a Monitored Client, and a Monitored Client may have one or more Monitored Taxpayers.</p>
-<p class="cl"><b>2.5 &ldquo;Active Client Relationship&rdquo;:</b> One client engagement billed to one payer, together with every Monitored Taxpayer served under that engagement, regardless of the number of taxpayer identification numbers, entities, or tax years involved. A person or entity that engages Customer separately and is billed separately is a separate Active Client Relationship. Active Client Relationships are the sole basis on which Subscription Fees are calculated.</p>
+<p class="cl"><b>2.5 &ldquo;Active Client Relationship&rdquo;:</b> <span id="mAcrDefn"></span> Active Client Relationships are the sole basis on which Subscription Fees are calculated.</p>
 <p class="cl"><b>2.6 &ldquo;Pricing Proposal&rdquo;:</b> The document identified in the signature block below and delivered with this Agreement, stating Customer&rsquo;s included capacity, monthly Subscription Fee, billing contact, and any agreed commercial terms. The Pricing Proposal is incorporated into this Agreement by reference and is accepted by Customer&rsquo;s execution of this Agreement. No separate signature to the Pricing Proposal is required.</p>
 <p class="cl"><b>2.7 &ldquo;Monitored Data&rdquo;:</b> All IRS data, tax information, authorization forms (including Form 8821 or equivalent electronic authorization), transcripts, notices, documents, metadata, and any other information relating to Monitored Clients and/or Monitored Taxpayers that is submitted, uploaded, retrieved, or processed through the Services.</p>
 <p class="cl"><b>2.8 &ldquo;Customer Data&rdquo;:</b> Business information, internal firm records, configuration settings, billing information, and other non-IRS data submitted by Customer or its Authorized Users.</p>
@@ -506,7 +506,7 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 <p class="cl"><b>4.3 User-Level Acceptance of TOS:</b> Customer&rsquo;s Authorized Users and Customer&rsquo;s clients must accept the TOS upon first login. Acceptance forms a direct agreement between the user and TaxRock governing platform use.</p>
 <p class="cl"><b>4.4 Restrictions:</b> Customer may not sublicense, resell, assign, or transfer access to the Services without TaxRock&rsquo;s prior written consent.</p>
 <p class="cl"><b>4.5 Customer Support:</b> TaxRock will provide support via email and in-platform messaging during normal business hours (Monday&ndash;Friday, 9:00 a.m. to 5:00 p.m. PST). TaxRock does not provide live phone support or custom consulting unless otherwise agreed in writing. Response times are provided on a commercially reasonable basis.</p>
-<p class="cl"><b>4.6 Guided Implementation:</b> Customer&rsquo;s subscription includes a guided sixty (60)-day implementation period beginning on the Effective Date (the &ldquo;Guided Implementation&rdquo;). During the Guided Implementation, TaxRock will work with Customer to configure its <span id="mImplNoun"></span>, begin client provisioning, and train its team on use of the Services. Following the Guided Implementation, Customer may continue to provision clients within its included capacity. Additional TaxRock-led implementation or training services requested by Customer may be subject to additional fees as set forth in the applicable Pricing Proposal.</p>
+<p class="cl"><b>4.6 Guided Implementation:</b> Customer&rsquo;s subscription includes a guided sixty (60)-day implementation period beginning on the Effective Date (the &ldquo;Guided Implementation&rdquo;). During the Guided Implementation, TaxRock will work with Customer to configure its account, begin client provisioning, and train its team on use of the Services. Following the Guided Implementation, Customer may continue to provision clients within its included capacity. Additional TaxRock-led implementation or training services requested by Customer may be subject to additional fees as set forth in the applicable Pricing Proposal.</p>
 <p class="cl"><b>4.7 Client Relationship Changes:</b> Customer may provision Monitored Clients and Monitored Taxpayers up to the number of Active Client Relationships included in its subscription, and may deactivate them at any time. Adding capacity beyond that number is governed by Section 6.3. Deactivation or cancellation stops monitoring and related Services. Form 8821 and equivalent authorizations remain on file to allow for streamlined reactivation of Services, unless Customer requests their withdrawal.</p>
 
 <h2 class="sec">5. Responsibilities of the Parties</h2>
@@ -522,8 +522,8 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 <p class="bl"><b>d)</b> Provide customer support as described in Section 4.5.</p>
 
 <h2 class="sec">6. Fees &amp; Payment</h2>
-<p class="cl"><b>6.1 Fees:</b> The subscription fee for the Services is a flat monthly fee stated in the Pricing Proposal (the &ldquo;Subscription Fee&rdquo;). Pricing is scoped individually to each Customer based on the requirements of its practice.</p>
-<p class="cl"><b>6.2 Measurement:</b> TaxRock&rsquo;s system records are the authoritative source for the number of Active Client Relationships provisioned in Customer&rsquo;s account. TaxRock does not audit Customer&rsquo;s books, client list, or practice.</p>
+<p class="cl"><b>6.1 Fees:</b> The subscription fee for the Services is a flat monthly fee stated in the Pricing Proposal (the &ldquo;Subscription Fee&rdquo;). Pricing is scoped individually to each Customer based on the requirements of its business.</p>
+<p class="cl"><b>6.2 Measurement:</b> TaxRock&rsquo;s system records are the authoritative source for the number of Active Client Relationships provisioned in Customer&rsquo;s account. TaxRock does not audit Customer&rsquo;s records, client list, or business.</p>
 <p class="cl"><b>6.3 Included Capacity and Pricing Adjustments:</b> The Subscription Fee includes up to the number of Active Client Relationships specified in the applicable Pricing Proposal, which Customer may provision at any time. The Subscription Fee is based on that included capacity and does not vary based on the number of Active Client Relationships provisioned at any particular time, whether Customer provisions its capacity gradually or all at once. If Customer&rsquo;s needs grow beyond that capacity, TaxRock and Customer will establish revised capacity and pricing through an updated Pricing Proposal, and the additional capacity becomes available for provisioning upon Customer&rsquo;s written acceptance of it. Any revised Subscription Fee will take effect beginning with the first billing cycle following that acceptance and will not decrease based on reductions in Customer&rsquo;s actual usage. This Section governs changes arising from Customer requiring capacity beyond the amount included in its Pricing Proposal; Section 6.7 governs changes initiated by TaxRock to the Subscription Fee for Customer&rsquo;s existing capacity.</p>
 <p class="cl"><b>6.4 Pricing Structure:</b> There are no platform fees, seat-based fees, or minimum commitments unless otherwise agreed in writing.</p>
 <p class="cl"><b>6.5 Billing &amp; Payment:</b> Subscription Fees are invoiced and charged monthly in advance on Customer&rsquo;s Billing Date and are due upon receipt. Customer will maintain a valid payment method on file and authorizes TaxRock to charge that method for all undisputed amounts on each Billing Date. Fees are exclusive of sales, use, VAT, GST, and similar taxes, which are Customer&rsquo;s responsibility where applicable. All amounts are in USD.</p>
@@ -614,22 +614,32 @@ const VERTICALS={
   lender:{label:'Lender', code:'LN', bands:FACTOR_BANDS, implFee:null, inherits:'Factor'}
 };
 
-/* The billing unit is the same in every vertical, because the MSA defines it once in
-   Section 2.5. Only the words around it change: a factor does not have a "practice"
-   and does not file joint returns. */
+/* "Active Client Relationship" is the billing unit in every vertical, but what counts
+   as one differs, so MSA Section 2.5 is written per vertical too: `msaDefn` is the
+   operative sentence of that clause and `defn` is its plain-English gloss on the
+   proposal. They must agree, because 2.5 controls.
+
+   Everything else here is the customer-facing wrapper. There is deliberately no noun
+   for the customer's business inside either document: TR-MSA-LN-11 names it nowhere
+   and says clients are "provisioned within Customer's account", which is right for a
+   practice, a book and a portfolio alike. `noun` is used in the internal pricing
+   matrix only, never in a document a customer sees. */
 const TERMS={
   taxpro:{section:'Practice', label:'Active client relationships', metaLab:'Practice size',
-    noun:'practice', implNoun:'practice',
+    noun:'practice',
     hint:'One engagement billed to one payer counts once. Taken from the prior-year client list.',
-    defn:'One Active Client Relationship is one engagement billed to one payer: typically a household or a business, together with everything filed under it. A married couple filing jointly counts as one.'},
+    defn:'One Active Client Relationship is one engagement billed to one payer: typically a household or a business, together with everything filed under it. A married couple filing jointly counts as one.',
+    msaDefn:'One client engagement billed to one payer, together with every Monitored Taxpayer served under that engagement, regardless of the number of taxpayer identification numbers, entities, or tax years involved. A person or entity that engages Customer separately and is billed separately is a separate Active Client Relationship.'},
   factor:{section:'Book', label:'Active client relationships', metaLab:'Book size',
-    noun:'book', implNoun:'operation',
+    noun:'book',
     hint:'Clients on the book. One client under one factoring agreement counts once, however many invoices or debtors sit under it.',
-    defn:'One Active Client Relationship is one client billed under one factoring agreement, together with every entity and taxpayer identification number served under that agreement, however many invoices or account debtors are involved.'},
+    defn:'One Active Client Relationship is one client billed under one factoring agreement, together with every entity and taxpayer identification number served under that agreement, however many invoices or account debtors are involved.',
+    msaDefn:'One client of Customer under one factoring agreement, together with every Monitored Client and Monitored Taxpayer served under that agreement, regardless of the number of taxpayer identification numbers, entities, invoices, or account debtors involved. A person or entity that contracts with Customer separately and is billed separately is a separate Active Client Relationship.'},
   lender:{label:'Active client relationships', section:'Portfolio', metaLab:'Portfolio size',
-    noun:'portfolio', implNoun:'operation',
+    noun:'portfolio',
     hint:'Borrowers in the portfolio. One borrower under one facility counts once, however many entities or guarantors sit under it.',
-    defn:'One Active Client Relationship is one borrower under one facility, together with every entity and taxpayer identification number served under that facility, however many obligations are involved.'}
+    defn:'One Active Client Relationship is one borrower under one facility, together with every entity and taxpayer identification number served under that facility, however many obligations are involved.',
+    msaDefn:'One borrower of Customer under one credit facility, together with every Monitored Client and Monitored Taxpayer served under that facility, regardless of the number of taxpayer identification numbers, entities, guarantors, or obligations involved. A person or entity that contracts with Customer separately and is billed separately is a separate Active Client Relationship.'}
 };
 const T=()=>TERMS[(document.getElementById('vertical')||{}).value||'taxpro']||TERMS.taxpro;
 const V=()=>VERTICALS[(document.getElementById('vertical')||{}).value||'taxpro'];
@@ -780,10 +790,10 @@ function render(){
   const mo=hasOv?ov:p.mo;
   const DASH='—';
 
-  const w=el('warnBox');
-  if(hasOv&&p.mo!==null){w.style.display='block';w.textContent='Override in use. Standard price for this practice size is '+money(p.mo)+' per month.';}
-  else if(hasOv&&isEnt){w.style.display='block';w.textContent='Override in use on an enterprise-size practice.';}
-  else if(hasOv){w.style.display='block';w.textContent='Override in use. No practice size entered, so there is no standard price to compare it to.';}
+  const w=el('warnBox'); const sizeWord=T().metaLab.toLowerCase();
+  if(hasOv&&p.mo!==null){w.style.display='block';w.textContent='Override in use. Standard price for this '+sizeWord+' is '+money(p.mo)+' per month.';}
+  else if(hasOv&&isEnt){w.style.display='block';w.textContent='Override in use on an enterprise-size '+T().noun+'.';}
+  else if(hasOv){w.style.display='block';w.textContent='Override in use. No '+sizeWord+' entered, so there is no standard price to compare it to.';}
   else{w.style.display='none';}
 
   const src=el('srcProposal');
@@ -833,7 +843,7 @@ function render(){
 
   const planName=n===null?DASH:isEnt?'Enterprise':'Up to '+p.cap.toLocaleString()+' Active Client Relationships';
   src.querySelector('#qPlan').textContent=isEnt?'TaxRock Enterprise':'TaxRock Subscription';
-  src.querySelector('#qPlanSub').textContent=n===null?'Enter the practice size to price this proposal':planName+'  ·  month to month';
+  src.querySelector('#qPlanSub').textContent=n===null?'Enter the '+tm.metaLab.toLowerCase()+' to price this proposal':planName+'  ·  month to month';
   src.querySelector('#qPrice').innerHTML=mo==null?(n===null?DASH:'Custom'):money(mo)+' <span>/ month</span>';
   const capCell=n===null?DASH:isEnt?'As scoped with Customer':'Up to '+p.cap.toLocaleString();
   const feeCell=mo==null?(n===null?DASH:'Quoted to scope'):money(mo)+'.00 per month';
@@ -842,7 +852,7 @@ function render(){
   src.querySelector('#qTable').innerHTML=
     '<tr><td class="u">Active Client Relationship</td><td>'+capCell+'</td><td class="r">'+feeCell+'</td></tr>'+
     '<tr><td class="u">Authorized Users</td><td>Unlimited</td><td class="r">No charge</td></tr>'+
-    '<tr><td class="u">Guided Implementation</td><td>60 days to configure your '+tm.implNoun+', provision clients, and prepare your team to use TaxRock.</td><td class="r">Included</td></tr>'+
+    '<tr><td class="u">Guided Implementation</td><td>60 days to configure your account, provision your clients, and prepare your team to use TaxRock.</td><td class="r">Included</td></tr>'+
     '<tr><td class="u">Additional implementation services</td><td>Additional TaxRock-led implementation or training requested after the Guided Implementation.</td><td class="r">'+implCell+'</td></tr>';
 
   src.querySelector('#oImplTerm').textContent = impl==null
@@ -856,7 +866,9 @@ function render(){
   // MSA fields
   const m=el('srcMsa');
   fillSig(m,'m');
-  const mi=m.querySelector('#mImplNoun'); if(mi) mi.textContent=tm.implNoun;
+  // Section 2.5 is the controlling definition of the billing unit, so it is written
+  // per vertical and must say the same thing as the proposal's gloss (tm.defn).
+  const ad=m.querySelector('#mAcrDefn'); if(ad) ad.textContent=tm.msaDefn;
   const rs=m.querySelector('#mTSig'); if(rs&&RON_SIG) rs.src=RON_SIG;
   // countersigning date is the date the document is exported
   const ppref=m.querySelector('#mPPRef');
@@ -868,7 +880,7 @@ function render(){
     ? vv.label+' currently uses '+vv.inherits+' pricing. Documents are coded TR-…-'+vv.code+'-11.'
     : 'Documents are coded TR-…-'+vv.code+'-11.';
   el('pillPrice').textContent=mo==null?(n===null?DASH:'Custom'):money(mo)+' / month';
-  el('pillPlan').textContent=(n===null?'No practice size entered':planName)+(hasOv?'  ·  override applied':'');
+  el('pillPlan').textContent=(n===null?'No '+sizeWord+' entered':planName)+(hasOv?'  ·  override applied':'');
 
   paginate(el('propSheet'), src, {docId:'TR-PP-'+V().code+'-11', runHead:'TaxRock Pricing Proposal', runRight:nm});
   paginate(el('msaSheet'), m, {docId:'TR-MSA-'+V().code+'-11', runHead:'Master Subscription Agreement', runRight:nm,

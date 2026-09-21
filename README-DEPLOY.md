@@ -128,20 +128,41 @@ the script marked `PRICING BY VERTICAL`:
 
 ```js
 const TAXPRO_BANDS=[[50,99],[150,159],[300,199],[500,349],[1000,499],[2500,799]];
+const FACTOR_BANDS=[[10,99],[25,199],[50,399],[100,499]];
 
 const VERTICALS={
-  taxpro:{label:'Tax Pro', code:'TP', bands:TAXPRO_BANDS, inherits:null},
-  factor:{label:'Factor', code:'FA', bands:TAXPRO_BANDS, inherits:'Tax Pro'},
-  lender:{label:'Lender', code:'LN', bands:TAXPRO_BANDS, inherits:'Tax Pro'}
+  taxpro:{label:'Tax Pro', code:'TP', bands:TAXPRO_BANDS, implFee:null, inherits:null},
+  factor:{label:'Factor', code:'FA', bands:FACTOR_BANDS, implFee:null, inherits:null},
+  lender:{label:'Lender', code:'LN', bands:FACTOR_BANDS, implFee:null, inherits:'Factor'}
 };
 ```
 
-Each pair is `[included capacity, monthly price]`, lowest first. To give Factor
-its own pricing, replace `TAXPRO_BANDS` on that line with its own list and set
-`inherits:null`. Quotes, the fee box, the rate table and the internal matrix all
-follow automatically.
+Each pair is `[included capacity, monthly price]`, lowest first. Anything above the
+top band is quoted rather than priced. To give Lender its own ladder, replace
+`FACTOR_BANDS` on that line with its own list and set `inherits:null`. Quotes, the
+fee box, the rate table and the internal matrix all follow automatically.
+
+`implFee` is the charge for an additional TaxRock-led implementation or training
+engagement requested after the included Guided Implementation. It is unrelated to
+capacity. Left at `null`, both documents say only that an additional fee may apply
+depending on scope; set it to a number and the amount and its per-engagement wording
+appear in both.
 
 Commit the change and Netlify redeploys in about a minute.
+
+**Changing what a client counts as.** Each vertical owns its own wording in the
+`TERMS` block just below `VERTICALS`. Two entries there must always agree, because
+one is the contract and the other explains it: `msaDefn` is the operative sentence
+of **MSA Section 2.5**, which controls, and `defn` is the plain-English gloss
+printed on the Pricing Proposal. Change one and change the other.
+
+Neither document names the customer's own business anywhere — no "practice", no
+"book", no "portfolio". That follows TR-MSA-LN-11, which says throughout that
+clients are *provisioned within Customer's account*, wording that is equally true
+of a tax practice, a factor's book and a lender's portfolio. `noun` and `metaLab`
+are for the builder's own screens and the internal pricing matrix only. Keep
+industry vocabulary out of the contract wording and this stays true for the next
+vertical as well.
 
 **Changing contract wording.** Both documents are plain HTML inside
 `public/index.html`. The MSA is the block beginning `<h2 class="sec">1. Agreement
