@@ -14,6 +14,7 @@
 <style>
 :root{
   --navy:#051329;--ink:#0A1A33;--blue:#0881FF;--violet:#4F00C3;--gold:#F3C260;
+  --rule-grad:linear-gradient(90deg,#0881FF 0%,#4F00C3 55%,#F3C260 100%);
   --btn:#0a5bd6;--btn-hover:#0850bd;
   --body:#4D515C;--muted:#8A93A6;--line:#E9EDF5;--wash:#EAF3FF;--paper:#FBFCFF;
 }
@@ -176,11 +177,20 @@ textarea{min-height:54px;resize:vertical;}
 .hd img.logo{width:164px;height:auto;display:block;}
 .hd .co{text-align:right;font-size:10.5px;line-height:1.45;color:var(--muted);}
 .hd .co b{color:var(--navy);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;font-family:'Inter Tight';}
-.rule{height:3px;background:var(--blue);margin:9px 0 0;}
+/* Letterhead rule, page 1 of each document only. Continuation pages carry the solid
+   navy rule under the running head (.rhd), and that contrast is deliberate: the
+   gradient marks where a document starts. Change the gradient in one place here and
+   both documents and all three verticals follow. */
+.rule{height:3px;background:var(--rule-grad);margin:9px 0 0;}
 .rhd{display:flex;justify-content:space-between;align-items:baseline;font-family:'Inter Tight';font-size:9px;
      font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding-bottom:6px;
      border-bottom:2px solid var(--navy);margin-bottom:9px;}
-.rhd .c{color:var(--navy);}
+.rhd .c{color:var(--navy);flex:none;}
+/* The running head is a locator, not an operative term: the full legal name is in
+   the preamble and both signature blocks. Hold it to one line, because a name that
+   wraps here costs ~15px on every page after the first and that is enough to push
+   the signature block onto a sixth page. */
+.rhd span:last-child{flex:0 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:14px;}
 .pgfoot{margin-top:auto;display:flex;justify-content:space-between;font-size:8.5px;letter-spacing:.16em;
         text-transform:uppercase;color:#A9B2C2;border-top:1px solid var(--line);padding:11px 0 22px;}
 

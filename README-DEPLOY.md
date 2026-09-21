@@ -164,6 +164,12 @@ are for the builder's own screens and the internal pricing matrix only. Keep
 industry vocabulary out of the contract wording and this stays true for the next
 vertical as well.
 
+**Changing the letterhead rule.** The gradient rule under the letterhead is set
+once, as `--rule-grad` near the top of the stylesheet, and applies to page 1 of
+both documents in all three verticals. Continuation pages deliberately keep a
+solid navy rule under the running head, so the gradient is what marks where a
+document begins. Change the one variable and everything follows.
+
 **Changing contract wording.** Both documents are plain HTML inside
 `public/index.html`. Bump `ver` for the affected verticals whenever you do
 (see Part 4). The MSA is the block beginning `<h2 class="sec">1. Agreement
