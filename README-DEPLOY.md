@@ -172,16 +172,12 @@ paginates and exports exactly like the MSA, honours Draft and For signature, and
 deliberately excluded from **Export package**, because a partnership is signed separately
 from the customer's proposal and MSA.
 
-**API & Integration is a placeholder for now.** TR-IPA-02 is drafted and injected into
-the page, but it is not rendered: `IPA_ENABLED` near the top of the script is `false`, so
-the tab shows a short note instead and the export button is hidden there. Set it to `true`
-when the agreement has been reviewed and it renders exactly like the referral one, filled
-from the same customer record. Nothing else needs changing.
+**API & Integration** renders TR-IPA-02, the Integration Partner Agreement, from the same customer record, at 6 pages. `IPA_ENABLED` near the top of the script switches it back to a placeholder pane if it ever needs pulling without deleting the document.
 
-The draft already fixes what the new MSA broke. TR-IPA-01 referenced an *Order Form* in
-four places and the current MSA has none; it incorporates the Pricing Proposal. One of
-those four was Section 3.1, which conditioned the whole licence grant on payment under
-that document. The draft points 1.2(b), 1.3(c), 3.1 and 13.4 at the Pricing Proposal and
+TR-IPA-02 fixes what the new MSA broke. TR-IPA-01 referenced an *Order Form* in
+five places and the current MSA has none; it incorporates the Pricing Proposal. One of
+those five was Section 3.1, which conditioned the whole licence grant on payment under
+that document. It points 1.2, 1.2(b), 1.3(c), 3.1 and 13.4 at the Pricing Proposal and
 drops "factoring and related financial services" from 3.1(b), which was wrong for any
 partner outside that vertical. Counsel's Section 7216 and sublicensing flag on -01 is
 untouched and still open.

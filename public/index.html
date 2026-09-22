@@ -856,10 +856,9 @@ const VERTICALS={
 /* full document code, e.g. TR-MSA-LN-12 */
 const DOC=kind=>'TR-'+kind+'-'+V().code+'-'+V().ver;
 
-/* The Integration Partner Agreement is drafted as TR-IPA-02 and injected below, but
-   it is not published in the builder yet. Flip this to true when it has been reviewed
-   and the API tab renders it instead of the placeholder. Nothing else needs changing. */
-const IPA_ENABLED=false;
+/* The Integration Partner Agreement, TR-IPA-02. Set false to fall back to the
+   placeholder pane without removing the document. */
+const IPA_ENABLED=true;
 
 /* "Active Client Relationship" is the billing unit in every vertical, but what counts
    as one differs, so MSA Section 2.5 is written per vertical too: `msaDefn` is the
