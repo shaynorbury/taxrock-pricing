@@ -434,6 +434,26 @@ body[data-mode="draft"] #apiSheet .draftmark{display:flex;}
   <div class="sheet" id="partSheet" hidden></div>
 
   <div class="sheet" id="apiSheet" hidden></div>
+
+  <div class="mx" id="apiPane" hidden>
+    <div class="mx-warn" style="background:#EAF3FF;border-color:#9FC8FF;color:#0A1A33;">
+      <b>The API &amp; Integration Partner Agreement is not published here yet.</b>
+      TR-IPA-02 is drafted and sitting in the builder behind a switch. It is not being
+      rendered until it has been reviewed.
+    </div>
+    <div class="mx-note">
+      <b>What the draft already fixes.</b> TR-IPA-01 referenced an <i>Order Form</i> in four
+      places and the current MSA has no Order Form; it incorporates the Pricing Proposal.
+      One of the four was Section 3.1, which conditioned the whole licence grant on payment
+      under that document. The draft points 1.2(b), 1.3(c), 3.1 and 13.4 at the Pricing
+      Proposal, and drops &ldquo;factoring and related financial services&rdquo; from 3.1(b),
+      which was wrong for any partner outside that vertical.<br><br>
+      <b>Still open.</b> Counsel&rsquo;s review of TR-IPA-01 flagged the Section 7216 and
+      sublicensing interplay. Nothing in the draft touches Section 5.2 or the Section 4.1
+      no-passthrough language, so that review still stands.<br><br>
+      To publish it, set <code>IPA_ENABLED</code> to <code>true</code> near the top of the script.
+    </div>
+  </div>
   </div>
 
   <div class="mx" id="matrixPane" hidden>
@@ -836,6 +856,11 @@ const VERTICALS={
 /* full document code, e.g. TR-MSA-LN-12 */
 const DOC=kind=>'TR-'+kind+'-'+V().code+'-'+V().ver;
 
+/* The Integration Partner Agreement is drafted as TR-IPA-02 and injected below, but
+   it is not published in the builder yet. Flip this to true when it has been reviewed
+   and the API tab renders it instead of the placeholder. Nothing else needs changing. */
+const IPA_ENABLED=false;
+
 /* "Active Client Relationship" is the billing unit in every vertical, but what counts
    as one differs, so MSA Section 2.5 is written per vertical too: `msaDefn` is the
    operative sentence of that clause and `defn` is its plain-English gloss on the
@@ -1122,7 +1147,7 @@ function render(){
       <b>${nm||'&nbsp;'}</b> (&ldquo;Partner&rdquo;), effective as of the date of Partner&rsquo;s signature
       (the &ldquo;Effective Date&rdquo;). Each is a &ldquo;Party&rdquo;. This Agreement governs Partner&rsquo;s
       referral of prospective customers to TaxRock and the recurring revenue share payable for those referrals.</p>`});
-  paginate(el('apiSheet'), ip, {docId:'TR-IPA-02', runHead:'Integration Partner Agreement', runRight:nm,
+  if(IPA_ENABLED) paginate(el('apiSheet'), ip, {docId:'TR-IPA-02', runHead:'Integration Partner Agreement', runRight:nm,
     draftmark:true,
     title:`<div class="kicker">Integration Partner Agreement</div>
       <h1 class="t">API Access &amp; Use of Taxpayer Data</h1>
@@ -1152,10 +1177,12 @@ document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
   el('msaSheet').hidden  = t!=='msa';
   el('matrixPane').hidden= t!=='matrix';
   el('partSheet').hidden = !(t==='partner' && partKind==='referral');
-  el('apiSheet').hidden  = !(t==='partner' && partKind==='api');
+  const apiOn = t==='partner' && partKind==='api';
+  el('apiSheet').hidden  = !(apiOn && IPA_ENABLED);
+  el('apiPane').hidden   = !(apiOn && !IPA_ENABLED);
   el('modeSeg').style.display = (t==='msa'||t==='partner') ? 'inline-flex' : 'none';
   el('partSeg').style.display = t==='partner' ? 'inline-flex' : 'none';
-  el('exportBtn').style.display = t==='matrix' ? 'none' : 'inline-flex';
+  el('exportBtn').style.display = (t==='matrix' || (apiOn && !IPA_ENABLED)) ? 'none' : 'inline-flex';
   // the package is the customer's proposal + MSA; a partnership is a separate signing
   el('pkgBtn').style.display    = (t==='matrix'||t==='partner') ? 'none' : 'inline-flex';
 }));
@@ -1163,7 +1190,9 @@ document.querySelectorAll('#partSeg button').forEach(b=>b.addEventListener('clic
   document.querySelectorAll('#partSeg button').forEach(x=>x.classList.toggle('on',x===b));
   const k=b.dataset.part;
   el('partSheet').hidden = k!=='referral';
-  el('apiSheet').hidden  = k!=='api';
+  el('apiSheet').hidden  = !(k==='api' && IPA_ENABLED);
+  el('apiPane').hidden   = !(k==='api' && !IPA_ENABLED);
+  el('exportBtn').style.display = (k==='api' && !IPA_ENABLED) ? 'none' : 'inline-flex';
 }));
 document.querySelectorAll('#modeSeg button').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('#modeSeg button').forEach(x=>x.classList.toggle('on',x===b));
@@ -1206,14 +1235,14 @@ el('exportBtn').addEventListener('click',()=>{
 el('pkgBtn').addEventListener('click',()=>{
   if(PKG) return;
   const was={p:el('propSheet').hidden, m:el('msaSheet').hidden, x:el('matrixPane').hidden,
-             r:el('partSheet').hidden, a:el('apiSheet').hidden};
+             r:el('partSheet').hidden, a:el('apiSheet').hidden, ap:el('apiPane').hidden};
   PKG=true; document.body.classList.add('pkg');
   el('propSheet').hidden=false; el('msaSheet').hidden=false; el('matrixPane').hidden=true;
   // a partnership is signed separately and never belongs in the customer package
-  el('partSheet').hidden=true; el('apiSheet').hidden=true;
+  el('partSheet').hidden=true; el('apiSheet').hidden=true; el('apiPane').hidden=true;
   PKG_UNDO=()=>{
     el('propSheet').hidden=was.p; el('msaSheet').hidden=was.m; el('matrixPane').hidden=was.x;
-    el('partSheet').hidden=was.r; el('apiSheet').hidden=was.a;
+    el('partSheet').hidden=was.r; el('apiSheet').hidden=was.a; el('apiPane').hidden=was.ap;
     document.body.classList.remove('pkg'); PKG=false; PKG_UNDO=null; document.title=PAGE_TITLE;
   };
   document.title=exportName();
