@@ -164,6 +164,25 @@ are for the builder's own screens and the internal pricing matrix only. Keep
 industry vocabulary out of the contract wording and this stays true for the next
 vertical as well.
 
+**Partnership agreements.** The **Partnerships** tab holds agreements where the saved
+customer is the counterparty rather than the buyer. **Referral** renders TR-RPA-02, the
+Referral Partner Agreement, from the same customer record: the legal entity name becomes
+the Partner, and the contact, email and address fill the Partner signature block. It
+paginates and exports exactly like the MSA, honours Draft and For signature, and is
+deliberately excluded from **Export package**, because a partnership is signed separately
+from the customer's proposal and MSA.
+
+**API & Integration** is a placeholder. TR-IPA-01 already exists as a separately reviewed
+document and has not been rewritten here. To wire it in, add its clause HTML as `IPA` in
+`gen_builder.py` alongside `RPA`, inject it into a `srcIpa` block, and give it its own
+sheet the way `partSheet` works. Counsel review on TR-IPA-01 flagged the Section 7216 and
+sublicensing interplay, so re-check that against the multi-tenant platform host redline
+before it goes in.
+
+**Partnership version codes are independent of the verticals.** TR-RPA-02 is stamped
+literally, not built from `VERTICALS`, because a referral partner is not on a pricing
+ladder. Bump it in the `paginate` call for `partSheet` when the wording changes.
+
 **Changing the letterhead rule.** The gradient rule under the letterhead is set
 once, as `--rule-grad` near the top of the stylesheet, and applies to page 1 of
 both documents in all three verticals. Continuation pages deliberately keep a

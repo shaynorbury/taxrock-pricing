@@ -251,8 +251,10 @@ p.bl b{font-family:'Inter Tight';color:var(--ink);font-weight:600;}
 .sigrow .ln{border-bottom:1px solid #9AA4B6;height:22px;position:relative;font-size:12px;color:var(--ink);
             display:flex;align-items:flex-end;padding-bottom:2px;}
 .execsig{max-height:36px;width:auto;position:absolute;bottom:2px;left:2px;display:none;}
-body[data-mode="exec"] #msaSheet .execsig[src]{display:block;}
-body[data-mode="draft"] #msaSheet .autodate{visibility:hidden;}
+body[data-mode="exec"] #msaSheet .execsig[src],
+body[data-mode="exec"] #partSheet .execsig[src]{display:block;}
+body[data-mode="draft"] #msaSheet .autodate,
+body[data-mode="draft"] #partSheet .autodate{visibility:hidden;}
 /* No hidden markers in the signature block. White text in a PDF is not invisible,
    it is white: viewers, selection and text extraction all bring it back, which is
    not acceptable on a document a customer signs. */
@@ -270,7 +272,8 @@ body[data-mode="draft"] #msaSheet .autodate{visibility:hidden;}
 .draftmark{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;z-index:5;}
 .draftmark span{font-family:'Inter Tight';font-weight:700;font-size:118px;letter-spacing:.22em;color:#0A1A33;
                 opacity:.055;transform:rotate(-32deg);white-space:nowrap;}
-body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
+body[data-mode="draft"] #msaSheet .draftmark,
+body[data-mode="draft"] #partSheet .draftmark{display:flex;}
 
 @media print{
   @page{size:letter;margin:0;}
@@ -406,8 +409,13 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
   <div class="tabbar noprint">
     <button class="tab on" data-tab="proposal">Pricing Proposal</button>
     <button class="tab" data-tab="msa">Master Subscription Agreement</button>
+    <button class="tab" data-tab="partner">Partnerships</button>
     <button class="tab int" data-tab="matrix">Pricing matrix <span class="intbadge">Internal</span></button>
     <span class="tb-actions">
+      <span class="modeseg" id="partSeg" style="display:none;">
+        <button data-part="referral" class="on">Referral</button>
+        <button data-part="api">API &amp; Integration</button>
+      </span>
       <span class="modeseg" id="modeSeg" style="display:none;">
         <button data-mode="draft">Draft</button>
         <button data-mode="exec" class="on">For signature</button>
@@ -420,6 +428,17 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 
   <div class="sheet" id="propSheet"></div>
   <div class="sheet" id="msaSheet" hidden></div>
+  <div class="sheet" id="partSheet" hidden></div>
+
+  <div class="mx" id="apiPane" hidden>
+    <div class="mx-warn" style="background:#EAF3FF;border-color:#9FC8FF;color:#0A1A33;">
+      <b>API &amp; Integration Partner Agreement (TR-IPA-01) is not wired in yet.</b>
+      It already exists as a reviewed document, so it has not been rewritten here. Drop the
+      current TR-IPA-01 text into <code>IPA</code> in the generator and this pane becomes a
+      third partnership document, filled from the same customer record.
+    </div>
+    <div class="mx-note">Counsel review on TR-IPA-01 flagged the Section 7216 and sublicensing interplay. That is worth re-checking against the multi-tenant platform host redline before this is published in the builder.</div>
+  </div>
 
   <div class="mx" id="matrixPane" hidden>
     <div class="mx-warn">
@@ -595,6 +614,84 @@ body[data-mode="draft"] #msaSheet .draftmark{display:flex;}
 <div class="paym">
   <div class="sigrow"><div class="ln"></div><div class="cap">Billing method</div></div>
   <p class="pmn">TaxRock charges the Subscription Fee to the method provided here monthly, as set out in Section 6.5.</p>
+</div>
+</div>
+</div>
+<div id="srcRpa" style="display:none">
+<h2 class="sec">1. Relationship</h2>
+<p class="cl"><b>1.1 Referral Relationship:</b> This Agreement establishes a non-exclusive referral relationship. Partner introduces prospective customers to TaxRock; TaxRock, in its sole discretion, sells to, contracts with, bills, and supports those customers directly and pays Partner the recurring revenue share set out in Section 3. The Agreement is non-exclusive, imposes no minimum referral obligation on Partner, and no obligation on TaxRock to accept any referral.</p>
+<p class="cl"><b>1.2 No Authority:</b> Partner is an independent contractor, not an agent, and may not bind TaxRock, quote or commit pricing, sign contracts, accept payment for TaxRock, or make representations about the Services except as TaxRock authorizes in writing.</p>
+
+<h2 class="sec">2. Definitions</h2>
+<p class="cl"><b>2.1 &ldquo;Services&rdquo;:</b> TaxRock&rsquo;s subscription software across all of its product lines and verticals, as offered from time to time.</p>
+<p class="cl"><b>2.2 &ldquo;Referred Customer&rdquo;:</b> A business or organization (not an individual consumer) that Partner registers and TaxRock accepts under Section 3 and that subscribes to the Services in its own name within ninety (90) days of acceptance.</p>
+<p class="cl"><b>2.3 &ldquo;Qualifying Revenue&rdquo;:</b> The recurring subscription fees actually received and collected from a Referred Customer for the Services, net of taxes, refunds, credits, chargebacks, and discounts. Qualifying Revenue is limited to recurring subscription fees and excludes all non-subscription amounts, including one-time, setup, usage, implementation and training, tax-resolution, case, professional-service, third-party pass-through, and other non-subscription fees.</p>
+<p class="cl"><b>2.4 &ldquo;Active Account&rdquo;:</b> A Referred Customer with a current, paid, non-cancelled subscription.</p>
+<p class="cl"><b>2.5 &ldquo;Active Partner&rdquo;:</b> A Partner whose Agreement remains in effect, that is operating as a going concern, and that is in good standing (not in uncured material breach and not terminated for cause).</p>
+<p class="cl"><b>2.6 &ldquo;Revenue Share&rdquo;:</b> The recurring revenue share payable to Partner under Section 3.</p>
+
+<h2 class="sec">3. Referrals and Revenue Share</h2>
+<p class="cl"><b>3.1 Registration and Attribution:</b> To be eligible for the Revenue Share, Partner must register each prospect with TaxRock before or at the time of referral, using the method TaxRock designates (for example, a partner link or online form). TaxRock will confirm acceptance, ordinarily within five (5) business days, and may decline a prospect who is already a customer, already in an active sales process, already registered by another partner, or otherwise already known to TaxRock. A registered, accepted prospect is credited to Partner if it becomes a Referred Customer within ninety (90) days of acceptance; where more than one partner registers the same prospect, the first to register, per TaxRock&rsquo;s records, receives credit. Referrals must be arm&rsquo;s-length: Partner may not refer itself, its affiliates or entities it controls, or accounts whose taxpayers Partner already administers under its own TaxRock subscription, each of which is a direct subscription, not a referral.</p>
+<p class="cl"><b>3.2 Revenue Share:</b> TaxRock will pay Partner a Revenue Share equal to twenty percent (20%) of Qualifying Revenue from each of Partner&rsquo;s Referred Customers, applied uniformly across all product lines, for so long as the account remains an Active Account and Partner remains an Active Partner.</p>
+<p class="cl"><b>3.3 Recurring; Collected Revenue; Holdback:</b> The Revenue Share is recurring and is calculated only on Qualifying Revenue actually collected. The first Revenue Share payment for each new Referred Customer is held until the customer has maintained a paid subscription for thirty (30) days, then becomes payable net of any refund or cancellation occurring in that period.</p>
+<p class="cl"><b>3.4 Payment:</b> TaxRock bills each subscription on that Referred Customer&rsquo;s own monthly billing date and pays the Revenue Share monthly, in arrears. Revenue Share on Qualifying Revenue collected during a calendar month is paid by the fifteenth (15th) of the following month, subject to the holdback in Section 3.3 and the adjustments in Section 3.5. TaxRock will pay by a commercially reasonable method and will make a statement or dashboard available to Partner. Absent manifest error, TaxRock&rsquo;s records are final; Partner must dispute a statement within thirty (30) days.</p>
+<p class="cl"><b>3.5 Clawback:</b> If any amount on which Revenue Share was paid or accrued is later refunded, credited, charged back, reversed, or found uncollectible, the Revenue Share is reversed and netted against future payments, or repaid within thirty (30) days if no further payments are due. No Revenue Share is payable on amounts TaxRock does not ultimately collect.</p>
+<p class="cl"><b>3.6 Continuation:</b> The Revenue Share continues for each Referred Customer for as long as the account remains an Active Account and Partner remains an Active Partner. Customer subscriptions are month to month and a Referred Customer may cancel at any time on notice to TaxRock, at which point the account ceases to be an Active Account. The Revenue Share ceases as of the date this Agreement expires or terminates for any reason, or the date Partner otherwise ceases to be an Active Partner; there is no post-termination continuation or tail.</p>
+<p class="cl"><b>3.7 Taxes:</b> Partner is responsible for all taxes on amounts it receives, will provide a completed IRS Form W-9 as a condition of payment, and will be reported on IRS Form 1099 as required.</p>
+
+<h2 class="sec">4. Partner Obligations and Compliance</h2>
+<p class="cl"><b>4.1 Professional Rules:</b> If Partner (or its principals or personnel) is a certified public accountant, enrolled agent, attorney, or other regulated professional, its receipt of referral compensation may be subject to disclosure obligations and restrictions under the AICPA Code of Professional Conduct, IRS Circular 230, and applicable state board or licensing rules, including disclosing commission arrangements to affected clients and prohibitions on accepting commissions for certain clients (such as audit, review, or compilation clients). Partner is solely responsible for determining how it may participate, making all required disclosures, and obtaining any required consents, and represents that its participation and receipt of the Revenue Share are permitted under the rules applicable to it.</p>
+<p class="cl"><b>4.2 Conduct:</b> Partner will comply with all applicable laws and will:</p>
+<p class="bl"><b>a)</b> make only truthful, TaxRock-approved representations about the Services, without unauthorized pricing or guarantees.</p>
+<p class="bl"><b>b)</b> not use spam or misleading, deceptive, or unsolicited communications, or violate the CAN-SPAM Act, the Telephone Consumer Protection Act, or similar laws.</p>
+<p class="bl"><b>c)</b> not misuse TaxRock&rsquo;s trademarks or register confusingly similar domains or handles.</p>
+<p class="bl"><b>d)</b> handle prospect information in accordance with privacy laws and submit it to TaxRock only where the prospect has agreed to be contacted.</p>
+
+<h2 class="sec">5. Term and Termination</h2>
+<p class="cl"><b>5.1 Term:</b> This Agreement begins on the Effective Date and continues month to month until terminated.</p>
+<p class="cl"><b>5.2 Termination:</b> Either Party may terminate for convenience on thirty (30) days&rsquo; prior written notice, or immediately for the other Party&rsquo;s material breach that remains uncured thirty (30) days after notice. TaxRock may terminate immediately for Partner&rsquo;s fraud, material misrepresentation, breach of Section 4, or conduct that TaxRock reasonably determines may harm its reputation, customers, or business.</p>
+<p class="cl"><b>5.3 Effect of Termination:</b> On termination, Partner will stop referring prospects and holding itself out as a TaxRock referral partner; Section 3.6 governs the Revenue Share on existing Referred Customers; and Sections 3.5 through 3.7, 4, 6, and 7 survive.</p>
+
+<h2 class="sec">6. Confidentiality and Intellectual Property</h2>
+<p class="cl">Each Party will protect the other&rsquo;s non-public information, use it only for this Agreement, and disclose it only to personnel or advisors with a need to know who are bound by at least equally protective obligations; customary exclusions apply and these obligations survive termination. TaxRock retains all right, title, and interest in the Services, its trademarks, and its materials. TaxRock grants Partner a limited, revocable, non-exclusive, non-transferable license to use TaxRock&rsquo;s name and logos solely to identify TaxRock and refer prospects, in accordance with TaxRock&rsquo;s brand guidelines and approval; Partner will cease use on termination. Partner grants TaxRock a limited, revocable right to identify Partner as a referral partner.</p>
+
+<h2 class="sec">7. Warranties; Liability; Indemnification</h2>
+<p class="cl">The Services are provided to customers under those customers&rsquo; own agreements with TaxRock. TaxRock makes no representation or warranty to Partner regarding any minimum referrals, conversions, revenue, or earnings and, except as expressly stated, disclaims all implied warranties regarding the referral program. Neither Party is liable for indirect, incidental, special, consequential, or punitive damages or for lost profits or revenue; TaxRock&rsquo;s aggregate liability arising out of this Agreement will not exceed the total Revenue Share paid or payable to Partner in the twelve (12) months preceding the claim; and nothing limits either Party&rsquo;s right to seek injunctive relief. Partner will defend, indemnify, and hold harmless TaxRock and its officers, directors, employees, and agents from third-party claims, losses, and expenses (including reasonable attorneys&rsquo; fees) arising out of Partner&rsquo;s referral activities and representations, breach of this Agreement (including Section 4), violation of any law or professional rule, or misuse of TaxRock&rsquo;s marks; TaxRock will give prompt notice and reasonable cooperation, and Partner will control the defense and settlement, provided no settlement imposing an obligation or admission on TaxRock is made without TaxRock&rsquo;s prior written consent.</p>
+
+<h2 class="sec">8. General Provisions</h2>
+<p class="cl"><b>8.1 Governing Law &amp; Arbitration:</b> This Agreement is governed by the laws of the State of <b>Delaware</b>, without regard to conflict-of-law principles. Any dispute will be resolved exclusively by binding arbitration in <b>Denver County, Colorado</b>, administered by the American Arbitration Association under its Commercial Arbitration Rules, except that either Party may seek injunctive or equitable relief in any court of competent jurisdiction.</p>
+<p class="cl"><b>8.2 Independence and Assignment:</b> The Parties are independent contractors. Neither Party may assign this Agreement without the other&rsquo;s prior written consent, except to an affiliate or in connection with a merger, acquisition, or sale of substantially all assets.</p>
+<p class="cl"><b>8.3 Entire Agreement; Changes:</b> This Agreement is the entire agreement on its subject and supersedes prior understandings. Except as provided in the next sentence, any amendment must be in writing and signed by both Parties. TaxRock may modify or discontinue any part of this Agreement, the referral program, the Services, or the pricing, at any time and for any or no reason, upon thirty (30) days&rsquo; prior written notice to Partner; Partner&rsquo;s continued participation after that notice period constitutes acceptance, and if Partner does not agree it may terminate under Section 5.</p>
+<p class="cl"><b>8.4 Notices:</b> Notices must be in writing to each Party&rsquo;s account contact (to TaxRock at support@taxrock.com) and are effective on receipt.</p>
+<p class="cl"><b>8.5 Severability; Counterparts:</b> If any provision is unenforceable, the remainder remains in effect. This Agreement may be executed in counterparts, and electronic signatures are valid and binding.</p>
+
+<p class="cl" style="margin-top:14px;">By signing, both Parties agree to the terms of this Agreement.</p>
+<div class="execblock">
+<div class="sig">
+  <div>
+    <h4 id="pCo"></h4>
+    <div class="sigrow"><div class="ln"></div><div class="cap">Signature</div></div>
+    <div class="sigrow"><div class="ln" id="pName"></div><div class="cap">Printed name</div></div>
+    <div class="sigrow"><div class="ln" id="pTitle"></div><div class="cap">Title</div></div>
+    <div class="sigrow"><div class="ln"></div><div class="cap">Date</div></div>
+    <div class="sigrow"><div class="ln" id="pEmail"></div><div class="cap">Email</div></div>
+    <div class="sigrow"><div class="ln" id="pA1"></div></div>
+    <div class="sigrow"><div class="ln" id="pA2"></div><div class="cap">Address</div></div>
+  </div>
+  <div>
+    <h4>TaxRock LLC</h4>
+    <div class="sigrow"><div class="ln"><img class="execsig" id="pTSig" alt=""></div><div class="cap">Signature</div></div>
+    <div class="sigrow"><div class="ln" id="pTName"></div><div class="cap">Printed name</div></div>
+    <div class="sigrow"><div class="ln" id="pTTitle"></div><div class="cap">Title</div></div>
+    <div class="sigrow"><div class="ln autodate" id="pTDate"></div><div class="cap">Date</div></div>
+    <div class="sigrow"><div class="ln" id="pTEmail"></div><div class="cap">Email</div></div>
+    <div class="sigrow"><div class="ln">5901 Priestly Dr #100</div></div>
+    <div class="sigrow"><div class="ln">Carlsbad, CA 92008</div><div class="cap">Address</div></div>
+  </div>
+</div>
+<div class="paym">
+  <div class="sigrow"><div class="ln"></div><div class="cap">Payment method for Revenue Share</div></div>
+  <p class="pmn">TaxRock pays the Revenue Share to the method provided here, monthly in arrears, as set out in Section 3.4. A completed IRS Form W-9 is required before the first payment.</p>
 </div>
 </div>
 </div>
@@ -895,7 +992,12 @@ function render(){
   // countersigning date is the date the document is exported
   const ppref=m.querySelector('#mPPRef');
   if(ppref) ppref.textContent='dated '+fmtDate(prep)+' ('+DOC('PP')+')';
-  stampDates(src); stampDates(m);
+  // Referral Partner Agreement. Same customer record, different counterparty role:
+  // the saved customer is the Partner. Version is its own, not the vertical's.
+  const rp=el('srcRpa');
+  fillSig(rp,'p');
+  const rsig=rp.querySelector('#pTSig'); if(rsig&&RON_SIG) rsig.src=RON_SIG;
+  stampDates(src); stampDates(m); stampDates(rp);
 
   const vv=V();
   el('vertHint').textContent = vv.inherits
@@ -904,6 +1006,15 @@ function render(){
   el('pillPrice').textContent=mo==null?(n===null?DASH:'Custom'):money(mo)+' / month';
   el('pillPlan').textContent=(n===null?'No '+sizeWord+' entered':planName)+(hasOv?'  ·  override applied':'');
 
+  paginate(el('partSheet'), rp, {docId:'TR-RPA-02', runHead:'Referral Partner Agreement', runRight:nm,
+    draftmark:true,
+    title:`<div class="kicker">Referral Partner Agreement</div>
+      <h1 class="t">Lead Referral &amp; Revenue Share Terms</h1>
+      <p class="pre">This Referral Partner Agreement (the &ldquo;Agreement&rdquo;) is entered into by and between
+      <b>TaxRock LLC</b>, a Delaware limited liability company (&ldquo;TaxRock&rdquo;), and
+      <b>${nm||'&nbsp;'}</b> (&ldquo;Partner&rdquo;), effective as of the date of Partner&rsquo;s signature
+      (the &ldquo;Effective Date&rdquo;). Each is a &ldquo;Party&rdquo;. This Agreement governs Partner&rsquo;s
+      referral of prospective customers to TaxRock and the recurring revenue share payable for those referrals.</p>`});
   paginate(el('propSheet'), src, {docId:DOC('PP'), runHead:'TaxRock Pricing Proposal', runRight:nm});
   paginate(el('msaSheet'), m, {docId:DOC('MSA'), runHead:'Master Subscription Agreement', runRight:nm,
     draftmark:true,
@@ -919,12 +1030,25 @@ document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
   const t=b.dataset.tab;
   document.body.dataset.doc=t;
+  const partKind = (document.querySelector('#partSeg button.on')||{dataset:{}}).dataset.part||'referral';
   el('propSheet').hidden = t!=='proposal';
   el('msaSheet').hidden  = t!=='msa';
   el('matrixPane').hidden= t!=='matrix';
-  el('modeSeg').style.display = t==='msa' ? 'inline-flex' : 'none';
-  el('exportBtn').style.display = t==='matrix' ? 'none' : 'inline-flex';
-  el('pkgBtn').style.display    = t==='matrix' ? 'none' : 'inline-flex';
+  el('partSheet').hidden = !(t==='partner' && partKind==='referral');
+  el('apiPane').hidden   = !(t==='partner' && partKind==='api');
+  el('modeSeg').style.display = (t==='msa'||t==='partner') ? 'inline-flex' : 'none';
+  el('partSeg').style.display = t==='partner' ? 'inline-flex' : 'none';
+  const noExport = t==='matrix' || (t==='partner' && partKind==='api');
+  el('exportBtn').style.display = noExport ? 'none' : 'inline-flex';
+  // the package is the customer's proposal + MSA; a partnership is a separate signing
+  el('pkgBtn').style.display    = (t==='matrix'||t==='partner') ? 'none' : 'inline-flex';
+}));
+document.querySelectorAll('#partSeg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#partSeg button').forEach(x=>x.classList.toggle('on',x===b));
+  const k=b.dataset.part;
+  el('partSheet').hidden = k!=='referral';
+  el('apiPane').hidden   = k!=='api';
+  el('exportBtn').style.display = k==='api' ? 'none' : 'inline-flex';
 }));
 document.querySelectorAll('#modeSeg button').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('#modeSeg button').forEach(x=>x.classList.toggle('on',x===b));
@@ -938,7 +1062,8 @@ document.querySelectorAll('#modeSeg button').forEach(b=>b.addEventListener('clic
 const PAGE_TITLE=document.title;
 let PKG=false, PKG_UNDO=null;
 function exportName(){
-  const kind = PKG ? 'TaxRock-Agreement' : (document.body.dataset.doc==='msa' ? 'MSA' : 'PP');
+  const which=document.body.dataset.doc;
+  const kind = PKG ? 'TaxRock-Agreement' : which==='msa' ? 'MSA' : which==='partner' ? 'RPA' : 'PP';
   const raw  = (el('cName').value||'Customer')
                  .replace(/[‘’“”]/g,'')
                  .replace(/&/g,'and')
@@ -963,11 +1088,15 @@ el('exportBtn').addEventListener('click',()=>{
    what you want: the agreement still reads Page 1 of 5. */
 el('pkgBtn').addEventListener('click',()=>{
   if(PKG) return;
-  const was={p:el('propSheet').hidden, m:el('msaSheet').hidden, x:el('matrixPane').hidden};
+  const was={p:el('propSheet').hidden, m:el('msaSheet').hidden, x:el('matrixPane').hidden,
+             r:el('partSheet').hidden, a:el('apiPane').hidden};
   PKG=true; document.body.classList.add('pkg');
   el('propSheet').hidden=false; el('msaSheet').hidden=false; el('matrixPane').hidden=true;
+  // a partnership is signed separately and never belongs in the customer package
+  el('partSheet').hidden=true; el('apiPane').hidden=true;
   PKG_UNDO=()=>{
     el('propSheet').hidden=was.p; el('msaSheet').hidden=was.m; el('matrixPane').hidden=was.x;
+    el('partSheet').hidden=was.r; el('apiPane').hidden=was.a;
     document.body.classList.remove('pkg'); PKG=false; PKG_UNDO=null; document.title=PAGE_TITLE;
   };
   document.title=exportName();
