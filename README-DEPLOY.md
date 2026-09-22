@@ -172,12 +172,9 @@ paginates and exports exactly like the MSA, honours Draft and For signature, and
 deliberately excluded from **Export package**, because a partnership is signed separately
 from the customer's proposal and MSA.
 
-**API & Integration** is a placeholder. TR-IPA-01 already exists as a separately reviewed
-document and has not been rewritten here. To wire it in, add its clause HTML as `IPA` in
-`gen_builder.py` alongside `RPA`, inject it into a `srcIpa` block, and give it its own
-sheet the way `partSheet` works. Counsel review on TR-IPA-01 flagged the Section 7216 and
-sublicensing interplay, so re-check that against the multi-tenant platform host redline
-before it goes in.
+**API & Integration** renders TR-IPA-02, the Integration Partner Agreement, the same
+way. Both fill from the customer record: the legal entity name becomes the Partner and
+the contact, email and address fill the Partner signature block.
 
 **Partnership version codes are independent of the verticals.** TR-RPA-02 is stamped
 literally, not built from `VERTICALS`, because a referral partner is not on a pricing

@@ -252,9 +252,11 @@ p.bl b{font-family:'Inter Tight';color:var(--ink);font-weight:600;}
             display:flex;align-items:flex-end;padding-bottom:2px;}
 .execsig{max-height:36px;width:auto;position:absolute;bottom:2px;left:2px;display:none;}
 body[data-mode="exec"] #msaSheet .execsig[src],
-body[data-mode="exec"] #partSheet .execsig[src]{display:block;}
+body[data-mode="exec"] #partSheet .execsig[src],
+body[data-mode="exec"] #apiSheet .execsig[src]{display:block;}
 body[data-mode="draft"] #msaSheet .autodate,
-body[data-mode="draft"] #partSheet .autodate{visibility:hidden;}
+body[data-mode="draft"] #partSheet .autodate,
+body[data-mode="draft"] #apiSheet .autodate{visibility:hidden;}
 /* No hidden markers in the signature block. White text in a PDF is not invisible,
    it is white: viewers, selection and text extraction all bring it back, which is
    not acceptable on a document a customer signs. */
@@ -273,7 +275,8 @@ body[data-mode="draft"] #partSheet .autodate{visibility:hidden;}
 .draftmark span{font-family:'Inter Tight';font-weight:700;font-size:118px;letter-spacing:.22em;color:#0A1A33;
                 opacity:.055;transform:rotate(-32deg);white-space:nowrap;}
 body[data-mode="draft"] #msaSheet .draftmark,
-body[data-mode="draft"] #partSheet .draftmark{display:flex;}
+body[data-mode="draft"] #partSheet .draftmark,
+body[data-mode="draft"] #apiSheet .draftmark{display:flex;}
 
 @media print{
   @page{size:letter;margin:0;}
@@ -430,14 +433,7 @@ body[data-mode="draft"] #partSheet .draftmark{display:flex;}
   <div class="sheet" id="msaSheet" hidden></div>
   <div class="sheet" id="partSheet" hidden></div>
 
-  <div class="mx" id="apiPane" hidden>
-    <div class="mx-warn" style="background:#EAF3FF;border-color:#9FC8FF;color:#0A1A33;">
-      <b>API &amp; Integration Partner Agreement (TR-IPA-01) is not wired in yet.</b>
-      It already exists as a reviewed document, so it has not been rewritten here. Drop the
-      current TR-IPA-01 text into <code>IPA</code> in the generator and this pane becomes a
-      third partnership document, filled from the same customer record.
-    </div>
-    <div class="mx-note">Counsel review on TR-IPA-01 flagged the Section 7216 and sublicensing interplay. That is worth re-checking against the multi-tenant platform host redline before this is published in the builder.</div>
+  <div class="sheet" id="apiSheet" hidden></div>
   </div>
 
   <div class="mx" id="matrixPane" hidden>
@@ -692,6 +688,113 @@ body[data-mode="draft"] #partSheet .draftmark{display:flex;}
 <div class="paym">
   <div class="sigrow"><div class="ln"></div><div class="cap">Payment method for Revenue Share</div></div>
   <p class="pmn">TaxRock pays the Revenue Share to the method provided here, monthly in arrears, as set out in Section 3.4. A completed IRS Form W-9 is required before the first payment.</p>
+</div>
+</div>
+</div>
+<div id="srcIpa" style="display:none">
+<h2 class="sec">1. Purpose and Relationship to Other Agreements</h2>
+<p class="cl"><b>1.1 Purpose:</b> This Agreement governs Partner&rsquo;s access to and use of TaxRock&rsquo;s application programming interface(s) (the &ldquo;API&rdquo;) and the Taxpayer Data and other data made available through the API, in connection with Partner&rsquo;s integration of the Services into the Partner Platform. It sets the permitted scope of, and the data-protection and use restrictions applicable to, that access.</p>
+<p class="cl"><b>1.2 Related Agreements:</b> This Agreement supplements, and is to be read together with: (a) the Master Subscription Agreement between the Parties (the &ldquo;MSA&rdquo;), which governs the commercial and subscription relationship; (b) the Pricing Proposal incorporated into the MSA, which governs pricing; and (c) the TaxRock Terms of Service accepted at first login (the &ldquo;TOS&rdquo;), which govern individual end-user and Monitored Client / Monitored Taxpayer use of the platform. The MSA, Pricing Proposal, and TOS are incorporated by reference. Capitalized terms not defined here have the meanings given in the MSA.</p>
+<p class="cl"><b>1.3 Order of Precedence:</b> In the event of a conflict: (a) this Agreement controls with respect to API access, data use, and data security; (b) the MSA controls with respect to commercial, subscription, payment, and general legal terms; (c) the Pricing Proposal controls with respect to the Subscription Fee, included capacity, and other expressly stated commercial terms; and (d) the TOS governs individual end users. Except as expressly modified here, the MSA and TOS remain in full force.</p>
+
+<h2 class="sec">2. Definitions</h2>
+<p class="cl"><b>2.1 &ldquo;API&rdquo;:</b> TaxRock&rsquo;s application programming interface(s), including the Delegate API and any related endpoints, documentation, and Credentials made available to Partner.</p>
+<p class="cl"><b>2.2 &ldquo;Credentials&rdquo;:</b> The production client identifier, client secret, API keys, tokens, and any other authentication materials issued to Partner for access to the API.</p>
+<p class="cl"><b>2.3 &ldquo;Taxpayer Data&rdquo;:</b> Federal tax return information, IRS transcript and account data, compliance and status information, Form 8821 / 2848 authorization data, and related taxpayer information retrieved, processed, or made available through the API, as further described in the TOS.</p>
+<p class="cl"><b>2.4 &ldquo;Monitored Taxpayer&rdquo;:</b> Has the meaning given in the MSA.</p>
+<p class="cl"><b>2.5 &ldquo;Client Consent&rdquo;:</b> A valid IRS authorization (Form 8821 or, where applicable, Form 2848, or an equivalent electronic authorization) executed by the applicable taxpayer.</p>
+<p class="cl"><b>2.6 &ldquo;Partner Platform&rdquo;:</b> Partner&rsquo;s own software application(s) and services operated by Partner under its own brand for its own clients.</p>
+<p class="cl"><b>2.7 &ldquo;Partner Client&rdquo;:</b> A client of Partner that is provisioned by Partner within the Services and to whom the relevant Taxpayer Data pertains or relates.</p>
+
+<h2 class="sec">3. License and Permitted Use</h2>
+<p class="cl"><b>3.1 Grant of Access:</b> Subject to Partner&rsquo;s compliance with this Agreement, the MSA, and the TOS, and to payment of all fees set out in the Pricing Proposal, TaxRock grants Partner a limited, non-exclusive, non-transferable, non-sublicensable, revocable right during the Term to access the API and to use Taxpayer Data solely: (a) within the Partner Platform; (b) for Partner&rsquo;s own internal business of providing its own services to its own Partner Clients; and (c) in accordance with each applicable Client Consent and applicable law.</p>
+<p class="cl"><b>3.2 Permitted Use:</b> Partner may retrieve, process, and display Taxpayer Data within the Partner Platform to support Partner&rsquo;s own underwriting, monitoring, and operational decisions for its own Partner Clients. All access and use must remain within the scope of the applicable Client Consent and the permitted purposes of this Section 3.</p>
+
+<h2 class="sec">4. Use Restrictions</h2>
+<p class="cl"><b>4.1 Sole Benefit; No Resale or Passthrough:</b> Partner shall access and use the API, Credentials, and Taxpayer Data solely for Partner&rsquo;s own account and benefit. Partner shall not, directly or indirectly, resell, sublicense, rent, lease, distribute, broker, syndicate, or otherwise provide or make available the API, Credentials, Services, or Taxpayer Data to, or operate them for the benefit of, any third party. Without limiting the foregoing, Partner shall not enable, permit, or facilitate any other factoring company, lender, financial institution, or other third party (including any affiliate or competitor of Partner or TaxRock) to access or use the API, Services, or Taxpayer Data through Partner&rsquo;s account or Credentials. Any such party must obtain its own TaxRock account, subscription, and Credentials under a separate agreement directly with TaxRock. Where it has done so, Partner may make the Services available to that party within the Partner Platform under that party&rsquo;s own account and Credentials, with each such party&rsquo;s access governed by its own agreement with TaxRock. Partner shall not act as a service bureau, aggregator, reseller, or conduit for the Services.</p>
+<p class="cl"><b>4.2 No Third-Party Data or Technology Providers:</b> Partner shall not provide, transfer, disclose, or otherwise make Taxpayer Data (or any output, derivative, or compilation of Taxpayer Data obtained through the API) available to any third-party technology provider, data provider, data aggregator, analytics provider, subprocessor, or other third party without TaxRock&rsquo;s prior written consent. This restriction does not apply to: (a) Partner&rsquo;s own employees and contractors who have a need to access such data to operate the Partner Platform and who are bound by confidentiality and use obligations at least as protective as those in this Agreement; and (b) disclosure to the Partner Client to whom the Taxpayer Data pertains, or as directed by that Partner Client within the scope of its Client Consent.</p>
+<p class="cl"><b>4.3 Credential Security:</b> Partner shall keep all Credentials strictly confidential, shall not share Credentials across legal entities or with any third party, and shall use a single set of production Credentials issued to Partner solely for the Partner Platform. Partner shall notify TaxRock without undue delay, and no later than seventy-two (72) hours, upon learning of any actual or suspected compromise, loss, or unauthorized use of Credentials, and shall cooperate with TaxRock to remediate. TaxRock may rotate or revoke Credentials as reasonably necessary to protect the Services or Taxpayer Data.</p>
+<p class="cl"><b>4.4 General Restrictions:</b> Partner shall not, and shall not permit any person to:</p>
+<p class="bl"><b>a)</b> reverse engineer, decompile, disassemble, or attempt to derive the source code, structure, or non-public aspects of the API or Services.</p>
+<p class="bl"><b>b)</b> scrape, harvest, or extract data other than through documented API calls within applicable rate limits.</p>
+<p class="bl"><b>c)</b> circumvent or interfere with any security, authentication, rate-limiting, or access controls.</p>
+<p class="bl"><b>d)</b> use the API or Taxpayer Data to build or improve a competing product or service; or</p>
+<p class="bl"><b>e)</b> use the Services in any manner prohibited by the TOS, the restrictions of which are incorporated by reference.</p>
+
+<h2 class="sec">5. Taxpayer Authorization and Compliance</h2>
+<p class="cl"><b>5.1 Authorization:</b> Partner represents, warrants, and covenants that, for each Monitored Taxpayer and each lookup, Partner has obtained and maintains a valid Client Consent authorizing the retrieval and use of the applicable Taxpayer Data, and that Partner accesses and uses Taxpayer Data only within the scope of such authorization and applicable law.</p>
+<p class="cl"><b>5.2 IRC &sect;7216 and Applicable Law:</b> Partner acknowledges that Taxpayer Data may constitute tax return information subject to Internal Revenue Code &sect;7216 and related regulations. Partner is solely responsible for compliance with IRC &sect;7216, IRS rules governing Form 8821 / 2848 authorizations, and all other applicable privacy and data-protection laws.</p>
+<p class="cl"><b>5.3 Revocation:</b> Partner shall promptly cease accessing Taxpayer Data for any taxpayer whose authorization has expired, been revoked, or is otherwise no longer valid, and shall maintain records of authorizations as required by law.</p>
+<p class="cl"><b>5.4 No Verification by TaxRock:</b> Partner acknowledges that TaxRock does not verify, validate, or confirm the existence, validity, or scope of any Client Consent, consistent with the TOS, and that Partner bears sole responsibility for authorization validity.</p>
+
+<h2 class="sec">6. Data Protection and Security</h2>
+<p class="cl"><b>6.1 Safeguards:</b> Partner shall maintain administrative, technical, and physical safeguards that are no less protective than industry-standard practices and appropriate to the sensitivity of Taxpayer Data, including encryption of Taxpayer Data in transit and at rest, role-based access controls, and logging and monitoring of access.</p>
+<p class="cl"><b>6.2 Use Limitation:</b> Partner shall process Taxpayer Data only as permitted by Section 3 and the applicable Client Consent, and shall not commingle, repurpose, or use Taxpayer Data for any purpose not expressly permitted by this Agreement.</p>
+<p class="cl"><b>6.3 Security Incidents:</b> Partner shall notify TaxRock without undue delay, and no later than seventy-two (72) hours, after becoming aware of any actual or reasonably suspected unauthorized access to, or acquisition, use, or disclosure of, Taxpayer Data or Credentials, and shall reasonably cooperate with TaxRock in investigating and remediating the incident.</p>
+<p class="cl"><b>6.4 Deletion:</b> Upon expiration or termination of this Agreement, or upon TaxRock&rsquo;s reasonable request, Partner shall cease all use of and securely delete Taxpayer Data and Credentials in its possession or control, except to the limited extent retention is required by applicable law (in which case the obligations of this Agreement continue to apply to such retained data).</p>
+
+<h2 class="sec">7. Intellectual Property</h2>
+<p class="cl"><b>7.1 TaxRock Property:</b> As between the Parties, TaxRock retains all right, title, and interest in and to the API, the Services, the Credentials, all documentation, and all data compilations, software, and other materials provided by TaxRock, including all intellectual property rights therein. Except for the limited rights expressly granted in this Agreement, no license or other right is granted to Partner, whether by implication, estoppel, or otherwise.</p>
+<p class="cl"><b>7.2 No Independent Rights in Taxpayer Data:</b> Taxpayer Data originates with the applicable taxpayer and the IRS. Neither Party acquires any ownership or independent right in Taxpayer Data under this Agreement beyond the limited right to process it as expressly authorized by the applicable Client Consent and this Agreement.</p>
+<p class="cl"><b>7.3 Marks:</b> Neither Party may use the other Party&rsquo;s name, logo, trademarks, or branding without prior written consent, except for factual internal references to this relationship.</p>
+
+<h2 class="sec">8. Confidentiality</h2>
+<p class="cl"><b>8.1 Confidential Information:</b> Each Party may receive non-public information of the other Party (&ldquo;Confidential Information&rdquo;). The API, Credentials, Taxpayer Data, and TaxRock&rsquo;s non-public technical and security information are TaxRock Confidential Information and are deemed confidential at the highest level. Confidential Information does not include information that the receiving Party can demonstrate is or becomes public through no fault of the receiving Party, was lawfully known to it without restriction, is lawfully received from a third party without breach, or is independently developed without use of the disclosing Party&rsquo;s Confidential Information.</p>
+<p class="cl"><b>8.2 Obligations:</b> The receiving Party shall use Confidential Information only as permitted by this Agreement, shall not disclose it except to personnel with a need to know who are bound by at least equally protective obligations, and shall protect it with no less than reasonable care. A Party may disclose Confidential Information if required by law, provided that, unless prohibited, it gives the disclosing Party prompt notice and reasonable cooperation to seek protective treatment. These obligations survive termination, and as to trade secrets and Taxpayer Data continue for so long as the information remains protectable under applicable law.</p>
+
+<h2 class="sec">9. Term and Termination</h2>
+<p class="cl"><b>9.1 Term:</b> This Agreement begins on the Effective Date and continues for so long as the MSA remains in effect, unless earlier terminated as provided here (the &ldquo;Term&rdquo;).</p>
+<p class="cl"><b>9.2 Termination for Cause:</b> Either Party may terminate this Agreement upon written notice if the other Party materially breaches this Agreement and fails to cure within thirty (30) days after written notice. Termination of the MSA terminates this Agreement.</p>
+<p class="cl"><b>9.3 Suspension:</b> TaxRock may suspend or revoke Partner&rsquo;s API access and Credentials immediately, with notice where practicable, to protect Taxpayer Data, comply with law, or address a breach of Section 4, 5, or 6 or a security incident.</p>
+<p class="cl"><b>9.4 Effect of Termination:</b> Upon expiration or termination, Partner shall immediately cease all access to and use of the API and Taxpayer Data, and Section 6.4 (Deletion) applies. Provisions that by their nature should survive, including Sections 4, 5, 6, 7, 8, 9.4, 10, 11, 12, and 13, survive termination.</p>
+
+<h2 class="sec">10. Warranties and Disclaimer</h2>
+<p class="cl">The API and Taxpayer Data are provided &ldquo;as is&rdquo; and &ldquo;as available.&rdquo; TaxRock does not warrant that the API will be uninterrupted or error-free, or that Taxpayer Data will be accurate, complete, or timely, and TaxRock is not responsible for the availability, accuracy, or performance of third-party systems, including the IRS, consistent with the TOS. Except as expressly stated in the MSA, TaxRock disclaims all warranties, express or implied, including implied warranties of merchantability, fitness for a particular purpose, and non-infringement.</p>
+
+<h2 class="sec">11. Limitation of Liability</h2>
+<p class="cl"><b>11.1 General:</b> Except as set forth in Section 11.2, each Party&rsquo;s liability arising out of or relating to this Agreement is governed by, and subject to the limitations and exclusions in, the MSA.</p>
+<p class="cl"><b>11.2 Carve-Outs; Equitable Relief:</b> The MSA&rsquo;s liability cap does not limit Partner&rsquo;s liability for breach of Section 4 (Use Restrictions), Section 5 (Authorization and Compliance), Section 6 (Data Protection and Security), Section 7 (Intellectual Property), or Section 8 (Confidentiality). Partner acknowledges that breach of those Sections may cause irreparable harm for which monetary damages are inadequate, and that TaxRock is entitled to seek injunctive and other equitable relief without the requirement of posting a bond, in addition to any other remedies.</p>
+
+<h2 class="sec">12. Indemnification</h2>
+<p class="cl"><b>12.1 By Partner:</b> Partner shall defend, indemnify, and hold harmless TaxRock and its officers, directors, employees, and agents from and against any third-party claims, demands, losses, liabilities, damages, costs, and expenses (including reasonable attorneys&rsquo; fees) arising out of or relating to:</p>
+<p class="bl"><b>a)</b> Partner&rsquo;s breach of this Agreement, the MSA, or the TOS.</p>
+<p class="bl"><b>b)</b> Partner&rsquo;s access to or use of the API, Credentials, or Taxpayer Data, including any unauthorized access, use, or disclosure resulting from Partner&rsquo;s acts or omissions.</p>
+<p class="bl"><b>c)</b> Partner&rsquo;s violation of IRC &sect;7216, IRS authorization requirements, or applicable privacy or data-protection law; or</p>
+<p class="bl"><b>d)</b> any claim by a Partner Client, taxpayer, or other third party relating to Partner&rsquo;s use of the Services or Taxpayer Data.</p>
+<p class="cl"><b>12.2 Procedure:</b> TaxRock will promptly notify Partner of any claim subject to indemnification, permit Partner to control the defense and settlement (provided that any settlement imposing any obligation or admission on TaxRock requires TaxRock&rsquo;s prior written consent, not to be unreasonably withheld), and reasonably cooperate at Partner&rsquo;s expense. TaxRock may participate in the defense with its own counsel at its own expense.</p>
+
+<h2 class="sec">13. General Provisions</h2>
+<p class="cl"><b>13.1 Governing Law; Dispute Resolution:</b> This Agreement is governed by the laws of the State of <b>Delaware</b>, without regard to conflict-of-law principles. Any dispute arising out of or relating to this Agreement shall be resolved exclusively through binding arbitration in <b>Denver County, Colorado</b>, administered by the American Arbitration Association under its Commercial Arbitration Rules, except that either Party may seek injunctive or equitable relief in any court of competent jurisdiction. Judgment on the award may be entered in any court of competent jurisdiction.</p>
+<p class="cl"><b>13.2 Independent Contractors:</b> The Parties are independent contractors. Nothing in this Agreement creates any partnership, joint venture, fiduciary, employment, or agency relationship, and neither Party may bind the other.</p>
+<p class="cl"><b>13.3 Assignment:</b> Neither Party may assign this Agreement without the other Party&rsquo;s prior written consent, except to an affiliate or in connection with a merger, acquisition, reorganization, or sale of substantially all assets, provided the assignee agrees to be bound.</p>
+<p class="cl"><b>13.4 Entire Agreement:</b> This Agreement, together with the MSA, the Pricing Proposal, and the TOS, constitutes the entire agreement between the Parties regarding its subject matter and supersedes all prior or contemporaneous understandings on that subject.</p>
+<p class="cl"><b>13.5 Amendments; Waiver:</b> Any amendment must be in writing and signed by both Parties. No waiver is effective unless in writing.</p>
+<p class="cl"><b>13.6 Notices:</b> Notices must be in writing and sent to the contact associated with each Party&rsquo;s account; notices to TaxRock may be sent to support@taxrock.com. Notices are effective upon receipt.</p>
+<p class="cl"><b>13.7 Severability; Counterparts:</b> If any provision is unenforceable, the remainder remains in effect. This Agreement may be executed in counterparts, and electronic signatures are valid and binding.</p>
+
+<p class="cl" style="margin-top:14px;">Accepted and agreed to as of the Effective Date.</p>
+<div class="execblock">
+<div class="sig">
+  <div>
+    <h4 id="iCo"></h4>
+    <div class="sigrow"><div class="ln"></div><div class="cap">Signature</div></div>
+    <div class="sigrow"><div class="ln" id="iName"></div><div class="cap">Printed name</div></div>
+    <div class="sigrow"><div class="ln" id="iTitle"></div><div class="cap">Title</div></div>
+    <div class="sigrow"><div class="ln"></div><div class="cap">Date</div></div>
+    <div class="sigrow"><div class="ln" id="iEmail"></div><div class="cap">Email</div></div>
+    <div class="sigrow"><div class="ln" id="iA1"></div></div>
+    <div class="sigrow"><div class="ln" id="iA2"></div><div class="cap">Address</div></div>
+  </div>
+  <div>
+    <h4>TaxRock LLC</h4>
+    <div class="sigrow"><div class="ln"><img class="execsig" id="iTSig" alt=""></div><div class="cap">Signature</div></div>
+    <div class="sigrow"><div class="ln" id="iTName"></div><div class="cap">Printed name</div></div>
+    <div class="sigrow"><div class="ln" id="iTTitle"></div><div class="cap">Title</div></div>
+    <div class="sigrow"><div class="ln autodate" id="iTDate"></div><div class="cap">Date</div></div>
+    <div class="sigrow"><div class="ln" id="iTEmail"></div><div class="cap">Email</div></div>
+    <div class="sigrow"><div class="ln">5901 Priestly Dr #100</div></div>
+    <div class="sigrow"><div class="ln">Carlsbad, CA 92008</div><div class="cap">Address</div></div>
+  </div>
 </div>
 </div>
 </div>
@@ -997,7 +1100,11 @@ function render(){
   const rp=el('srcRpa');
   fillSig(rp,'p');
   const rsig=rp.querySelector('#pTSig'); if(rsig&&RON_SIG) rsig.src=RON_SIG;
-  stampDates(src); stampDates(m); stampDates(rp);
+  // Integration Partner Agreement, the API partnership
+  const ip=el('srcIpa');
+  fillSig(ip,'i');
+  const isig=ip.querySelector('#iTSig'); if(isig&&RON_SIG) isig.src=RON_SIG;
+  stampDates(src); stampDates(m); stampDates(rp); stampDates(ip);
 
   const vv=V();
   el('vertHint').textContent = vv.inherits
@@ -1015,6 +1122,16 @@ function render(){
       <b>${nm||'&nbsp;'}</b> (&ldquo;Partner&rdquo;), effective as of the date of Partner&rsquo;s signature
       (the &ldquo;Effective Date&rdquo;). Each is a &ldquo;Party&rdquo;. This Agreement governs Partner&rsquo;s
       referral of prospective customers to TaxRock and the recurring revenue share payable for those referrals.</p>`});
+  paginate(el('apiSheet'), ip, {docId:'TR-IPA-02', runHead:'Integration Partner Agreement', runRight:nm,
+    draftmark:true,
+    title:`<div class="kicker">Integration Partner Agreement</div>
+      <h1 class="t">API Access &amp; Use of Taxpayer Data</h1>
+      <p class="pre">This Integration Partner Agreement (the &ldquo;Agreement&rdquo;) is entered into by and between
+      <b>TaxRock LLC</b>, a Delaware limited liability company (&ldquo;TaxRock&rdquo;), and
+      <b>${nm||'&nbsp;'}</b> (&ldquo;Partner&rdquo;), effective as of the date of Partner&rsquo;s signature
+      (the &ldquo;Effective Date&rdquo;). TaxRock and Partner may each be referred to as a &ldquo;Party&rdquo;
+      and together as the &ldquo;Parties&rdquo;. This Agreement governs Partner&rsquo;s access to and use of the
+      TaxRock API and the Taxpayer Data made available through it.</p>`});
   paginate(el('propSheet'), src, {docId:DOC('PP'), runHead:'TaxRock Pricing Proposal', runRight:nm});
   paginate(el('msaSheet'), m, {docId:DOC('MSA'), runHead:'Master Subscription Agreement', runRight:nm,
     draftmark:true,
@@ -1035,11 +1152,10 @@ document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
   el('msaSheet').hidden  = t!=='msa';
   el('matrixPane').hidden= t!=='matrix';
   el('partSheet').hidden = !(t==='partner' && partKind==='referral');
-  el('apiPane').hidden   = !(t==='partner' && partKind==='api');
+  el('apiSheet').hidden  = !(t==='partner' && partKind==='api');
   el('modeSeg').style.display = (t==='msa'||t==='partner') ? 'inline-flex' : 'none';
   el('partSeg').style.display = t==='partner' ? 'inline-flex' : 'none';
-  const noExport = t==='matrix' || (t==='partner' && partKind==='api');
-  el('exportBtn').style.display = noExport ? 'none' : 'inline-flex';
+  el('exportBtn').style.display = t==='matrix' ? 'none' : 'inline-flex';
   // the package is the customer's proposal + MSA; a partnership is a separate signing
   el('pkgBtn').style.display    = (t==='matrix'||t==='partner') ? 'none' : 'inline-flex';
 }));
@@ -1047,8 +1163,7 @@ document.querySelectorAll('#partSeg button').forEach(b=>b.addEventListener('clic
   document.querySelectorAll('#partSeg button').forEach(x=>x.classList.toggle('on',x===b));
   const k=b.dataset.part;
   el('partSheet').hidden = k!=='referral';
-  el('apiPane').hidden   = k!=='api';
-  el('exportBtn').style.display = k==='api' ? 'none' : 'inline-flex';
+  el('apiSheet').hidden  = k!=='api';
 }));
 document.querySelectorAll('#modeSeg button').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('#modeSeg button').forEach(x=>x.classList.toggle('on',x===b));
@@ -1063,7 +1178,9 @@ const PAGE_TITLE=document.title;
 let PKG=false, PKG_UNDO=null;
 function exportName(){
   const which=document.body.dataset.doc;
-  const kind = PKG ? 'TaxRock-Agreement' : which==='msa' ? 'MSA' : which==='partner' ? 'RPA' : 'PP';
+  const pk=(document.querySelector('#partSeg button.on')||{dataset:{}}).dataset.part||'referral';
+  const kind = PKG ? 'TaxRock-Agreement' : which==='msa' ? 'MSA'
+             : which==='partner' ? (pk==='api' ? 'IPA' : 'RPA') : 'PP';
   const raw  = (el('cName').value||'Customer')
                  .replace(/[‘’“”]/g,'')
                  .replace(/&/g,'and')
@@ -1089,14 +1206,14 @@ el('exportBtn').addEventListener('click',()=>{
 el('pkgBtn').addEventListener('click',()=>{
   if(PKG) return;
   const was={p:el('propSheet').hidden, m:el('msaSheet').hidden, x:el('matrixPane').hidden,
-             r:el('partSheet').hidden, a:el('apiPane').hidden};
+             r:el('partSheet').hidden, a:el('apiSheet').hidden};
   PKG=true; document.body.classList.add('pkg');
   el('propSheet').hidden=false; el('msaSheet').hidden=false; el('matrixPane').hidden=true;
   // a partnership is signed separately and never belongs in the customer package
-  el('partSheet').hidden=true; el('apiPane').hidden=true;
+  el('partSheet').hidden=true; el('apiSheet').hidden=true;
   PKG_UNDO=()=>{
     el('propSheet').hidden=was.p; el('msaSheet').hidden=was.m; el('matrixPane').hidden=was.x;
-    el('partSheet').hidden=was.r; el('apiPane').hidden=was.a;
+    el('partSheet').hidden=was.r; el('apiSheet').hidden=was.a;
     document.body.classList.remove('pkg'); PKG=false; PKG_UNDO=null; document.title=PAGE_TITLE;
   };
   document.title=exportName();
