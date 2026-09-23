@@ -111,6 +111,19 @@ textarea{min-height:54px;resize:vertical;}
 .modeseg button{border:none;background:transparent;font-family:'Inter Tight';font-weight:600;font-size:12.5px;color:#69748c;padding:7px 15px;border-radius:999px;cursor:pointer;}
 .modeseg button.on{background:#fff;color:var(--ink);box-shadow:0 2px 8px -3px rgba(12,30,80,.28);}
 
+/* Partnerships: which company the partner signs with. Styled apart from the grey
+   segment switches below it so the company choice reads as the first decision. */
+.brandseg{display:inline-flex;gap:4px;padding:3px;border-radius:999px;background:#fff;border:1.5px solid var(--line);}
+.brandseg button{display:inline-flex;align-items:center;gap:7px;border:none;background:transparent;font-family:'Inter Tight';
+  font-weight:600;font-size:12.5px;color:#69748c;padding:6px 14px;border-radius:999px;cursor:pointer;transition:.15s;}
+.brandseg button i{width:8px;height:8px;border-radius:50%;flex:none;}
+.brandseg button[data-brand="tr"] i{background:linear-gradient(135deg,#0881FF,#4F00C3);}
+.brandseg button[data-brand="rw"] i{background:linear-gradient(135deg,#2F9FD5,#0A5285);}
+.brandseg button:hover{color:var(--ink);}
+.brandseg button.on[data-brand="tr"]{background:#0A1A33;color:#fff;}
+.brandseg button.on[data-brand="rw"]{background:#1B77AC;color:#fff;}
+.brandseg button.on i{box-shadow:0 0 0 2px #fff;}
+
 /* ---------------- access gate ---------------- */
 .topbar{display:flex;align-items:center;gap:14px;background:#fff;border-bottom:1px solid var(--line);
   padding:0 24px;height:60px;position:sticky;top:0;z-index:40;}
@@ -431,9 +444,12 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
     <button class="tab" data-tab="partner">Partnerships</button>
     <button class="tab int" data-tab="matrix">Pricing matrix <span class="intbadge">Internal</span></button>
     <span class="tb-actions">
+      <span class="brandseg" id="brandSeg" style="display:none;">
+        <button data-brand="tr" class="on"><i></i>TaxRock</button>
+        <button data-brand="rw"><i></i>Rockwater Tax</button>
+      </span>
       <span class="modeseg" id="partSeg" style="display:none;">
-        <button data-part="referral" class="on">TaxRock Referral</button>
-        <button data-part="rwreferral">Rockwater Referral</button>
+        <button data-part="referral" class="on">Referral</button>
         <button data-part="api">API &amp; Integration</button>
       </span>
       <span class="modeseg" id="modeSeg" style="display:none;">
@@ -796,11 +812,12 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
     <div class="sigrow"><div class="ln" id="wA2"></div><div class="cap">Address</div></div>
   </div>
   <div>
-    <h4>Rockwater Tax</h4>
+    <h4>Rockwater Associates LLC dba Rockwater Tax</h4>
     <div class="sigrow"><div class="ln"><img class="execsig" id="wTSig" alt=""></div><div class="cap">Signature</div></div>
-    <div class="sigrow"><div class="ln" id="wRName"></div><div class="cap">Printed name</div></div>
-    <div class="sigrow"><div class="ln" id="wRTitle"></div><div class="cap">Title</div></div>
+    <div class="sigrow"><div class="ln" id="wTName"></div><div class="cap">Printed name</div></div>
+    <div class="sigrow"><div class="ln" id="wTTitle"></div><div class="cap">Title</div></div>
     <div class="sigrow"><div class="ln autodate" id="wTDate"></div><div class="cap">Date</div></div>
+    <div class="sigrow"><div class="ln" id="wTEmail"></div><div class="cap">Email</div></div>
     <div class="sigrow"><div class="ln">2011 Palomar Airport Rd, Ste 101</div></div>
     <div class="sigrow"><div class="ln">Carlsbad, CA 92011</div><div class="cap">Address</div></div>
   </div>
@@ -1001,13 +1018,9 @@ const LETTERHEAD=`<div class="hd"><img class="logo" src="${LOGO}">
 
 /* ---------- Rockwater Tax referral agreement (RWT-RPA-01) ----------
    Signed solely between Rockwater Tax and the partner; TaxRock is not a party.
-   RW_ENTITY: set to the full legal entity line once confirmed, e.g.
-   "Rockwater Tax, LLC, a California limited liability company". Until then the
-   preamble shows a highlighted placeholder so an unfinished agreement cannot go out
-   looking finished. RW_SIGNER signs for Rockwater Tax in every case, whoever is
-   named as the TaxRock signatory in the builder. */
-const RW_ENTITY='';
-const RW_SIGNER={name:'Ron Jost', title:'Chief Executive Officer'};
+   Filled exactly like the TaxRock agreements: the saved customer is the Partner,
+   and the signatory fields in the builder sign for Rockwater Tax. */
+const RW_ENTITY='<b>Rockwater Associates LLC</b>, a Delaware limited liability company doing business as Rockwater Tax';
 const RW_LOGO="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iNDM3Ljc5MSIgaGVpZ2h0PSIxMTUuODE1IiB2aWV3Qm94PSIyMi4xMDUgMTgzLjA5MiA0MzcuNzkxIDExNS44MTUiPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0icndnIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjUyLjQ4IiB5MT0iMjEzLjQwIiB4Mj0iMTA4LjU5IiB5Mj0iMjcxLjU0Ij48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMyRjlGRDUiLz48c3RvcCBvZmZzZXQ9IjAuNSIgc3RvcC1jb2xvcj0iIzFCNzdBQyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzBBNTI4NSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiNFMDdCMkEiIGZpbGwtb3BhY2l0eT0iMSIgZD0iTSA4Ny44NTE1NjIgMjMxLjk0NTMxMiBMIDEwNi4xNjQwNjIgMjMxLjk0NTMxMiBMIDEwNi4xNjQwNjIgMjEzLjYzMjgxMiBMIDg3Ljg1MTU2MiAyMTMuNjMyODEyIFogTSA4Ny44NTE1NjIgMjMxLjk0NTMxMiAiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBmaWxsPSJ1cmwoI3J3ZykiIGZpbGwtb3BhY2l0eT0iMSIgZD0iTSA3NC43MDcwMzEgMjY4LjA3MDMxMiBDIDkyLjI0MjE4OCAyNzEuNTM1MTU2IDEwOC41OTM3NSAyNTcuNTY2NDA2IDEwNy42NDQ1MzEgMjM5LjUzMTI1IEMgMTAxLjA0Njg3NSAyMzkuNTMxMjUgOTQuNDQ5MjE5IDIzOS41MzEyNSA4Ny44NTE1NjIgMjM5LjUzMTI1IEwgODcuODUxNTYyIDI0Ny43MTg3NSBDIDg3Ljg1MTU2MiAyNTIuNSA4OS40MDYyNSAyNTQuNDEwMTU2IDkzLjIzMDQ2OSAyNTQuNDEwMTU2IEwgOTMuMjMwNDY5IDI2MiBDIDg1LjE2NDA2MiAyNjIgODAuMDg1OTM4IDI1Ny4zMzk4NDQgODAuMDg1OTM4IDI0Ny43MTg3NSBMIDgwLjA4NTkzOCAyMzkuNDE0MDYyIEMgNzUuNzUzOTA2IDIzOS40MTQwNjIgNzQuNzA3MDMxIDI0Mi4xODc1IDc0LjcwNzAzMSAyNDYuMTA1NDY5IEMgNzQuNzA3MDMxIDI1My40MjU3ODEgNzQuNzA3MDMxIDI2MC43NSA3NC43MDcwMzEgMjY4LjA3MDMxMiAiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBmaWxsPSJ1cmwoI3J3ZykiIGZpbGwtb3BhY2l0eT0iMSIgZD0iTSA4MC4wODU5MzggMjMxLjgyNDIxOSBDIDgwLjA4NTkzOCAyMjUuNjgzNTk0IDgwLjA4NTkzOCAyMTkuNTM5MDYyIDgwLjA4NTkzOCAyMTMuMzk4NDM4IEMgNjQuODQzNzUgMjEzLjM5ODQzOCA1Mi40ODQzNzUgMjI1Ljc1MzkwNiA1Mi40ODQzNzUgMjQwLjk5NjA5NCBDIDUyLjQ4NDM3NSAyNTEuNDgwNDY5IDU4LjMzMjAzMSAyNjAuNTk3NjU2IDY2LjkzNzUgMjY1LjI2OTUzMSBDIDY2LjkzNzUgMjU4Ljg4MjgxMiA2Ni45Mzc1IDI1Mi40OTIxODggNjYuOTM3NSAyNDYuMTA1NDY5IEMgNjYuOTM3NSAyMzcuNDg0Mzc1IDcxLjEyODkwNiAyMzEuODI0MjE5IDgwLjA4NTkzOCAyMzEuODI0MjE5ICIvPgo8cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGZpbGw9IiMwRTFDMkEiIGZpbGwtb3BhY2l0eT0iMSIgZD0iTSAxMzguMTUyMzQ0IDI1OC4wNDI5NjkgTCAxMzAuOTUzMTI1IDI0NS42MjUgTCAxMjQuMzIwMzEyIDI0NS42MjUgTCAxMjQuMzIwMzEyIDI1OC4wNDI5NjkgTCAxMTguNzE4NzUgMjU4LjA0Mjk2OSBMIDExOC43MTg3NSAyMjMuOTUzMTI1IEwgMTMyLjM1NTQ2OSAyMjMuOTUzMTI1IEMgMTM1LjQwNjI1IDIyMy45NTMxMjUgMTM3Ljk5NjA5NCAyMjUuMDE1NjI1IDE0MC4xMjUgMjI3LjE0NDUzMSBDIDE0Mi4yNSAyMjkuMjY5NTMxIDE0My4zMTI1IDIzMS44NTkzNzUgMTQzLjMxMjUgMjM0LjkxMDE1NiBDIDE0My4zMTI1IDIzNy4wODU5MzggMTQyLjY4NzUgMjM5LjA3NDIxOSAxNDEuNDM3NSAyNDAuODc4OTA2IEMgMTQwLjE4NzUgMjQyLjY3OTY4OCAxMzguNTU4NTk0IDI0My45ODQzNzUgMTM2LjU0Mjk2OSAyNDQuNzk2ODc1IEwgMTQ0LjI4OTA2MiAyNTguMDQyOTY5IFogTSAxMjQuMzIwMzEyIDIyOS4yMTQ4NDQgTCAxMjQuMzIwMzEyIDI0MC42MDkzNzUgTCAxMzIuMzU1NDY5IDI0MC42MDkzNzUgQyAxMzMuODQ3NjU2IDI0MC42MDkzNzUgMTM1LjExNzE4OCAyNDAuMDU4NTk0IDEzNi4xNTYyNSAyMzguOTUzMTI1IEMgMTM3LjE5MTQwNiAyMzcuODUxNTYyIDEzNy43MTA5MzggMjM2LjUwMzkwNiAxMzcuNzEwOTM4IDIzNC45MTAxNTYgQyAxMzcuNzEwOTM4IDIzMy4zMjAzMTIgMTM3LjE5MTQwNiAyMzEuOTcyNjU2IDEzNi4xNTYyNSAyMzAuODcxMDk0IEMgMTM1LjExNzE4OCAyMjkuNzY1NjI1IDEzMy44NDc2NTYgMjI5LjIxNDg0NCAxMzIuMzU1NDY5IDIyOS4yMTQ4NDQgWiBNIDE1OC40NjA5MzggMjU4LjY3NTc4MSBDIDE1NC44ODY3MTkgMjU4LjY3NTc4MSAxNTEuODUxNTYyIDI1Ny40NDE0MDYgMTQ5LjM1MTU2MiAyNTQuOTc2NTYyIEMgMTQ2Ljg1MTU2MiAyNTIuNTA3ODEyIDE0NS42MDE1NjIgMjQ5LjQ3MjY1NiAxNDUuNjAxNTYyIDI0NS44NjcxODggQyAxNDUuNjAxNTYyIDI0Mi4yNjU2MjUgMTQ2Ljg1MTU2MiAyMzkuMjMwNDY5IDE0OS4zNTE1NjIgMjM2Ljc2MTcxOSBDIDE1MS44NTE1NjIgMjM0LjI5Mjk2OSAxNTQuODg2NzE5IDIzMy4wNjI1IDE1OC40NjA5MzggMjMzLjA2MjUgQyAxNjIuMDYyNSAyMzMuMDYyNSAxNjUuMTA1NDY5IDIzNC4yOTI5NjkgMTY3LjU4OTg0NCAyMzYuNzYxNzE5IEMgMTcwLjA3NDIxOSAyMzkuMjMwNDY5IDE3MS4zMTY0MDYgMjQyLjI2NTYyNSAxNzEuMzE2NDA2IDI0NS44NjcxODggQyAxNzEuMzE2NDA2IDI0OS40NzI2NTYgMTcwLjA3NDIxOSAyNTIuNTA3ODEyIDE2Ny41ODk4NDQgMjU0Ljk3NjU2MiBDIDE2NS4xMDU0NjkgMjU3LjQ0MTQwNiAxNjIuMDYyNSAyNTguNjc1NzgxIDE1OC40NjA5MzggMjU4LjY3NTc4MSBaIE0gMTUzLjA1NDY4OCAyNTEuMzcxMDk0IEMgMTU0LjUxNTYyNSAyNTIuODMyMDMxIDE1Ni4zMTY0MDYgMjUzLjU2MjUgMTU4LjQ2MDkzOCAyNTMuNTYyNSBDIDE2MC42MDE1NjIgMjUzLjU2MjUgMTYyLjQwMjM0NCAyNTIuODMyMDMxIDE2My44NjMyODEgMjUxLjM3MTA5NCBDIDE2NS4zMjQyMTkgMjQ5LjkxMDE1NiAxNjYuMDU0Njg4IDI0OC4wNzgxMjUgMTY2LjA1NDY4OCAyNDUuODY3MTg4IEMgMTY2LjA1NDY4OCAyNDMuNjYwMTU2IDE2NS4zMjQyMTkgMjQxLjgyODEyNSAxNjMuODYzMjgxIDI0MC4zNjcxODggQyAxNjIuNDAyMzQ0IDIzOC45MDYyNSAxNjAuNjAxNTYyIDIzOC4xNzU3ODEgMTU4LjQ2MDkzOCAyMzguMTc1NzgxIEMgMTU2LjMxNjQwNiAyMzguMTc1NzgxIDE1NC41MTU2MjUgMjM4LjkwNjI1IDE1My4wNTQ2ODggMjQwLjM2NzE4OCBDIDE1MS41OTM3NSAyNDEuODI4MTI1IDE1MC44NjMyODEgMjQzLjY2MDE1NiAxNTAuODYzMjgxIDI0NS44NjcxODggQyAxNTAuODYzMjgxIDI0OC4wNzgxMjUgMTUxLjU5Mzc1IDI0OS45MTAxNTYgMTUzLjA1NDY4OCAyNTEuMzcxMDk0IFogTSAxODcuNTgyMDMxIDI1OC42NzU3ODEgQyAxODMuOTE0MDYyIDI1OC42NzU3ODEgMTgwLjg1MTU2MiAyNTcuNDQxNDA2IDE3OC40MDIzNDQgMjU0Ljk3NjU2MiBDIDE3NS45NTMxMjUgMjUyLjUwNzgxMiAxNzQuNzI2NTYyIDI0OS40NzI2NTYgMTc0LjcyNjU2MiAyNDUuODY3MTg4IEMgMTc0LjcyNjU2MiAyNDIuMjM0Mzc1IDE3NS45NTMxMjUgMjM5LjE4NzUgMTc4LjQwMjM0NCAyMzYuNzM4MjgxIEMgMTgwLjg1MTU2MiAyMzQuMjg1MTU2IDE4My45MTQwNjIgMjMzLjA2MjUgMTg3LjU4MjAzMSAyMzMuMDYyNSBDIDE4OS45NTMxMjUgMjMzLjA2MjUgMTkyLjEwOTM3NSAyMzMuNjI4OTA2IDE5NC4wNTg1OTQgMjM0Ljc2NTYyNSBDIDE5Ni4wMDc4MTIgMjM1LjkwMjM0NCAxOTcuNDY4NzUgMjM3LjQyNTc4MSAxOTguNDQxNDA2IDIzOS4zNDM3NSBMIDE5My45MTQwNjIgMjQxLjk3MjY1NiBDIDE5My4zNjMyODEgMjQwLjgwNDY4OCAxOTIuNTI3MzQ0IDIzOS44ODY3MTkgMTkxLjQwNjI1IDIzOS4yMjI2NTYgQyAxOTAuMjg1MTU2IDIzOC41NTQ2ODggMTg4Ljk5NjA5NCAyMzguMjIyNjU2IDE4Ny41MzUxNTYgMjM4LjIyMjY1NiBDIDE4NS4zOTA2MjUgMjM4LjIyMjY1NiAxODMuNTk3NjU2IDIzOC45NTMxMjUgMTgyLjE1MjM0NCAyNDAuNDE0MDYyIEMgMTgwLjcwNzAzMSAyNDEuODc1IDE3OS45ODQzNzUgMjQzLjY5NTMxMiAxNzkuOTg0Mzc1IDI0NS44NjcxODggQyAxNzkuOTg0Mzc1IDI0OC4wNDI5NjkgMTgwLjcwNzAzMSAyNDkuODYzMjgxIDE4Mi4xNTIzNDQgMjUxLjMyNDIxOSBDIDE4My41OTc2NTYgMjUyLjc4NTE1NiAxODUuMzkwNjI1IDI1My41MTU2MjUgMTg3LjUzNTE1NiAyNTMuNTE1NjI1IEMgMTg4Ljk2MDkzOCAyNTMuNTE1NjI1IDE5MC4yNTM5MDYgMjUzLjE3MTg3NSAxOTEuNDA2MjUgMjUyLjQ5MjE4OCBDIDE5Mi41NTg1OTQgMjUxLjgxMjUgMTkzLjQyNTc4MSAyNTAuOTAyMzQ0IDE5NC4wMTE3MTkgMjQ5Ljc2NTYyNSBMIDE5OC41MzkwNjIgMjUyLjM0NzY1NiBDIDE5Ny41IDI1NC4yOTI5NjkgMTk2LjAwNzgxMiAyNTUuODM1OTM4IDE5NC4wNTg1OTQgMjU2Ljk3MjY1NiBDIDE5Mi4xMDkzNzUgMjU4LjEwOTM3NSAxODkuOTUzMTI1IDI1OC42NzU3ODEgMTg3LjU4MjAzMSAyNTguNjc1NzgxIFogTSAyMjMuODYzMjgxIDI1OC4wNDI5NjkgTCAyMTcuNTgyMDMxIDI1OC4wNDI5NjkgTCAyMDcuNTk3NjU2IDI0Ni44MDA3ODEgTCAyMDcuNTk3NjU2IDI1OC4wNDI5NjkgTCAyMDIuMzM5ODQ0IDI1OC4wNDI5NjkgTCAyMDIuMzM5ODQ0IDIyMy45NTMxMjUgTCAyMDcuNTk3NjU2IDIyMy45NTMxMjUgTCAyMDcuNTk3NjU2IDI0NC41MDM5MDYgTCAyMTcuMDQ2ODc1IDIzMy42OTUzMTIgTCAyMjMuNDcyNjU2IDIzMy42OTUzMTIgTCAyMTIuNzYxNzE5IDI0NS42MjUgWiBNIDI1NC45ODQzNzUgMjMzLjY5NTMxMiBMIDI2MC41MzUxNTYgMjMzLjY5NTMxMiBMIDI1Mi44OTA2MjUgMjU4LjA0Mjk2OSBMIDI0Ny43MjY1NjIgMjU4LjA0Mjk2OSBMIDI0Mi41NjY0MDYgMjQxLjQyMTg3NSBMIDIzNy40MDIzNDQgMjU4LjA0Mjk2OSBMIDIzMS44MjgxMjUgMjU4LjA0Mjk2OSBMIDIyNC43NDIxODggMjMzLjY5NTMxMiBMIDIzMC4zMDg1OTQgMjMzLjY5NTMxMiBMIDIzNS4wMTU2MjUgMjUwLjQ5NjA5NCBMIDI0MC4xMjg5MDYgMjMzLjY5NTMxMiBMIDI0NS4xNzE4NzUgMjMzLjY5NTMxMiBMIDI1MC4yMzQzNzUgMjUwLjQ4ODI4MSBaIE0gMjgyLjc0MjE4OCAyMzMuNjk1MzEyIEwgMjg4LjAwMzkwNiAyMzMuNjk1MzEyIEwgMjg4LjAwMzkwNiAyNTguMDQyOTY5IEwgMjgyLjc0MjE4OCAyNTguMDQyOTY5IEwgMjgyLjc0MjE4OCAyNTQuNTM5MDYyIEMgMjgwLjc2MTcxOSAyNTcuMjk2ODc1IDI3Ny45MjE4NzUgMjU4LjY3NTc4MSAyNzQuMjE4NzUgMjU4LjY3NTc4MSBDIDI3MC44NzUgMjU4LjY3NTc4MSAyNjguMDE5NTMxIDI1Ny40MzM1OTQgMjY1LjY0ODQzOCAyNTQuOTUzMTI1IEMgMjYzLjI3NzM0NCAyNTIuNDY4NzUgMjYyLjA5Mzc1IDI0OS40NDE0MDYgMjYyLjA5Mzc1IDI0NS44NjcxODggQyAyNjIuMDkzNzUgMjQyLjI2NTYyNSAyNjMuMjc3MzQ0IDIzOS4yMzA0NjkgMjY1LjY0ODQzOCAyMzYuNzYxNzE5IEMgMjY4LjAxOTUzMSAyMzQuMjkyOTY5IDI3MC44NzUgMjMzLjA2MjUgMjc0LjIxODc1IDIzMy4wNjI1IEMgMjc3LjkyMTg3NSAyMzMuMDYyNSAyODAuNzYxNzE5IDIzNC40MjU3ODEgMjgyLjc0MjE4OCAyMzcuMTUyMzQ0IFogTSAyNjkuNTQ2ODc1IDI1MS40NDUzMTIgQyAyNzEuMDA3ODEyIDI1Mi45MjE4NzUgMjcyLjgzOTg0NCAyNTMuNjYwMTU2IDI3NS4wNDY4NzUgMjUzLjY2MDE1NiBDIDI3Ny4yNTM5MDYgMjUzLjY2MDE1NiAyNzkuMDg5ODQ0IDI1Mi45MjE4NzUgMjgwLjU1MDc4MSAyNTEuNDQ1MzEyIEMgMjgyLjAxMTcxOSAyNDkuOTY4NzUgMjgyLjc0MjE4OCAyNDguMTA5Mzc1IDI4Mi43NDIxODggMjQ1Ljg2NzE4OCBDIDI4Mi43NDIxODggMjQzLjYyODkwNiAyODIuMDExNzE5IDI0MS43Njk1MzEgMjgwLjU1MDc4MSAyNDAuMjkyOTY5IEMgMjc5LjA4OTg0NCAyMzguODE2NDA2IDI3Ny4yNTM5MDYgMjM4LjA3ODEyNSAyNzUuMDQ2ODc1IDIzOC4wNzgxMjUgQyAyNzIuODM5ODQ0IDIzOC4wNzgxMjUgMjcxLjAwNzgxMiAyMzguODE2NDA2IDI2OS41NDY4NzUgMjQwLjI5Mjk2OSBDIDI2OC4wODU5MzggMjQxLjc2OTUzMSAyNjcuMzUxNTYyIDI0My42Mjg5MDYgMjY3LjM1MTU2MiAyNDUuODY3MTg4IEMgMjY3LjM1MTU2MiAyNDguMTA5Mzc1IDI2OC4wODU5MzggMjQ5Ljk2ODc1IDI2OS41NDY4NzUgMjUxLjQ0NTMxMiBaIE0gMzA3LjcyNjU2MiAyMzguNzU3ODEyIEwgMzAxLjY4NzUgMjM4Ljc1NzgxMiBMIDMwMS42ODc1IDI1MC40NDUzMTIgQyAzMDEuNjg3NSAyNTEuNDUzMTI1IDMwMS45MTQwNjIgMjUyLjE3NTc4MSAzMDIuMzY3MTg4IDI1Mi42MTMyODEgQyAzMDIuODI0MjE5IDI1My4wNTA3ODEgMzAzLjQ5NjA5NCAyNTMuMjk2ODc1IDMwNC4zOTA2MjUgMjUzLjM0Mzc1IEMgMzA1LjI4MTI1IDI1My4zOTQ1MzEgMzA2LjM5NDUzMSAyNTMuMzg2NzE5IDMwNy43MjY1NjIgMjUzLjMyMDMxMiBMIDMwNy43MjY1NjIgMjU4LjA0Mjk2OSBDIDMwMy42OTkyMTkgMjU4LjUzMTI1IDMwMC44MTI1IDI1OC4xODM1OTQgMjk5LjA1ODU5NCAyNTYuOTk2MDk0IEMgMjk3LjMwNDY4OCAyNTUuODEyNSAyOTYuNDI1NzgxIDI1My42Mjg5MDYgMjk2LjQyNTc4MSAyNTAuNDQ1MzEyIEwgMjk2LjQyNTc4MSAyMzguNzU3ODEyIEwgMjkxLjk0NTMxMiAyMzguNzU3ODEyIEwgMjkxLjk0NTMxMiAyMzMuNjk1MzEyIEwgMjk2LjQyNTc4MSAyMzMuNjk1MzEyIEwgMjk2LjQyNTc4MSAyMjguNDMzNTk0IEwgMzAxLjY4NzUgMjI2Ljg3NSBMIDMwMS42ODc1IDIzMy42OTUzMTIgTCAzMDcuNzI2NTYyIDIzMy42OTUzMTIgWiBNIDMxNS42NjQwNjIgMjQ4LjEwOTM3NSBDIDMxNi4wNTQ2ODggMjQ5Ljk2MDkzOCAzMTYuOTQ1MzEyIDI1MS4zNzg5MDYgMzE4LjM0Mzc1IDI1Mi4zNzEwOTQgQyAzMTkuNzM4MjgxIDI1My4zNTkzNzUgMzIxLjQ0NTMxMiAyNTMuODU1NDY5IDMyMy40NTcwMzEgMjUzLjg1NTQ2OSBDIDMyNi4yNSAyNTMuODU1NDY5IDMyOC4zNDM3NSAyNTIuODQ3NjU2IDMyOS43MzgyODEgMjUwLjgzNTkzOCBMIDMzNC4wNzQyMTkgMjUzLjM2NzE4OCBDIDMzMS42NzE4NzUgMjU2LjkwNjI1IDMyOC4xMTcxODggMjU4LjY3NTc4MSAzMjMuNDA2MjUgMjU4LjY3NTc4MSBDIDMxOS40NDUzMTIgMjU4LjY3NTc4MSAzMTYuMjUgMjU3LjQ2ODc1IDMxMy44MTI1IDI1NS4wNTA3ODEgQyAzMTEuMzc4OTA2IDI1Mi42Mjg5MDYgMzEwLjE2MDE1NiAyNDkuNTcwMzEyIDMxMC4xNjAxNTYgMjQ1Ljg2NzE4OCBDIDMxMC4xNjAxNTYgMjQyLjIzNDM3NSAzMTEuMzYzMjgxIDIzOS4xODc1IDMxMy43NjU2MjUgMjM2LjczODI4MSBDIDMxNi4xNjc5NjkgMjM0LjI4NTE1NiAzMTkuMjUgMjMzLjA2MjUgMzIzLjAxOTUzMSAyMzMuMDYyNSBDIDMyNi41ODk4NDQgMjMzLjA2MjUgMzI5LjUxOTUzMSAyMzQuMzEyNSAzMzEuODA4NTk0IDIzNi44MTI1IEMgMzM0LjA5NzY1NiAyMzkuMzA4NTk0IDMzNS4yNDIxODggMjQyLjM0NzY1NiAzMzUuMjQyMTg4IDI0NS45MTc5NjkgQyAzMzUuMjQyMTg4IDI0Ni40Njg3NSAzMzUuMTc1NzgxIDI0Ny4xOTkyMTkgMzM1LjA0Njg3NSAyNDguMTA5Mzc1IFogTSAzMTUuNjE3MTg4IDI0My44MjQyMTkgTCAzMjkuOTMzNTk0IDI0My44MjQyMTkgQyAzMjkuNTc4MTI1IDI0MS44NDM3NSAzMjguNzU3ODEyIDI0MC4zNDc2NTYgMzI3LjQ3MjY1NiAyMzkuMzQzNzUgQyAzMjYuMTkxNDA2IDIzOC4zMzU5MzggMzI0LjY5MTQwNiAyMzcuODMyMDMxIDMyMi45Njg3NSAyMzcuODMyMDMxIEMgMzIxLjAyMzQzOCAyMzcuODMyMDMxIDMxOS4zOTg0MzggMjM4LjM3MTA5NCAzMTguMDk3NjU2IDIzOS40NDE0MDYgQyAzMTYuODAwNzgxIDI0MC41MTE3MTkgMzE1Ljk3MjY1NiAyNDEuOTcyNjU2IDMxNS42MTcxODggMjQzLjgyNDIxOSBaIE0gMzQ1LjEyODkwNiAyMzcuNzg1MTU2IEMgMzQ2LjQ2MDkzOCAyMzQuNzY1NjI1IDM0OC45NjA5MzggMjMzLjI1MzkwNiAzNTIuNjI4OTA2IDIzMy4yNTM5MDYgTCAzNTIuNjI4OTA2IDIzOC45NTMxMjUgQyAzNTAuNjEzMjgxIDIzOC44MjQyMTkgMzQ4Ljg2MzI4MSAyMzkuMzAwNzgxIDM0Ny4zNjcxODggMjQwLjM5MDYyNSBDIDM0NS44NzUgMjQxLjQ3NjU2MiAzNDUuMTI4OTA2IDI0My4yNzM0MzggMzQ1LjEyODkwNiAyNDUuNzczNDM4IEwgMzQ1LjEyODkwNiAyNTguMDQyOTY5IEwgMzM5Ljg2NzE4OCAyNTguMDQyOTY5IEwgMzM5Ljg2NzE4OCAyMzMuNjk1MzEyIEwgMzQ1LjEyODkwNiAyMzMuNjk1MzEyIFogTSAzNDUuMTI4OTA2IDIzNy43ODUxNTYgIi8+CjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZmlsbD0iIzBFMUMyQSIgZmlsbC1vcGFjaXR5PSIxIiBkPSJNIDM3Ny44NDM3NSAyMjMuOTUzMTI1IEwgMzc3Ljg0Mzc1IDIyNi4zODY3MTkgTCAzNjcuMTI4OTA2IDIyNi4zODY3MTkgTCAzNjcuMTI4OTA2IDI1OC4wNDI5NjkgTCAzNjQuNSAyNTguMDQyOTY5IEwgMzY0LjUgMjI2LjM4NjcxOSBMIDM1My43ODUxNTYgMjI2LjM4NjcxOSBMIDM1My43ODUxNTYgMjIzLjk1MzEyNSBaIE0gMzk5Ljc1NzgxMiAyMzMuNjk1MzEyIEwgNDAyLjI0MjE4OCAyMzMuNjk1MzEyIEwgNDAyLjI0MjE4OCAyNTguMDQyOTY5IEwgMzk5Ljc1NzgxMiAyNTguMDQyOTY5IEwgMzk5Ljc1NzgxMiAyNTIuNTM5MDYyIEMgMzk4LjcxODc1IDI1NC40MjE4NzUgMzk3LjI5Mjk2OSAyNTUuOTAyMzQ0IDM5NS40NzI2NTYgMjU2Ljk3MjY1NiBDIDM5My42NTYyNSAyNTguMDQyOTY5IDM5MS41OTM3NSAyNTguNTc4MTI1IDM4OS4yODkwNjIgMjU4LjU3ODEyNSBDIDM4NS44MTY0MDYgMjU4LjU3ODEyNSAzODIuODQzNzUgMjU3LjM1NTQ2OSAzODAuMzc1IDI1NC45MDIzNDQgQyAzNzcuOTEwMTU2IDI1Mi40NTMxMjUgMzc2LjY3NTc4MSAyNDkuNDQxNDA2IDM3Ni42NzU3ODEgMjQ1Ljg2NzE4OCBDIDM3Ni42NzU3ODEgMjQyLjI5Njg3NSAzNzcuOTEwMTU2IDIzOS4yODUxNTYgMzgwLjM3NSAyMzYuODM1OTM4IEMgMzgyLjg0Mzc1IDIzNC4zODI4MTIgMzg1LjgxNjQwNiAyMzMuMTYwMTU2IDM4OS4yODkwNjIgMjMzLjE2MDE1NiBDIDM5MS41OTM3NSAyMzMuMTYwMTU2IDM5My42NTYyNSAyMzMuNjk1MzEyIDM5NS40NzI2NTYgMjM0Ljc2NTYyNSBDIDM5Ny4yOTI5NjkgMjM1LjgzNTkzOCAzOTguNzE4NzUgMjM3LjMxMjUgMzk5Ljc1NzgxMiAyMzkuMTk1MzEyIFogTSAzODIuMTUyMzQ0IDI1My4yMjI2NTYgQyAzODQuMTUyMzQ0IDI1NS4yMzQzNzUgMzg2LjU5Mzc1IDI1Ni4yNDIxODggMzg5LjQ4NDM3NSAyNTYuMjQyMTg4IEMgMzkyLjM3MTA5NCAyNTYuMjQyMTg4IDM5NC44MDg1OTQgMjU1LjIzNDM3NSAzOTYuNzg5MDYyIDI1My4yMjI2NTYgQyAzOTguNzY5NTMxIDI1MS4yMTA5MzggMzk5Ljc1NzgxMiAyNDguNzU3ODEyIDM5OS43NTc4MTIgMjQ1Ljg2NzE4OCBDIDM5OS43NTc4MTIgMjQyLjk4MDQ2OSAzOTguNzY5NTMxIDI0MC41MjczNDQgMzk2Ljc4OTA2MiAyMzguNTE1NjI1IEMgMzk0LjgwODU5NCAyMzYuNTAzOTA2IDM5Mi4zNzEwOTQgMjM1LjQ5NjA5NCAzODkuNDg0Mzc1IDIzNS40OTYwOTQgQyAzODYuNTkzNzUgMjM1LjQ5NjA5NCAzODQuMTUyMzQ0IDIzNi41MDM5MDYgMzgyLjE1MjM0NCAyMzguNTE1NjI1IEMgMzgwLjE1NjI1IDI0MC41MjczNDQgMzc5LjE2MDE1NiAyNDIuOTgwNDY5IDM3OS4xNjAxNTYgMjQ1Ljg2NzE4OCBDIDM3OS4xNjAxNTYgMjQ4Ljc1NzgxMiAzODAuMTU2MjUgMjUxLjIxMDkzOCAzODIuMTUyMzQ0IDI1My4yMjI2NTYgWiBNIDQyOS41MTU2MjUgMjU4LjA0Mjk2OSBMIDQyNi41NDI5NjkgMjU4LjA0Mjk2OSBMIDQxOC4zMTI1IDI0Ny40MjU3ODEgTCA0MTAuMDgyMDMxIDI1OC4wNDI5NjkgTCA0MDcuMTEzMjgxIDI1OC4wNDI5NjkgTCA0MTYuODUxNTYyIDI0NS41MjczNDQgTCA0MDcuNjk1MzEyIDIzMy42OTUzMTIgTCA0MTAuNjY3OTY5IDIzMy42OTUzMTIgTCA0MTguMzEyNSAyNDMuNTc4MTI1IEwgNDI2LjAwNzgxMiAyMzMuNjk1MzEyIEwgNDI4LjkyOTY4OCAyMzMuNjk1MzEyIEwgNDE5LjgyNDIxOSAyNDUuNDgwNDY5IFogTSA0MjkuNTE1NjI1IDI1OC4wNDI5NjkgIi8+Cjwvc3ZnPgo=";
 const RW_LETTERHEAD=`<div class="hd"><img class="logo" src="${RW_LOGO}" alt="Rockwater Tax">
   <div class="co"><b>Rockwater Tax</b><br>2011 Palomar Airport Rd, Ste 101<br>Carlsbad, CA 92011</div>
@@ -1245,9 +1258,7 @@ function render(){
   // Rockwater Tax Referral Partner Agreement. Same record; the saved customer is the Partner.
   const rw=el('srcRwa');
   fillSig(rw,'w');
-  rw.querySelector('#wRName').textContent=RW_SIGNER.name;
-  rw.querySelector('#wRTitle').textContent=RW_SIGNER.title;
-  const wsig=rw.querySelector('#wTSig'); if(wsig&&RON_SIG&&RW_SIGNER.name==='Ron Jost') wsig.src=RON_SIG;
+  const wsig=rw.querySelector('#wTSig'); if(wsig&&RON_SIG) wsig.src=RON_SIG;
   stampDates(src); stampDates(m); stampDates(rp); stampDates(ip); stampDates(rw);
 
   const vv=V();
@@ -1266,15 +1277,12 @@ function render(){
       <b>${nm||'&nbsp;'}</b> (&ldquo;Partner&rdquo;), effective as of the date of Partner&rsquo;s signature
       (the &ldquo;Effective Date&rdquo;). Each is a &ldquo;Party&rdquo;. This Agreement governs Partner&rsquo;s
       referral of prospective customers to TaxRock and the recurring revenue share payable for those referrals.</p>`});
-  const rwEntity = RW_ENTITY
-    ? RW_ENTITY
-    : '<span class="fill">[Rockwater Tax legal entity name]</span>, a <span class="fill">[state] [entity type]</span>';
   paginate(el('rwSheet'), rw, {docId:'RWT-RPA-01', runHead:'Referral Partner Agreement', runRight:nm,
     draftmark:true, letterhead:RW_LETTERHEAD,
     title:`<div class="kicker">Referral Partner Agreement</div>
       <h1 class="t">Client Referral &amp; Revenue Share Terms</h1>
       <p class="pre">This Referral Partner Agreement (the &ldquo;Agreement&rdquo;) is entered into by and between
-      <b>${rwEntity}</b> (&ldquo;Rockwater Tax&rdquo;), and
+      ${RW_ENTITY} (&ldquo;Rockwater Tax&rdquo;), and
       <b>${nm||'&nbsp;'}</b> (&ldquo;Partner&rdquo;), effective as of the date of Partner&rsquo;s signature
       (the &ldquo;Effective Date&rdquo;). Each is a &ldquo;Party&rdquo;. This Agreement governs Partner&rsquo;s
       referral of prospective clients to Rockwater Tax and the revenue share payable for those referrals.</p>`});
@@ -1299,33 +1307,41 @@ function render(){
 }
 
 
-document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
-  const t=b.dataset.tab;
-  document.body.dataset.doc=t;
-  const partKind = (document.querySelector('#partSeg button.on')||{dataset:{}}).dataset.part||'referral';
+/* What the Partnerships tab shows: TaxRock (Referral or API) or Rockwater Tax
+   (its one referral agreement). */
+const partBrand=()=>(document.querySelector('#brandSeg button.on')||{dataset:{}}).dataset.brand||'tr';
+const partKind=()=>partBrand()==='rw' ? 'rwreferral'
+  : ((document.querySelector('#partSeg button.on')||{dataset:{}}).dataset.part||'referral');
+function showStage(){
+  const t=document.body.dataset.doc||'proposal';
+  const k=partKind(), onP=t==='partner';
   el('propSheet').hidden = t!=='proposal';
   el('msaSheet').hidden  = t!=='msa';
   el('matrixPane').hidden= t!=='matrix';
-  el('partSheet').hidden = !(t==='partner' && partKind==='referral');
-  el('rwSheet').hidden   = !(t==='partner' && partKind==='rwreferral');
-  const apiOn = t==='partner' && partKind==='api';
+  el('partSheet').hidden = !(onP && k==='referral');
+  el('rwSheet').hidden   = !(onP && k==='rwreferral');
+  const apiOn = onP && k==='api';
   el('apiSheet').hidden  = !(apiOn && IPA_ENABLED);
   el('apiPane').hidden   = !(apiOn && !IPA_ENABLED);
-  el('modeSeg').style.display = (t==='msa'||t==='partner') ? 'inline-flex' : 'none';
-  el('partSeg').style.display = t==='partner' ? 'inline-flex' : 'none';
+  el('modeSeg').style.display  = (t==='msa'||onP) ? 'inline-flex' : 'none';
+  el('brandSeg').style.display = onP ? 'inline-flex' : 'none';
+  el('partSeg').style.display  = (onP && partBrand()==='tr') ? 'inline-flex' : 'none';
   el('exportBtn').style.display = (t==='matrix' || (apiOn && !IPA_ENABLED)) ? 'none' : 'inline-flex';
   // the package is the customer's proposal + MSA; a partnership is a separate signing
-  el('pkgBtn').style.display    = (t==='matrix'||t==='partner') ? 'none' : 'inline-flex';
+  el('pkgBtn').style.display    = (t==='matrix'||onP) ? 'none' : 'inline-flex';
+}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
+  document.body.dataset.doc=b.dataset.tab;
+  showStage();
+}));
+document.querySelectorAll('#brandSeg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#brandSeg button').forEach(x=>x.classList.toggle('on',x===b));
+  showStage();
 }));
 document.querySelectorAll('#partSeg button').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('#partSeg button').forEach(x=>x.classList.toggle('on',x===b));
-  const k=b.dataset.part;
-  el('partSheet').hidden = k!=='referral';
-  el('rwSheet').hidden   = k!=='rwreferral';
-  el('apiSheet').hidden  = !(k==='api' && IPA_ENABLED);
-  el('apiPane').hidden   = !(k==='api' && !IPA_ENABLED);
-  el('exportBtn').style.display = (k==='api' && !IPA_ENABLED) ? 'none' : 'inline-flex';
+  showStage();
 }));
 document.querySelectorAll('#modeSeg button').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('#modeSeg button').forEach(x=>x.classList.toggle('on',x===b));
@@ -1340,7 +1356,7 @@ const PAGE_TITLE=document.title;
 let PKG=false, PKG_UNDO=null;
 function exportName(){
   const which=document.body.dataset.doc;
-  const pk=(document.querySelector('#partSeg button.on')||{dataset:{}}).dataset.part||'referral';
+  const pk=partKind();
   const kind = PKG ? 'TaxRock-Agreement' : which==='msa' ? 'MSA'
              : which==='partner' ? (pk==='api' ? 'IPA' : pk==='rwreferral' ? 'RWT-RPA' : 'RPA') : 'PP';
   const raw  = (el('cName').value||'Customer')
