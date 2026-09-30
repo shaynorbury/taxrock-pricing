@@ -1020,7 +1020,7 @@ const planFor=c=>{for(const[cap,mo]of BANDS_FOR())if(c<=cap)return{cap,mo};retur
    bands above one for one: TR-TP-<cap> for Tax Pro, TR-FL-<cap> for Factor and Lender,
    TR-ENT past the top band. If a band changes here, change the matching HubSpot
    product (Commerce > Products) the same day, or the quote and the PDF will disagree. */
-const hsSkuFor=cap=>cap==null?'TR-ENT':(V().code==='TP'?'TR-TP-':'TR-FL-')+String(cap).padStart(4,'0');
+const hsSkuFor=cap=>cap==null?'TR-ENT':({TP:'TR-TP-',FA:'TR-FL-',LN:'TR-LN-'}[V().code]||'TR-FL-')+String(cap).padStart(4,'0');
 
 const LETTERHEAD=`<div class="hd"><img class="logo" src="${LOGO}">
   <div class="co"><b>TaxRock LLC</b><br>5901 Priestly Dr #100, Carlsbad, CA 92008<br>support@taxrock.com</div>
