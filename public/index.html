@@ -256,6 +256,10 @@ ol.tl b{font-family:'Inter Tight';color:var(--navy);}
 .note{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--gold);padding:12px 16px;font-size:12px;margin-top:14px;}
 .note b{font-family:'Inter Tight';color:var(--navy);}
 
+/* Term variants. Month-to-month and 12-month language both live in the document
+   sources; body[data-term] shows one and hides the other before pagination. */
+body:not([data-term="12"]) .t-12{display:none!important;}
+body[data-term="12"] .t-mtm{display:none!important;}
 /* MSA clause type */
 p.cl{font-size:11.6px;line-height:1.55;margin:0 0 6px;color:var(--body);}
 p.cl b{font-family:'Inter Tight';color:var(--ink);font-weight:600;}
@@ -409,6 +413,12 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
 
   <div class="fs">
     <div class="fs-t">Pricing</div>
+    <label>Term</label>
+    <select id="term">
+      <option value="mtm" selected>Month to month</option>
+      <option value="12">12 months</option>
+    </select>
+    <div class="hint">12 months adds the term commitment and price lock to both documents. Set the 12-month price with the fee override below.</div>
     <label>Monthly fee override</label><input id="override" type="number" min="0" placeholder="Standard price applies">
     <label>Override reason (internal)</label><input id="ovrWhy" placeholder="Not shown on the documents">
     <div class="warn" id="warnBox"></div>
@@ -522,7 +532,8 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
   <div><div class="lab">Date prepared</div><div class="v" id="oPrep"></div></div>
   <div><div class="lab">Valid through</div><div class="v" id="oValid"></div></div>
   <div><div class="lab" id="oCountLab">Practice size</div><div class="v" id="oCount"></div></div>
-  <div><div class="lab">Billing starts</div><div class="v" id="oBill"></div></div>
+  <div class="t-mtm"><div class="lab">Billing starts</div><div class="v" id="oBill"></div></div>
+  <div class="t-12"><div class="lab">Term</div><div class="v">12 months, from execution</div></div>
 </div>
 
 <h2 class="sec">Subscription fee</h2>
@@ -539,9 +550,10 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
 
 <h2 class="sec">Key terms</h2>
 <ol class="tl">
-  <li><b>Billing.</b> The Subscription Fee is charged on execution of the MSA and monthly thereafter on the same day, to the payment method on file. Fees are exclusive of applicable taxes. All amounts are in USD.</li>
-  <li><b>Term.</b> Month to month. No minimum term and no renewal date. Either party may cancel on thirty (30) days&rsquo; written notice. TaxRock may update the Subscription Fee on thirty (30) days&rsquo; written notice, and Customer may cancel without penalty before the change takes effect.</li>
-  <li><b>Included capacity.</b> The Subscription Fee includes up to the number of Active Client Relationships stated above, which Customer may provision at any time. If needs grow beyond that capacity, TaxRock and Customer will establish revised capacity and pricing through an updated Pricing Proposal, and the additional capacity becomes available on execution.</li>
+  <li><b>Billing.</b> The Subscription Fee is charged on execution of the MSA and monthly thereafter on the same day<span class="t-12"> throughout the term</span>, to the payment method on file. Fees are exclusive of applicable taxes. All amounts are in USD.</li>
+  <li class="t-mtm"><b>Term.</b> Month to month. No minimum term and no renewal date. Either party may cancel on thirty (30) days&rsquo; written notice. TaxRock may update the Subscription Fee on thirty (30) days&rsquo; written notice, and Customer may cancel without penalty before the change takes effect.</li>
+  <li class="t-12"><b>Term.</b> Twelve (12) months from the Effective Date. The Subscription Fee is fixed for the term, and Customer commits to all twelve (12) monthly payments. The subscription then renews for successive twelve (12)-month terms unless either party gives thirty (30) days&rsquo; written notice before the current term ends. TaxRock may update the Subscription Fee for a renewal term on thirty (30) days&rsquo; written notice before it begins.</li>
+  <li><b>Included capacity.</b> The Subscription Fee includes up to the number of Active Client Relationships stated above, which Customer may provision at any time. If needs grow beyond that capacity, TaxRock and Customer will establish revised capacity and pricing through an updated Pricing Proposal, and the additional capacity becomes available on execution.<span class="t-12"> The revised Subscription Fee applies for the remainder of the term, and the term&rsquo;s end date does not change.</span></li>
   <li><b>Guided Implementation.</b> The subscription includes a 60-day Guided Implementation beginning on the Effective Date. TaxRock will work with Customer to configure its account, begin client provisioning, and train its team on use of the platform. Customer may continue provisioning clients within its included capacity after the Guided Implementation. <span id="oImplTerm"></span></li>
   <li><b>Precedence.</b> In the event of a conflict, this Pricing Proposal controls with respect to the Subscription Fee, included capacity, and other expressly stated commercial terms. The MSA controls in all other respects. The terms of this Pricing Proposal are confidential.</li>
 </ol>
@@ -576,14 +588,15 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
 <h2 class="sec">3. Term and Termination</h2>
 <p class="cl"><b>3.1 Effective Date:</b> This Agreement becomes effective on the date of Customer&rsquo;s signature.</p>
 <p class="cl"><b>3.2 Subscription Commencement:</b> Customer&rsquo;s subscription begins on the Effective Date. The first Subscription Fee is charged on the Effective Date and recurs on the same day of each month thereafter (the &ldquo;Billing Date&rdquo;), in accordance with Section 6. If a month does not contain the corresponding day, the Billing Date is the last day of that month.</p>
-<p class="cl"><b>3.3 Subscription Term:</b> The subscription is month to month. There is no minimum term and no renewal date; it continues until cancelled. Either Party may cancel on at least thirty (30) days&rsquo; written notice, and the subscription ends at the close of the notice period. Customer authorizes TaxRock to charge the payment method on file through the end of the notice period. Customer may submit cancellation notice to support@taxrock.com.</p>
+<p class="cl t-12"><b>3.3 Subscription Term:</b> The subscription has an initial term of twelve (12) months beginning on the Effective Date (the &ldquo;Initial Term&rdquo;). At the end of the Initial Term, the subscription renews automatically for successive twelve (12)-month terms (each a &ldquo;Renewal Term&rdquo;) unless either Party gives written notice of non-renewal at least thirty (30) days before the end of the then-current term, in which case the subscription ends at the close of that term. Customer commits to pay the Subscription Fee for every month of the Initial Term and of any Renewal Term. If Customer ends the subscription before the close of the then-current term, other than under Section 3.4 for TaxRock&rsquo;s uncured material breach, the Subscription Fees for the remainder of that term become due on the Effective Termination Date. Customer authorizes TaxRock to charge the payment method on file for all amounts due under this Section. Customer may submit notice to support@taxrock.com.</p>
+<p class="cl t-mtm"><b>3.3 Subscription Term:</b> The subscription is month to month. There is no minimum term and no renewal date; it continues until cancelled. Either Party may cancel on at least thirty (30) days&rsquo; written notice, and the subscription ends at the close of the notice period. Customer authorizes TaxRock to charge the payment method on file through the end of the notice period. Customer may submit cancellation notice to support@taxrock.com.</p>
 <p class="cl"><b>3.4 Termination for Cause:</b> Either Party may terminate this Agreement for material breach by written notice describing the breach. Termination takes effect at the end of the thirty (30) day cure period if the breach remains uncured. The date on which cancellation under Section 3.3 or termination under this Section takes effect is the &ldquo;Effective Termination Date&rdquo;.</p>
 <p class="cl"><b>3.5 Effect of Termination:</b> Upon cancellation or termination:</p>
 <p class="bl"><b>a)</b> Customer&rsquo;s access to the Services ends on the Effective Termination Date.</p>
 <p class="bl"><b>b)</b> TaxRock stops all transcript retrieval, monitoring, notifications, and related automated processing for Customer and its Monitored Clients and Monitored Taxpayers on the Effective Termination Date.</p>
 <p class="bl"><b>c)</b> TaxRock does not provide data exports upon cancellation. IRS transcripts and related information can be obtained directly from the IRS at any time by Customer or its clients.</p>
-<p class="bl"><b>d)</b> All unpaid fees accrued through the Effective Termination Date become immediately due and payable.</p>
-<p class="cl"><b>3.6 Survival:</b> Sections 2 (Definitions), 6 (Fees &amp; Payment) with respect to amounts accrued through the Effective Termination Date, 7 (Confidentiality), 8 (Limitation of Liability), and 9 (General Provisions) survive cancellation or termination of this Agreement.</p>
+<p class="bl"><b>d)</b> All unpaid fees accrued through the Effective Termination Date<span class="t-12">, and any amounts due under Section 3.3,</span> become immediately due and payable.</p>
+<p class="cl"><b>3.6 Survival:</b> Sections 2 (Definitions), <span class="t-12">3.3 with respect to amounts due under it, </span>6 (Fees &amp; Payment) with respect to amounts accrued through the Effective Termination Date, 7 (Confidentiality), 8 (Limitation of Liability), and 9 (General Provisions) survive cancellation or termination of this Agreement.</p>
 
 <h2 class="sec">4. Services &amp; Access</h2>
 <p class="cl"><b>4.1 Services:</b> &ldquo;Services&rdquo; means access to the TaxRock platform made available to Customer under this Agreement and the TOS. Customer acknowledges that the Services may evolve over time and that TaxRock may modify or update the platform without prior notice, provided such changes do not materially degrade overall functionality. TaxRock does not warrant or guarantee the availability of any particular feature, workflow, or functionality.</p>
@@ -609,11 +622,13 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
 <h2 class="sec">6. Fees &amp; Payment</h2>
 <p class="cl"><b>6.1 Fees:</b> The subscription fee for the Services is a flat monthly fee stated in the Pricing Proposal (the &ldquo;Subscription Fee&rdquo;). Pricing is scoped individually to each Customer based on the requirements of its business.</p>
 <p class="cl"><b>6.2 Measurement:</b> TaxRock&rsquo;s system records are the authoritative source for the number of Active Client Relationships provisioned in Customer&rsquo;s account. TaxRock does not audit Customer&rsquo;s records, client list, or business.</p>
-<p class="cl"><b>6.3 Included Capacity and Pricing Adjustments:</b> The Subscription Fee includes up to the number of Active Client Relationships specified in the applicable Pricing Proposal, which Customer may provision at any time. The Subscription Fee is based on that included capacity and does not vary based on the number of Active Client Relationships provisioned at any particular time, whether Customer provisions its capacity gradually or all at once. If Customer&rsquo;s needs grow beyond that capacity, TaxRock and Customer will establish revised capacity and pricing through an updated Pricing Proposal, and the additional capacity becomes available for provisioning upon Customer&rsquo;s written acceptance of it. Any revised Subscription Fee will take effect beginning with the first billing cycle following that acceptance and will not decrease based on reductions in Customer&rsquo;s actual usage. This Section governs changes arising from Customer requiring capacity beyond the amount included in its Pricing Proposal; Section 6.7 governs changes initiated by TaxRock to the Subscription Fee for Customer&rsquo;s existing capacity.</p>
-<p class="cl"><b>6.4 Pricing Structure:</b> There are no platform fees, seat-based fees, or minimum commitments unless otherwise agreed in writing.</p>
+<p class="cl"><b>6.3 Included Capacity and Pricing Adjustments:</b> The Subscription Fee includes up to the number of Active Client Relationships specified in the applicable Pricing Proposal, which Customer may provision at any time. The Subscription Fee is based on that included capacity and does not vary based on the number of Active Client Relationships provisioned at any particular time, whether Customer provisions its capacity gradually or all at once. If Customer&rsquo;s needs grow beyond that capacity, TaxRock and Customer will establish revised capacity and pricing through an updated Pricing Proposal, and the additional capacity becomes available for provisioning upon Customer&rsquo;s written acceptance of it. Any revised Subscription Fee will take effect beginning with the first billing cycle following that acceptance and will not decrease based on reductions in Customer&rsquo;s actual usage. <span class="t-12">If Customer&rsquo;s capacity increases during a term, the revised Subscription Fee applies for the remainder of that term, and the term&rsquo;s end date does not change. </span>This Section governs changes arising from Customer requiring capacity beyond the amount included in its Pricing Proposal; Section 6.7 governs changes initiated by TaxRock to the Subscription Fee for Customer&rsquo;s existing capacity.</p>
+<p class="cl t-mtm"><b>6.4 Pricing Structure:</b> There are no platform fees, seat-based fees, or minimum commitments unless otherwise agreed in writing.</p>
+<p class="cl t-12"><b>6.4 Pricing Structure:</b> There are no platform fees or seat-based fees. Customer&rsquo;s term commitment is set out in Section 3.3.</p>
 <p class="cl"><b>6.5 Billing &amp; Payment:</b> Subscription Fees are invoiced and charged monthly in advance on Customer&rsquo;s Billing Date and are due upon receipt. Customer will maintain a valid payment method on file and authorizes TaxRock to charge that method for all undisputed amounts on each Billing Date. Fees are exclusive of sales, use, VAT, GST, and similar taxes, which are Customer&rsquo;s responsibility where applicable. All amounts are in USD.</p>
 <p class="cl"><b>6.6 Suspension for Non-Payment:</b> If payment fails, TaxRock may suspend access to the Services until all outstanding amounts are paid in full. Suspension does not relieve Customer of its obligation to pay fees due.</p>
-<p class="cl"><b>6.7 Price Changes:</b> Subject to Section 6.3, which governs capacity increases, TaxRock may update the Subscription Fee for Customer&rsquo;s existing capacity upon at least thirty (30) days&rsquo; written notice to Customer. Updated pricing takes effect at the start of the first billing cycle following the close of the notice period. Customer may terminate this Agreement without penalty by providing written notice of cancellation in accordance with Section 3 prior to the effective date of the price change.</p>
+<p class="cl t-12"><b>6.7 Price Changes:</b> Subject to Section 6.3, which governs capacity increases, the Subscription Fee for Customer&rsquo;s existing capacity is fixed for the Initial Term. TaxRock may update it for any Renewal Term on at least thirty (30) days&rsquo; written notice before that Renewal Term begins, and Customer may give notice of non-renewal under Section 3.3 before the updated pricing takes effect.</p>
+<p class="cl t-mtm"><b>6.7 Price Changes:</b> Subject to Section 6.3, which governs capacity increases, TaxRock may update the Subscription Fee for Customer&rsquo;s existing capacity upon at least thirty (30) days&rsquo; written notice to Customer. Updated pricing takes effect at the start of the first billing cycle following the close of the notice period. Customer may terminate this Agreement without penalty by providing written notice of cancellation in accordance with Section 3 prior to the effective date of the price change.</p>
 <p class="cl"><b>6.8 No Refunds:</b> All subscription fees are non-refundable except as expressly stated in this Agreement.</p>
 
 <h2 class="sec">7. Confidentiality</h2>
@@ -953,8 +968,9 @@ const RON_SIG="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAaQAAACWCAYAAACRifw
 --------------------------------------------------------------------------- */
 const TAXPRO_BANDS=[[50,99],[150,159],[300,199],[500,349],[1000,499],[2500,799]];
 /* Factoring and lending. Penetration ladder approved September 2026: books are far
-   smaller than a tax practice's, so the bands are tighter. Over 100 is quoted. */
-const FACTOR_BANDS=[[10,99],[25,199],[50,399],[100,499]];
+   smaller than a tax practice's, so the bands are tighter. Bands above 100 approved
+   by Ron October 2026 as guidelines; over 1,000 is quoted (TaxRock Enterprise). */
+const FACTOR_BANDS=[[10,99],[25,199],[50,399],[100,499],[150,599],[300,899],[500,1099],[1000,1599]];
 
 /* implFee: an additional TaxRock-led implementation or training engagement, requested
    after the included initial one. Nothing to do with capacity.
@@ -971,12 +987,16 @@ const FACTOR_BANDS=[[10,99],[25,199],[50,399],[100,499]];
    called LN-11 would be a genuine problem in a dispute, so this generation is 12.
    Bump a vertical's number here whenever its contract language changes. */
 const VERTICALS={
-  taxpro:{label:'Tax Pro', code:'TP', ver:11, bands:TAXPRO_BANDS, implFee:null, inherits:null},
-  factor:{label:'Factor', code:'FA', ver:11, bands:FACTOR_BANDS, implFee:null, inherits:null},
-  lender:{label:'Lender', code:'LN', ver:12, bands:FACTOR_BANDS, implFee:null, inherits:'Factor'}
+  taxpro:{label:'Tax Pro', code:'TP', ver:11, termVer:13, bands:TAXPRO_BANDS, implFee:null, inherits:null},
+  factor:{label:'Factor', code:'FA', ver:11, termVer:13, bands:FACTOR_BANDS, implFee:null, inherits:null},
+  lender:{label:'Lender', code:'LN', ver:12, termVer:14, bands:FACTOR_BANDS, implFee:null, inherits:'Factor'}
 };
+/* termVer: the version stamped when Term is 12 months. The 12-month documents carry
+   different contract language, so they get their own number. It skips the numbers
+   already used by the HubSpot agreement PDFs (TP-12, FA-12, LN-13). */
+const IS12=()=>((document.getElementById('term')||{}).value==='12');
 /* full document code, e.g. TR-MSA-LN-12 */
-const DOC=kind=>'TR-'+kind+'-'+V().code+'-'+V().ver;
+const DOC=kind=>'TR-'+kind+'-'+V().code+'-'+(IS12()?V().termVer:V().ver);
 
 /* The Integration Partner Agreement, TR-IPA-02. Set false to fall back to the
    placeholder pane without removing the document. */
@@ -1078,6 +1098,7 @@ function paginate(sheet, source, opts){
     let h=0;
     for(const c of body.children){
       if(c===grow||c===foot) continue;
+      if(!c.getClientRects().length) continue;   // hidden term variant: takes no space
       const cs=getComputedStyle(c);
       h+=c.getBoundingClientRect().height+parseFloat(cs.marginTop||0)+parseFloat(cs.marginBottom||0);
     }
@@ -1170,6 +1191,8 @@ function render(){
   const p=n===null?{cap:null,mo:null}:planFor(n);
   const isEnt=n!==null&&p.mo===null;                 // past the top band
   const ov=parseFloat(el('override').value); const hasOv=isFinite(ov)&&ov>=0;
+  const is12=IS12();
+  document.body.dataset.term=is12?'12':'mtm';   // shows the matching term language before pagination
   const mo=hasOv?ov:p.mo;
   const DASH='—';
 
@@ -1226,7 +1249,7 @@ function render(){
 
   const planName=n===null?DASH:isEnt?'Enterprise':'Up to '+p.cap.toLocaleString()+' Active Client Relationships';
   src.querySelector('#qPlan').textContent=isEnt?'TaxRock Enterprise':'TaxRock Subscription';
-  src.querySelector('#qPlanSub').textContent=n===null?'Enter the '+tm.metaLab.toLowerCase()+' to price this proposal':planName+'  ·  month to month';
+  src.querySelector('#qPlanSub').textContent=n===null?'Enter the '+tm.metaLab.toLowerCase()+' to price this proposal':planName+(is12?'  ·  12-month term':'  ·  month to month');
   src.querySelector('#qPrice').innerHTML=mo==null?(n===null?DASH:'Custom'):money(mo)+' <span>/ month</span>';
   const capCell=n===null?DASH:isEnt?'As scoped with Customer':'Up to '+p.cap.toLocaleString();
   const feeCell=mo==null?(n===null?DASH:'Quoted to scope'):money(mo)+'.00 per month';
@@ -1234,6 +1257,7 @@ function render(){
   const implCell = impl==null ? 'Quoted to scope' : money(impl)+' per engagement';
   src.querySelector('#qTable').innerHTML=
     '<tr><td class="u">Active Client Relationship</td><td>'+capCell+'</td><td class="r">'+feeCell+'</td></tr>'+
+    (is12&&mo!=null?'<tr><td class="u">12-month commitment</td><td>Twelve monthly payments of '+money(mo)+'.00, billed monthly</td><td class="r">'+money(mo*12)+'.00</td></tr>':'')+
     '<tr><td class="u">Authorized Users</td><td>Unlimited</td><td class="r">No charge</td></tr>'+
     '<tr><td class="u">Guided Implementation</td><td>60 days to configure your account, provision your clients, and prepare your team to use TaxRock.</td><td class="r">Included</td></tr>'+
     '<tr><td class="u">Additional implementation services</td><td>Additional TaxRock-led implementation or training requested after the Guided Implementation.</td><td class="r">'+implCell+'</td></tr>';
@@ -1273,10 +1297,10 @@ function render(){
 
   const vv=V();
   el('vertHint').textContent = vv.inherits
-    ? vv.label+' currently uses '+vv.inherits+' pricing. Documents are coded TR-…-'+vv.code+'-'+vv.ver+'.'
-    : 'Documents are coded TR-…-'+vv.code+'-'+vv.ver+'.';
+    ? vv.label+' currently uses '+vv.inherits+' pricing. Documents are coded TR-…-'+vv.code+'-'+(is12?vv.termVer:vv.ver)+'.'
+    : 'Documents are coded TR-…-'+vv.code+'-'+(is12?vv.termVer:vv.ver)+'.';
   el('pillPrice').textContent=mo==null?(n===null?DASH:'Custom'):money(mo)+' / month';
-  el('pillPlan').textContent=(n===null?'No '+sizeWord+' entered':planName)+(hasOv?'  ·  override applied':'');
+  el('pillPlan').textContent=(n===null?'No '+sizeWord+' entered':planName)+(is12?'  ·  12-month term':'')+(hasOv?'  ·  override applied':'');
   // what Mike adds to the HubSpot quote so the line item matches this PDF
   if(n===null){el('hsSku').textContent=DASH;el('hsNote').textContent='Enter the '+sizeWord+' to get the product code.';}
   else{
@@ -1452,6 +1476,7 @@ phoneEl.addEventListener('blur',()=>{
 
 document.querySelectorAll('input,textarea').forEach(i=>i.addEventListener('input',render));
 el('vertical').addEventListener('change',()=>{render();buildMatrix();});
+el('term').addEventListener('change',render);
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(render);}
 /* ---------- saved quotes ----------
    Records live in a Netlify Blobs store behind /.netlify/functions/quotes and are
@@ -1525,7 +1550,11 @@ function rel(ms){
 const shortRep=e=>(e||'').split('@')[0].replace(/[._]/g,' ');
 
 function collect(){ const f={}; FIELD_IDS.forEach(id=>{const n=el(id); if(n) f[id]=n.value;}); return f; }
-function applyFields(f){ FIELD_IDS.forEach(id=>{const n=el(id); if(n&&f&&(id in f)) n.value=f[id];}); }
+function applyFields(f){
+  FIELD_IDS.forEach(id=>{const n=el(id); if(n&&f&&(id in f)) n.value=f[id];});
+  // quotes saved before the Term setting existed are month to month
+  if(!f||!f.term) el('term').value='mtm';
+}
 
 function drawList(){
   const q=el('navSearch').value.trim().toLowerCase();
@@ -1639,6 +1668,7 @@ function newQuote(){
     const n=el(id); if(n) n.value='';
   });
   el('dValid').value=30;
+  el('term').value='mtm';
   CURRENT=null; DIRTY=false;
   render(); drawList(); setState('Not saved yet.');
   el('cName').focus();
