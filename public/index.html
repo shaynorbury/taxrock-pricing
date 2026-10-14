@@ -97,6 +97,12 @@ textarea{min-height:54px;resize:vertical;}
 .pill.hs .v{font-size:19px;letter-spacing:.02em;}
 .warn{background:#FFF1DE;border-radius:10px;padding:9px 11px;font-size:11.5px;color:#7a4c0d;margin-top:10px;display:none;}
 
+/* ---------------- export check ---------------- */
+.needbox{background:#FFF1F3;border:1px solid #F6D4DA;color:#8a2236;border-radius:14px;padding:12px 16px;
+  font-size:13px;line-height:1.5;margin:0 0 16px;max-width:880px;}
+.needbox b{font-family:'Inter Tight';}
+.needbox[hidden]{display:none;}
+input.need,textarea.need{border-color:#E86A80;background:#FFF8F9;}
 /* ---------------- tabs ---------------- */
 .stage{min-width:0;}
 .tabbar{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
@@ -420,7 +426,8 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
     </select>
     <div class="hint">12 months adds the term commitment and price lock to both documents. Set the 12-month price with the fee override below.</div>
     <label>Monthly fee override</label><input id="override" type="number" min="0" placeholder="Standard price applies">
-    <label>Override reason (internal)</label><input id="ovrWhy" placeholder="Not shown on the documents">
+    <label>Override reason <span class="intbadge" style="margin-left:4px;vertical-align:1px;">Internal only</span></label><input id="ovrWhy" placeholder="Why this price? Required with an override.">
+    <div class="hint">Saved with the quote for the team. Never printed on any document the customer sees.</div>
     <div class="warn" id="warnBox"></div>
   </div>
 
@@ -457,7 +464,7 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
   <div class="tabbar noprint">
     <button class="tab on" data-tab="proposal">Pricing Proposal</button>
     <button class="tab" data-tab="msa">Master Subscription Agreement</button>
-    <button class="tab" data-tab="partner">Partnerships</button>
+    <button class="tab" data-tab="partner">Partner agreements</button>
     <button class="tab int" data-tab="matrix">Pricing matrix <span class="intbadge">Internal</span></button>
     <span class="tb-actions">
       <span class="brandseg" id="brandSeg" style="display:none;">
@@ -478,6 +485,7 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
     </span>
   </div>
 
+  <div class="needbox noprint" id="needBox" hidden></div>
   <div class="sheet" id="propSheet"></div>
   <div class="sheet" id="msaSheet" hidden></div>
   <div class="sheet" id="partSheet" hidden></div>
@@ -1376,6 +1384,8 @@ function showStage(){
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
   document.body.dataset.doc=b.dataset.tab;
+  el('needBox').hidden=true;
+  document.querySelectorAll('.builder .need').forEach(n=>n.classList.remove('need'));
   showStage();
 }));
 document.querySelectorAll('#brandSeg button').forEach(b=>b.addEventListener('click',()=>{
@@ -1413,7 +1423,45 @@ function exportName(){
 }
 window.addEventListener('beforeprint',()=>{ document.title=exportName(); });
 window.addEventListener('afterprint', ()=>{ document.title=PAGE_TITLE; if(PKG_UNDO) PKG_UNDO(); });
+/* ---------- export check ----------
+   Nothing leaves the builder for signature without the details that make it
+   enforceable and billable. Drafts can go out incomplete; they say DRAFT. The
+   override reason is internal only: it saves with the quote and never prints. */
+function missingFor(pkg){
+  const which=pkg?'customer':document.body.dataset.doc;
+  const onP=which==='partner';
+  const draft=document.body.dataset.mode==='draft' && (which==='msa'||onP);
+  if(draft) return [];
+  const need=[['cName','Legal entity name'],['cContact','Contact'],['cEmail','Email'],
+              ['cAddr1','Street address'],['cAddr2','City/state/ZIP']];
+  if(!onP){
+    need.push(['cBill','Billing contact'],['count',T().label]);
+    const ov=el('override').value.trim();
+    if(ov!=='') need.push(['ovrWhy','Override reason']);
+  }
+  return need.filter(([id])=>!el(id).value.trim());
+}
+function checkExport(pkg){
+  document.querySelectorAll('.builder .need').forEach(n=>n.classList.remove('need'));
+  const miss=missingFor(pkg);
+  const box=el('needBox');
+  if(!miss.length){ box.hidden=true; return true; }
+  miss.forEach(([id])=>el(id).classList.add('need'));
+  box.innerHTML='<b>Finish '+miss.length+' field'+(miss.length>1?'s':'')+' before exporting:</b> '+
+    miss.map(m=>m[1]).join(', ')+'.';
+  box.hidden=false;
+  el(miss[0][0]).focus();
+  return false;
+}
+// a field that gets filled in stops being flagged, and the banner clears once all are done
+document.querySelector('.builder').addEventListener('input',ev=>{
+  if(!ev.target.classList.contains('need')||!ev.target.value.trim()) return;
+  ev.target.classList.remove('need');
+  if(!document.querySelector('.builder .need')) el('needBox').hidden=true;
+});
+
 el('exportBtn').addEventListener('click',()=>{
+  if(!checkExport(false)) return;
   // Safari fires neither print event reliably, so the title is set before the call too
   document.title=exportName();
   window.print();
@@ -1426,6 +1474,7 @@ el('exportBtn').addEventListener('click',()=>{
    what you want: the agreement still reads Page 1 of 5. */
 el('pkgBtn').addEventListener('click',()=>{
   if(PKG) return;
+  if(!checkExport(true)) return;
   const was={p:el('propSheet').hidden, m:el('msaSheet').hidden, x:el('matrixPane').hidden,
              r:el('partSheet').hidden, w:el('rwSheet').hidden, a:el('apiSheet').hidden, ap:el('apiPane').hidden};
   PKG=true; document.body.classList.add('pkg');
