@@ -457,7 +457,7 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
   <div class="fs">
     <div class="fs-t">TaxRock signatory (MSA)</div>
     <div class="row2"><div><label>Name</label><input id="tSigner" value="Ron Jost"></div><div><label>Title</label><input id="tSignerTitle" value="Chief Executive Officer"></div></div>
-    <label>Email</label><input id="tSignerEmail" value="ron@taxrock.com">
+    <label>Email</label><input id="tSignerEmail" value="ron.jost@taxrock.com">
     <div class="hint">Used on the MSA only. The Pricing Proposal is signed by the representative named under Prepared by.</div>
   </div>
 
@@ -1708,6 +1708,8 @@ const shortRep=e=>(e||'').split('@')[0].replace(/[._]/g,' ');
 function collect(){ const f={}; FIELD_IDS.forEach(id=>{const n=el(id); if(n) f[id]=n.value;}); return f; }
 function applyFields(f){
   FIELD_IDS.forEach(id=>{const n=el(id); if(n&&f&&(id in f)) n.value=f[id];});
+  // quotes saved with Ron's old address pick up the right one when opened
+  if(el('tSignerEmail').value.trim().toLowerCase()==='ron@taxrock.com') el('tSignerEmail').value='ron.jost@taxrock.com';
   // quotes saved before the Term setting existed are month to month
   if(!f||!f.term) el('term').value='mtm';
 }
