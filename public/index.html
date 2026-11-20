@@ -103,6 +103,13 @@ textarea{min-height:54px;resize:vertical;}
 .needbox b{font-family:'Inter Tight';}
 .needbox[hidden]{display:none;}
 input.need,textarea.need{border-color:#E86A80;background:#FFF8F9;}
+/* ---------------- Mutual NDA (TR-NDA-01) ---------------- */
+.ndafill{color:var(--ink);font-weight:600;}
+.ndafill.empty{font-weight:400;color:var(--body);}
+/* a little larger than the other agreements: it reads easier and closes on a full sixth page */
+#ndaSheet p.cl,#ndaSheet p.bl{font-size:12.2px;line-height:1.48;}
+#ndaSheet .sig h4{min-height:16px;line-height:16px;margin-bottom:18px;}
+body:not([data-doc="nda"]) .nda-only{display:none;}
 /* ---------------- tabs ---------------- */
 .stage{min-width:0;}
 .tabbar{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
@@ -279,10 +286,12 @@ p.bl b{font-family:'Inter Tight';color:var(--ink);font-weight:600;}
 .sigrow .ln{border-bottom:1px solid #9AA4B6;height:22px;position:relative;font-size:12px;color:var(--ink);
             display:flex;align-items:flex-end;padding-bottom:2px;}
 .execsig{max-height:36px;width:auto;position:absolute;bottom:2px;left:2px;display:none;}
+body[data-mode="exec"] #ndaSheet .execsig[src],
 body[data-mode="exec"] #msaSheet .execsig[src],
 body[data-mode="exec"] #partSheet .execsig[src],
 body[data-mode="exec"] #apiSheet .execsig[src],
 body[data-mode="exec"] #rwSheet .execsig[src]{display:block;}
+body[data-mode="draft"] #ndaSheet .autodate,
 body[data-mode="draft"] #msaSheet .autodate,
 body[data-mode="draft"] #partSheet .autodate,
 body[data-mode="draft"] #apiSheet .autodate,
@@ -316,6 +325,7 @@ body[data-mode="draft"] #rwSheet .autodate{visibility:hidden;}
 .draftmark{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;z-index:5;}
 .draftmark span{font-family:'Inter Tight';font-weight:700;font-size:118px;letter-spacing:.22em;color:#0A1A33;
                 opacity:.055;transform:rotate(-32deg);white-space:nowrap;}
+body[data-mode="draft"] #ndaSheet .draftmark,
 body[data-mode="draft"] #msaSheet .draftmark,
 body[data-mode="draft"] #partSheet .draftmark,
 body[data-mode="draft"] #apiSheet .draftmark,
@@ -408,6 +418,7 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
     <label>Billing contact (for invoices)</label><input id="cBill" placeholder="ap@firm.com">
     <label>Street address</label><input id="cAddr1" placeholder="Street and suite">
     <label>City, state, ZIP</label><input id="cAddr2" placeholder="City, ST 00000">
+    <div class="nda-only"><label>Entity type (for the NDA)</label><input id="cEntity" placeholder="e.g. Delaware limited liability company"></div>
     <div class="row2"><div><label>Signatory (optional)</label><input id="cSigner" placeholder="Defaults to contact"></div><div><label>Signatory title</label><input id="cSignerTitle" placeholder="Defaults to title"></div></div>
   </div>
 
@@ -465,6 +476,7 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
     <button class="tab on" data-tab="proposal">Pricing Proposal</button>
     <button class="tab" data-tab="msa">Master Subscription Agreement</button>
     <button class="tab" data-tab="partner">Partner agreements</button>
+    <button class="tab" data-tab="nda">Mutual NDA</button>
     <button class="tab int" data-tab="matrix">Pricing matrix <span class="intbadge">Internal</span></button>
     <span class="tb-actions">
       <span class="brandseg" id="brandSeg" style="display:none;">
@@ -488,6 +500,7 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
   <div class="needbox noprint" id="needBox" hidden></div>
   <div class="sheet" id="propSheet"></div>
   <div class="sheet" id="msaSheet" hidden></div>
+  <div class="sheet" id="ndaSheet" hidden></div>
   <div class="sheet" id="partSheet" hidden></div>
   <div class="sheet rw" id="rwSheet" hidden></div>
 
@@ -695,6 +708,77 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
 <div class="paym">
   <div class="sigrow"><div class="ln"></div><div class="cap">Billing method</div></div>
   <p class="pmn">TaxRock charges the Subscription Fee to the method provided here monthly, as set out in Section 6.5.</p>
+</div>
+</div>
+</div>
+<!-- Mutual NDA, TR-NDA-01. Counsel's final approved text of Nov 20, 2026 (ref. ACTIVE/210436857.2).
+     Do not edit the wording here. If counsel changes it, replace the text and bump NDA_DOC. -->
+<div id="srcNda" style="display:none">
+<p class="cl">This Mutual Non-Disclosure and Non-Use Agreement (the “<b>Agreement</b>”), by and between the following parties (each a “<b>Party</b>” and, together, the “<b>Parties</b>”), is made effective as of the date it is signed by both Parties (“<b>Effective Date</b>”):</p>
+<p class="bl"><b>A.</b> TaxRock LLC, a Delaware limited liability company (“<b>Company</b>”); and</p>
+<p class="bl"><b>B.</b> <span class="ndafill" id="nPreName"></span>, a <span class="ndafill" id="nPreEntity"></span> (“<b>Counterparty</b>”).</p>
+<p class="cl">WHEREAS, the Parties wish to evaluate and negotiate a potential commercial agreement involving Counterparty’s use of the Company’s products and/or services (the “<b>Business Purpose</b>”); and</p>
+<p class="cl">WHEREAS, the Parties recognize that, in the course of the discussions with each other, it will be necessary for one Party to disclose to the other Party its Confidential Information (as defined below) orally and/or in writing; the Parties intend that any Confidential Information disclosed by one Party to the other Party under this Agreement shall be used by the Receiving Party (as defined below) only to further the Business Purpose and for no other purpose; and, in furtherance of the foregoing, the Parties intend that any Confidential Information disclosed by a Disclosing Party (as defined below) to a Receiving Party hereunder shall be protected from further disclosures or use by the Receiving Party in accordance with the terms of this Agreement.</p>
+<p class="cl">NOW, THEREFORE, in consideration of the foregoing, the mutual promises set forth herein and other good and valuable consideration, the receipt and sufficiency of which is hereby acknowledged, the Parties do hereby agree as follows:</p>
+<p class="cl"><b>1. Definitions.</b> For purposes of this Agreement, “<b>Confidential Information</b>” shall mean, subject to the exceptions set forth in Section 4 (“<b>Certain Exceptions</b>”) below, all nonpublic information disclosed or made available, directly or indirectly, before, on or after the Effective Date, by or on behalf of a Party or its Affiliates (together, the “<b>Disclosing Party</b>”) to the other Party (the “<b>Receiving Party</b>”) or its Representatives (as defined below), whether orally, visually, electronically, in writing, by demonstration, inspection or access, or in any other form, whether or not marked or identified as confidential, including, but not limited to, the Disclosing Party’s data, software, specifications, processes, techniques, ideas, know-how, inventions, prototypes, patents, copyrights, trademarks, trade secrets, marketing plans, business plans, product road maps, marketing analyses, financial information, pricing, pricing models, customer information, vendor information, supplier information, investor agreements, and any other materials containing information relating to the business of the Disclosing Party. Without limiting the foregoing, the existence of this Agreement and the identity of and the occurrence of discussions between the Parties shall be considered Confidential Information hereunder. Confidential Information includes information lawfully held by the Disclosing Party for third parties and all notes, analyses, compilations, studies, extracts and other materials prepared by the Receiving Party or its Representatives to the extent containing, reflecting or derived from such information. For purposes of this Agreement, “<b>Affiliate</b>” means an entity that directly or indirectly controls, is controlled by, or is under common control with a Party, where “control” means the power to direct management or policies. No Affiliate becomes a signatory solely by reason of this definition. Each signatory is responsible for its Representatives as provided herein. Each Party may enforce this Agreement with respect to information disclosed by or on behalf of its Affiliates.</p>
+<p class="cl"><b>2. Term.</b> Subject to Sections 8 and 15 below, this Agreement will begin on the Effective Date and terminate on the second anniversary of the Effective Date or such date as the Parties may otherwise agree on in writing (the “<b>Term</b>”).</p>
+<p class="cl"><b>3. Non-Disclosure.</b> During the Term, the Receiving Party agrees:</p>
+<p class="bl"><b>(a)</b> to hold Disclosing Party’s Confidential Information in strict confidence;</p>
+<p class="bl"><b>(b)</b> to exercise at least the same care in protecting Disclosing Party’s Confidential Information from disclosure as Receiving Party uses with regard to its own confidential information; <i>provided that</i>, in no event, shall the level of care be less than reasonable care, including reasonable administrative, technical and physical safeguards against unauthorized access, use and disclosure;</p>
+<p class="bl"><b>(c)</b> not to disclose any of Disclosing Party’s Confidential Information except to its directors, managers, officers, employees, agents, professional advisors, investors and financing sources (collectively, “<b>Representatives</b>”), in each case who have a need to know solely for the Business Purpose and who, before access, are informed of its confidential nature and bound by written confidentiality and non-use obligations at least as protective as this Agreement, or, for professional advisors, enforceable professional duties providing equivalent protection. No other disclosure is permitted without the Disclosing Party’s prior written consent; and</p>
+<p class="bl"><b>(d)</b> if the Receiving Party or any Representative is legally compelled to disclose Confidential Information, to provide, to the extent legally permissible, prompt written notice before disclosure and reasonable cooperation in seeking a protective order or other remedy. Absent such protection, the Receiving Party shall disclose only the portion legally required, take reasonable steps to obtain confidential treatment, and otherwise continue to protect the information under this Agreement. The Disclosing Party bears its own costs of seeking protection, except to the extent the requirement to disclose arises from a breach by the Receiving Party or its Representatives, in which case the Receiving Party bears the reasonable resulting costs. Legally compelled disclosure does not remove the information from Confidential Information or authorize any other disclosure or use.</p>
+<p class="cl">The Receiving Party shall cause its Representatives to comply with the applicable restrictions of this Agreement and is responsible for their acts and omissions that would breach this Agreement if committed by the Receiving Party, whether or not a Representative has entered into a separate confidentiality agreement with the Disclosing Party, unless the Disclosing Party expressly releases the Receiving Party in writing. An Affiliate is not a Representative merely because it shares personnel with the Receiving Party, but any person receiving or accessing Confidential Information in a dual role remains subject to the applicable restrictions. The Receiving Party shall maintain reasonable information barriers to prevent disclosure to, or use for the benefit of, an unauthorized Affiliate or competing business, including through other dual-role personnel. This paragraph does not make an entity that has not received or accessed Confidential Information a Representative solely by reason of shared personnel.</p>
+<p class="cl">The Receiving Party shall notify the Disclosing Party in writing promptly and without undue delay after becoming aware of actual or reasonably suspected unauthorized access to, use or disclosure of Confidential Information by it or its Representatives. It shall promptly take reasonable steps to contain the incident, prevent recurrence, preserve relevant evidence, and cooperate reasonably with the Disclosing Party in investigating and mitigating resulting harm. To the extent caused by a breach by the Receiving Party or its Representatives, the Receiving Party shall bear the reasonable costs of such containment, investigation and remediation. Without prior written consent, neither the Receiving Party nor its Representatives shall upload Confidential Information to public or shared generative artificial intelligence services, use it to train or improve any general-purpose or third-party model, or permit access through systems that allow third-party use of such information, provided that the foregoing restriction does not apply to artificial intelligence tools or services that a Party uses under terms prohibiting the provider from (a) training on Confidential Information and (b) disclosing Confidential Information to third parties. Any specifically authorized processing remains subject to this Agreement.</p>
+<p class="cl"><b>4. Certain Exceptions.</b> Confidential Information does not include information that:</p>
+<p class="bl"><b>(a)</b> is or becomes generally available to the public through no breach of this Agreement or other duty by the Receiving Party or any of its Representatives;</p>
+<p class="bl"><b>(b)</b> was lawfully in the Receiving Party’s possession before disclosure by or on behalf of the Disclosing Party, without restriction as to use or disclosure and not obtained in breach of any duty;</p>
+<p class="bl"><b>(c)</b> is lawfully received from a third party entitled to disclose it without restriction as to use or disclosure, provided the Receiving Party, after reasonable inquiry, does not know or have reason to know that the third party’s disclosure breaches any duty; or</p>
+<p class="bl"><b>(d)</b> was independently developed by Receiving Party without use of or reference to Disclosing Party’s Confidential Information, as evidenced by the Receiving Party’s contemporaneously generated written records thereof.</p>
+<p class="cl">A combination of information is not within an exclusion merely because individual elements are public or otherwise excluded, unless the combination itself qualifies for that exclusion. A disclosure expressly authorized in writing by the Disclosing Party is permitted only to the recipient, for the purpose, and on the conditions specified in that authorization; it does not otherwise remove the information from Confidential Information or authorize further disclosure or use.</p>
+<p class="cl"><b>5. Non-Use; Reverse Engineering.</b></p>
+<p class="bl"><b>(a)</b> Receiving Party agrees not to use any of Disclosing Party’s Confidential Information for any reason or any purpose except for the Business Purpose during the Term.</p>
+<p class="bl"><b>(b)</b> Except to the extent expressly authorized in advance in writing by the Disclosing Party, the Receiving Party shall not, and shall cause its Representatives not to, directly or indirectly: (i) reverse engineer, decompile, disassemble, decode, or otherwise attempt to discover, derive or reconstruct the source code, underlying structure, architecture, composition, design, algorithms, models, model parameters, processes, methods or other nonpublic elements of any software, system, model, prototype, sample, product, material or other item disclosed, supplied or made accessible by or on behalf of the Disclosing Party in connection with the Business Purpose (collectively, “<b>Evaluation Materials</b>”); (ii) conduct or permit any analysis, testing, probing, scraping, extraction, circumvention of access controls or other examination of Evaluation Materials for any purpose described in clause (i), or to reproduce their nonpublic functionality; or (iii) use Confidential Information or Evaluation Materials to develop, train, improve, or assist any other person in developing, training or improving any product, service, software, model or process, except as expressly authorized in writing by the Disclosing Party. Ordinary evaluation of Evaluation Materials solely for the Business Purpose is permitted only to the extent consistent with access rights and testing permissions expressly granted by the Disclosing Party. No delivery of or access to Evaluation Materials grants any license or other right except the limited right to evaluate them for the Business Purpose in accordance with this Agreement. Nonpublic information obtained or derived from Evaluation Materials constitutes Confidential Information, subject to Section 4. These restrictions apply whether the activity is undertaken by the Receiving Party itself or through a Representative or other person. They do not prohibit genuinely independent development without use of or reference to Confidential Information or Evaluation Materials, as demonstrated by contemporaneous written records. These restrictions apply to the fullest extent permitted by applicable law and do not restrict an activity to the extent the right to undertake that activity cannot lawfully be excluded by contract.</p>
+<p class="cl"><b>6. Non-Solicitation.</b> During the Term and for twelve (12) months thereafter, neither Party shall, and each Party shall cause its Affiliates and any Representatives acting on its behalf not to, directly or indirectly, target for solicitation for employment any officer, manager or employee of the other Party with whom the soliciting Party had material direct contact in connection with the Business Purpose and whose identity was first learned through that process; <i>provided</i>, <i>however</i>, that this Section shall not restrict (a) general solicitations of employment (including through search firms or public advertisements) not specifically directed at such persons, or the hiring of any person who responds thereto, (b) hiring a person who independently approaches the hiring Party without prohibited solicitation, or (c) the solicitation or hiring of any person whose employment with the other Party or its Affiliates ended at least six (6) months before the commencement of employment discussions.</p>
+<p class="cl"><b>7. No Grant of Rights.</b> Nothing contained in this Agreement shall be construed as granting any rights to Receiving Party, by license or otherwise, to use any of Disclosing Party’s Confidential Information except for the Business Purpose. All right, title, and interest in Disclosing Party’s Confidential Information are reserved by and shall be retained by Disclosing Party or the applicable third-party rights holder. Nothing transfers ownership of Evaluation Materials or grants a patent, copyright, trade secret or other intellectual property license except the limited evaluation right expressly stated herein.</p>
+<p class="cl"><b>8. Return or Destruction of Confidential Information.</b> Upon the earlier of (a) the written request of the Disclosing Party at any time, (b) the termination or expiration of this Agreement, or (c) either Party’s written notice that it has elected not to proceed with the Business Purpose, the Receiving Party shall, and shall cause its Representatives to, within ten (10) Business Days (as defined below), return to the Disclosing Party or destroy (at the Receiving Party’s election) all of the Disclosing Party’s Confidential Information in tangible or electronic form, including all copies, extracts, and other reproductions thereof, and destroy all notes, analyses, compilations, studies, and other materials prepared by the Receiving Party or its Representatives to the extent containing or reflecting any of the Disclosing Party’s Confidential Information. Upon the Disclosing Party’s written request, the Receiving Party shall confirm such return or destruction in writing by an authorized officer. Notwithstanding the foregoing, the Receiving Party and its Representatives (i) may retain copies of Confidential Information to the extent required by applicable law, regulation or a bona fide litigation hold, or limited archival copies reasonably necessary for legal or regulatory compliance under a written retention policy not adopted to circumvent this Agreement, and (ii) shall not be required to purge Confidential Information stored in automatic electronic archives or back-up systems that are not readily accessible in the ordinary course of business; <i>provided</i> that any Confidential Information so retained shall not be accessed or used for any purpose other than such legal or regulatory compliance or litigation hold, shall be accessible only to personnel with a need to know for that purpose, and shall remain subject to the confidentiality and non-use obligations of this Agreement for so long as it is retained, notwithstanding any expiration or termination of this Agreement. Backup copies shall be deleted in the ordinary documented backup-deletion cycle and shall not be restored except for bona fide disaster recovery or legal compliance; any restored information remains subject to these restrictions and shall be promptly re-deleted when no longer necessary for that purpose. The Receiving Party shall ensure that any permitted retention is limited to the information and period reasonably necessary and shall cause retained copies to be destroyed when the applicable justification ends.</p>
+<p class="cl"><b>9. Other Business Interests.</b> Each Party acknowledges that the other Party and its Representatives initiate, evaluate, negotiate, structure, finance and consummate investments in and transactions with various companies, including companies that are competitive with the business of such Party, in the ordinary course of their respective businesses and nothing in this Agreement shall restrict either Party’s or its Representatives’ ability to initiate, evaluate, negotiate, structure, finance or consummate such investments or transactions; provided, however, that neither Party nor its Representatives may use the other Party’s Confidential Information for any purpose other than the Business Purpose.</p>
+<p class="cl"><b>10. Equitable and Legal Relief.</b> All rights in Disclosing Party’s Confidential Information remain with Disclosing Party or the applicable rights holder and the Parties agree that the unauthorized disclosure or use of such Confidential Information may cause irreparable harm and significant injury to Disclosing Party, the degree of which may be difficult to ascertain. Accordingly, Receiving Party agrees that Disclosing Party shall have the right to seek an immediate injunction as provided in Section 17 (without posting a security bond to the fullest extent permitted by applicable law) enjoining breach of this Agreement and/or disclosure of the Confidential Information in addition to any other rights or remedies available at law or equity to the Disclosing Party. In any proceeding to enforce this Agreement, including a proceeding for injunctive relief, the non-prevailing Party (as determined by a court of competent jurisdiction in a final, nonappealable judgment on the merits) will reimburse the prevailing Party for its costs and expenses (including reasonable attorneys’ fees) incurred in connection therewith.</p>
+<p class="cl"><b>11. No Binding Agreement.</b> The Parties agree that no contract or agreement providing for any transaction between them shall be deemed to exist unless and until they execute and deliver a definitive transaction agreement, and neither Party is obligated to enter into or consummate any such transaction before executing and delivering a definitive transaction agreement. Until such time as a definitive transaction agreement is entered into by the Parties, neither Party will be under any legal obligation of any kind whatsoever with respect to a potential transaction between them by virtue of this Agreement except for the matters specifically agreed to herein. Nothing in this Section waives or limits enforcement of this Agreement, claims for unauthorized use or disclosure or misappropriation of information, fraud claims, or rights that cannot lawfully be waived.</p>
+<p class="cl"><b>12. Entire Agreement.</b> This Agreement represents the entire agreement and understanding among the Parties with respect to the subject matter hereof, and supersedes and replaces all prior agreements, understandings, representations, proposals, negotiations and other written or oral communications among the Parties with respect to the subject matter of this Agreement, provided that this Agreement does not diminish protections for information disclosed under any prior written confidentiality or non-use agreement between the Parties, which remain effective to the extent more protective, and applies to all prior disclosures without interruption. Reasonable additional data-room security and access controls notified to and accepted by the Receiving Party continue to apply to the extent consistent with this Agreement, but are in addition to, and not in limitation of, the protections set forth herein.</p>
+<p class="cl"><b>13. Amendment and Waiver.</b> This Agreement may not be modified or amended, nor may any provisions of this Agreement be waived, except by an instrument in writing signed by the Parties hereto. No written waiver will be deemed to be a continuing waiver unless specifically stated therein, and each such waiver will operate only as to the specific term or condition waived and shall not constitute a waiver of such term or condition for the future or as to any act other than that specifically waived. No failure of any Party to exercise any right or remedy given to such Party under this Agreement or otherwise available to such Party or to insist upon strict compliance by any other Party with its or his obligations hereunder, and no custom or practice of the Parties in variance with the terms hereof, shall constitute a waiver of any Party’s right to demand compliance with the terms hereof.</p>
+<p class="cl"><b>14. Severability.</b> If any term or provision of this Agreement is held to be invalid, illegal or incapable of being enforced under any law or public policy, all other terms and provisions of this Agreement shall nevertheless remain in full force and effect. If any term or provision of this Agreement is determined to be unenforceable by reason of its extent, duration, scope or otherwise, then the Parties contemplate that the court making such determination shall reduce such extent, duration, scope or other provision and enforce them in their reduced form for all purposes contemplated by this Agreement.</p>
+<p class="cl"><b>15. Survival.</b> Notwithstanding expiration or termination of this Agreement for any reason, (a) Sections 1 and 4 survive to the extent necessary to give effect to surviving obligations; (b) the obligations under Sections 3 and 5, including the reverse-engineering restrictions set forth therein, survive until five (5) years after the expiration or termination of this Agreement for any reason; (c) for Confidential Information constituting a trade secret under applicable law, the obligations under Sections 3 and 5 shall survive for so long as the information remains a trade secret, and the Receiving Party may not rely on any loss of trade-secret status resulting from a breach by it or its Representatives to shorten that protection; (d) Section 6 survives for the period stated therein; and (e) Sections 7 through 21 survive to the extent applicable, subject to their express limitations and the periods stated in this Section. No earlier release of these protections is effective unless expressly agreed in a writing signed by the Disclosing Party.</p>
+<p class="cl"><b>16. Notice.</b> Any notice, request, instruction or other document to be given hereunder by any Party hereto to the other Party hereto shall be in writing and shall be given by delivery in person, by email (where provided), by overnight courier or by registered or certified mail, postage prepaid to the address or email address set forth on the signature page or such other address as such Party may give to the other Party by notice pursuant to this Section. Notice shall be deemed given on (a) the date such notice is personally delivered, (b) the date of actual delivery or documented refusal if sent by overnight courier, (c) the date of actual delivery or documented refusal if sent by registered or certified mail, or (d) the date transmitted by email, provided no failure or nondelivery notice is received, if transmitted before 5:00 p.m. New York time on a Business Day, and otherwise the next Business Day. For purposes of this Agreement, “<b>Business Day</b>” means a day other than Saturday, Sunday or a day on which banks in New York, New York, are generally closed. If an email transmission fails, notice must be resent by another permitted method.</p>
+<p class="cl"><b>17. Governing Law and Venue.</b> This Agreement shall be governed by the laws of the State of Delaware without reference to or application of principles of choice of law. Notwithstanding the following exclusive forum provision, either Party may seek temporary or preliminary injunctive or other protective relief in any court of competent jurisdiction where necessary to protect Confidential Information or preserve the status quo; proceedings on the merits remain subject to the following exclusive forum provision. The Parties hereby irrevocably and unconditionally consent to submit to the exclusive jurisdiction of the state and federal courts located in San Diego County in the State of California for any lawsuits, claims or other proceedings arising out of or relating to this Agreement, and hereby further irrevocably and unconditionally waive the right to, and agree not to, plead or claim in any such court that any such lawsuit, claim or other proceeding brought in any such court has been brought in an inconvenient forum. A final judgment in any such action, suit or proceeding may be enforced in other jurisdictions by suit on the judgment or in any other manner provided by law. Each of the Parties hereto expressly waives all rights to trial by jury in any action or proceeding arising out of or relating to this Agreement.</p>
+<p class="cl"><b>18. Assignment.</b> This Agreement may not be assigned by a Party without the other Party’s express written consent and any assignment or attempted assignment in violation of this Section shall be null and void. Notwithstanding the foregoing, Company may assign this Agreement without consent to a successor in a merger, reorganization or sale of all or substantially all of its business or assets to which the Confidential Information relates, provided the successor assumes Company’s obligations in writing and Company gives prompt written notice. Without limiting the foregoing, this Agreement shall be binding upon and inure to the benefit of a Party’s successors and assigns.</p>
+<p class="cl"><b>19. Counterparts.</b> This Agreement may be executed in separate counterparts and may be executed and delivered by electronic delivery, each of which is deemed to be an original and all of which, taken together, constitute one and the same agreement.</p>
+<p class="cl"><b>20. No Strict Construction.</b> The language used in this Agreement will be deemed to be the language chosen by the Parties to express their mutual intent, and no rule of strict construction will be applied against any person.</p>
+<p class="cl"><b>21. Headings.</b> The headings and other captions in this Agreement are included solely for convenience of reference and will not control the meaning and interpretation of any provision of this Agreement.</p>
+<div class="execblock">
+<p class="cl">IN WITNESS WHEREOF, the Parties have executed this Agreement through their duly authorized representatives as of the Effective Date.</p>
+<div class="sig">
+  <div>
+    <div class="lab">Counterparty</div>
+    <h4 id="nCo"></h4>
+    <div class="sigrow"><div class="ln"></div><div class="cap">Signature</div></div>
+    <div class="sigrow"><div class="ln" id="nName"></div><div class="cap">Name</div></div>
+    <div class="sigrow"><div class="ln" id="nTitle"></div><div class="cap">Title</div></div>
+    <div class="sigrow"><div class="ln"></div><div class="cap">Date</div></div>
+    <div class="sigrow"><div class="ln" id="nA1"></div></div>
+    <div class="sigrow"><div class="ln" id="nA2"></div><div class="cap">Address</div></div>
+    <div class="sigrow"><div class="ln" id="nEmail"></div><div class="cap">Email</div></div>
+  </div>
+  <div>
+    <div class="lab">Company</div>
+    <h4>TaxRock LLC</h4>
+    <div class="sigrow"><div class="ln"><img class="execsig" id="nTSig" alt=""></div><div class="cap">Signature</div></div>
+    <div class="sigrow"><div class="ln" id="nTName"></div><div class="cap">Name</div></div>
+    <div class="sigrow"><div class="ln" id="nTTitle"></div><div class="cap">Title</div></div>
+    <div class="sigrow"><div class="ln autodate" id="nTDate"></div><div class="cap">Date</div></div>
+    <div class="sigrow"><div class="ln">5901 Priestly Dr #100</div></div>
+    <div class="sigrow"><div class="ln">Carlsbad, CA 92008</div><div class="cap">Address</div></div>
+    <div class="sigrow"><div class="ln" id="nTEmail"></div><div class="cap">Email</div></div>
+  </div>
 </div>
 </div>
 </div>
@@ -1015,6 +1099,8 @@ const DOC=kind=>'TR-'+kind+'-'+V().code+'-'+(IS12()?V().termVer:V().ver);
 /* The Integration Partner Agreement, TR-IPA-02. Set false to fall back to the
    placeholder pane without removing the document. */
 const IPA_ENABLED=true;
+/* Mutual NDA version. Bump whenever counsel changes the agreement text. */
+const NDA_DOC='TR-NDA-01';
 
 /* "Active Client Relationship" is the billing unit in every vertical, but what counts
    as one differs, so MSA Section 2.5 is written per vertical too: `msaDefn` is the
@@ -1307,7 +1393,15 @@ function render(){
   const rw=el('srcRwa');
   fillSig(rw,'w');
   const wsig=rw.querySelector('#wTSig'); if(wsig&&RON_SIG) wsig.src=RON_SIG;
-  stampDates(src); stampDates(m); stampDates(rp); stampDates(ip); stampDates(rw);
+  // Mutual NDA. The saved customer is the Counterparty; blanks print as blanks to complete at signing.
+  const nd=el('srcNda');
+  fillSig(nd,'n');
+  const ndName=nm.trim(), ndEnt=el('cEntity').value.trim();
+  const npn=nd.querySelector('#nPreName'), npe=nd.querySelector('#nPreEntity');
+  npn.textContent=ndName||'[_________________]'; npn.classList.toggle('empty',!ndName);
+  npe.textContent=ndEnt||'[_______________]'; npe.classList.toggle('empty',!ndEnt);
+  const nsig=nd.querySelector('#nTSig'); if(nsig&&RON_SIG) nsig.src=RON_SIG;
+  stampDates(src); stampDates(m); stampDates(rp); stampDates(ip); stampDates(rw); stampDates(nd);
 
   const vv=V();
   el('vertHint').textContent = vv.inherits
@@ -1353,6 +1447,10 @@ function render(){
       (the &ldquo;Effective Date&rdquo;). TaxRock and Partner may each be referred to as a &ldquo;Party&rdquo;
       and together as the &ldquo;Parties&rdquo;. This Agreement governs Partner&rsquo;s access to and use of the
       TaxRock API and the Taxpayer Data made available through it.</p>`});
+  paginate(el('ndaSheet'), nd, {docId:NDA_DOC, runHead:'Mutual Non-Disclosure and Non-Use Agreement', runRight:nm,
+    draftmark:true,
+    title:`<div class="kicker">Mutual NDA</div>
+      <h1 class="t" style="margin-bottom:14px;">Mutual Non-Disclosure and Non-Use Agreement</h1>`});
   paginate(el('propSheet'), src, {docId:DOC('PP'), runHead:'TaxRock Pricing Proposal', runRight:nm});
   paginate(el('msaSheet'), m, {docId:DOC('MSA'), runHead:'Master Subscription Agreement', runRight:nm,
     draftmark:true,
@@ -1374,18 +1472,19 @@ function showStage(){
   const k=partKind(), onP=t==='partner';
   el('propSheet').hidden = t!=='proposal';
   el('msaSheet').hidden  = t!=='msa';
+  el('ndaSheet').hidden  = t!=='nda';
   el('matrixPane').hidden= t!=='matrix';
   el('partSheet').hidden = !(onP && k==='referral');
   el('rwSheet').hidden   = !(onP && k==='rwreferral');
   const apiOn = onP && k==='api';
   el('apiSheet').hidden  = !(apiOn && IPA_ENABLED);
   el('apiPane').hidden   = !(apiOn && !IPA_ENABLED);
-  el('modeSeg').style.display  = (t==='msa'||onP) ? 'inline-flex' : 'none';
+  el('modeSeg').style.display  = (t==='msa'||t==='nda'||onP) ? 'inline-flex' : 'none';
   el('brandSeg').style.display = onP ? 'inline-flex' : 'none';
   el('partSeg').style.display  = (onP && partBrand()==='tr') ? 'inline-flex' : 'none';
   el('exportBtn').style.display = (t==='matrix' || (apiOn && !IPA_ENABLED)) ? 'none' : 'inline-flex';
   // the package is the customer's proposal + MSA; a partnership is a separate signing
-  el('pkgBtn').style.display    = (t==='matrix'||onP) ? 'none' : 'inline-flex';
+  el('pkgBtn').style.display    = (t==='matrix'||t==='nda'||onP) ? 'none' : 'inline-flex';
 }
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
@@ -1416,7 +1515,7 @@ let PKG=false, PKG_UNDO=null;
 function exportName(){
   const which=document.body.dataset.doc;
   const pk=partKind();
-  const kind = PKG ? 'TaxRock-Agreement' : which==='msa' ? 'MSA'
+  const kind = PKG ? 'TaxRock-Agreement' : which==='msa' ? 'MSA' : which==='nda' ? 'NDA'
              : which==='partner' ? (pk==='api' ? 'IPA' : pk==='rwreferral' ? 'RWT-RPA' : 'RPA') : 'PP';
   const raw  = (el('cName').value||'Customer')
                  .replace(/[‘’“”]/g,'')
@@ -1435,11 +1534,13 @@ window.addEventListener('afterprint', ()=>{ document.title=PAGE_TITLE; if(PKG_UN
    override reason is internal only: it saves with the quote and never prints. */
 function missingFor(pkg){
   const which=pkg?'customer':document.body.dataset.doc;
-  const onP=which==='partner';
+  const isNda=which==='nda';
+  const onP=which==='partner'||isNda;   // like a partnership, an NDA has no billing or pricing fields
   const draft=document.body.dataset.mode==='draft' && (which==='msa'||onP);
   if(draft) return [];
   const need=[['cName','Legal entity name'],['cContact','Contact'],['cEmail','Email'],
               ['cAddr1','Street address'],['cAddr2','City/state/ZIP']];
+  if(isNda) need.push(['cEntity','Entity type']);
   if(!onP){
     need.push(['cBill','Billing contact'],['count',T().label]);
     const ov=el('override').value.trim();
@@ -1482,14 +1583,14 @@ el('pkgBtn').addEventListener('click',()=>{
   if(PKG) return;
   if(!checkExport(true)) return;
   const was={p:el('propSheet').hidden, m:el('msaSheet').hidden, x:el('matrixPane').hidden,
-             r:el('partSheet').hidden, w:el('rwSheet').hidden, a:el('apiSheet').hidden, ap:el('apiPane').hidden};
+             r:el('partSheet').hidden, w:el('rwSheet').hidden, a:el('apiSheet').hidden, ap:el('apiPane').hidden, n:el('ndaSheet').hidden};
   PKG=true; document.body.classList.add('pkg');
   el('propSheet').hidden=false; el('msaSheet').hidden=false; el('matrixPane').hidden=true;
   // a partnership is signed separately and never belongs in the customer package
-  el('partSheet').hidden=true; el('rwSheet').hidden=true; el('apiSheet').hidden=true; el('apiPane').hidden=true;
+  el('partSheet').hidden=true; el('rwSheet').hidden=true; el('apiSheet').hidden=true; el('apiPane').hidden=true; el('ndaSheet').hidden=true;
   PKG_UNDO=()=>{
     el('propSheet').hidden=was.p; el('msaSheet').hidden=was.m; el('matrixPane').hidden=was.x;
-    el('partSheet').hidden=was.r; el('rwSheet').hidden=was.w; el('apiSheet').hidden=was.a; el('apiPane').hidden=was.ap;
+    el('partSheet').hidden=was.r; el('rwSheet').hidden=was.w; el('apiSheet').hidden=was.a; el('apiPane').hidden=was.ap; el('ndaSheet').hidden=was.n;
     document.body.classList.remove('pkg'); PKG=false; PKG_UNDO=null; document.title=PAGE_TITLE;
   };
   document.title=exportName();
