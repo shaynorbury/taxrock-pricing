@@ -98,6 +98,7 @@ textarea{min-height:54px;resize:vertical;}
 .warn{background:#FFF1DE;border-radius:10px;padding:9px 11px;font-size:11.5px;color:#7a4c0d;margin-top:10px;display:none;}
 /* Guided Activation fee and waiver */
 #gaBox [hidden]{display:none!important;}
+#dValid:disabled{background:#F3F5F9;color:var(--muted);cursor:not-allowed;}
 .ga-amt{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:4px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#FBFCFF;font-size:12px;color:var(--muted);}
 .ga-amt b{font-family:'Inter Tight';font-weight:600;color:var(--ink);font-size:14px;white-space:nowrap;}
 .ga-amt.off b{text-decoration:line-through;color:var(--muted);}
@@ -463,6 +464,7 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
       <option value="">No, charge the fee</option>
       <option value="12mo">Waive: 12-month commitment</option>
       <option value="today">Waive: signed today</option>
+      <option value="eow">Waive: signed by end of week</option>
       <option value="other">Waive: other reason (needs Ron&rsquo;s approval)</option>
     </select>
     <div id="gaExtWrap" hidden><label>Note to the customer <span class="extbadge">On the Pricing Proposal</span></label><input id="gaWhyExt" placeholder="Why the fee is waived. The customer sees this."></div>
@@ -473,7 +475,7 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
 
   <div class="fs">
     <div class="fs-t">Document</div>
-    <div class="row2"><div><label>Date prepared</label><input id="dPrep" type="date"></div><div><label>Valid (days)</label><input id="dValid" type="number" value="30" min="1"></div></div>
+    <div class="row2"><div><label>Date prepared</label><input id="dPrep" type="date"></div><div><label>Valid (days)</label><input id="dValid" type="number" value="30" min="0"></div></div>
     <label>Special terms</label><textarea id="special" placeholder="Leave blank if standard."></textarea>
   </div>
 
@@ -1333,12 +1335,24 @@ const ppYear=mo=>Math.round(mo*12*(1-PREPAY_OFF)*100)/100;
 const GA_EXT={
   '12mo':()=>'Waiver given in exchange for Customer’s 12-month commitment.',
   today:()=>'Waiver applies only if the MSA is signed on '+fmtDate(gaToday())+'.',
+  eow:()=>'Waiver applies only if the MSA is signed on or before '+fmtDate(gaWeekEnd())+'.',
   other:()=>''
 };
 const m2=v=>'$'+Number(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const gaEsc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 // a sign-today waiver is good for the date the proposal is prepared, and that day only
 function gaToday(){ return el('dPrep').value?new Date(el('dPrep').value+'T12:00:00'):new Date(); }
+// an end-of-week waiver runs to the Friday of the week the proposal is prepared (a weekend rolls to the next Friday)
+function gaWeekEnd(){ const d=gaToday(); d.setDate(d.getDate()+((5-d.getDay()+7)%7)); return d; }
+// a time-limited waiver sets the proposal's Valid Through date, so the offer and the proposal end together
+function gaValidThrough(){ const w=el('gaWaive').value; return w==='today'?gaToday():w==='eow'?gaWeekEnd():null; }
+// runs at the top of render, before the Valid Through date is worked out
+function gaLock(){
+  // a time-limited waiver locks Valid (days) to the days left in the offer; another reason gives the rep's own number back
+  const dv=el('dValid'), lock=gaValidThrough();
+  if(lock){ if(!dv.disabled) dv.dataset.prev=dv.value; dv.value=String(Math.max(0,Math.round((lock-gaToday())/864e5))); dv.disabled=true; }
+  else if(dv.disabled){ dv.value=dv.dataset.prev&&dv.dataset.prev!=='0'?dv.dataset.prev:'30'; dv.disabled=false; }
+}
 let GA_AUTO='';   // the customer note last filled in for the rep: a new reason replaces it, never the rep's own words
 function gaState(mo){
   const fee=mo>0?Math.round(mo*100)/100:null, why=el('gaWaive').value;
@@ -1355,7 +1369,8 @@ function gaSync(mo){
   const w=el('gaWarn'); let msg='';
   if(why==='12mo'&&!IS12()) msg='This reason needs a 12-month term. Set Term to 12 months, or choose another reason.';
   else if(why==='other') msg='Ron must approve this waiver before it is offered to the customer.';
-  else if(why==='today') msg='The waiver holds only if the MSA is signed on '+fmtDate(gaToday())+'. Signed later, the fee applies.';
+  else if(why==='today') msg='Valid through is locked to today, '+fmtDate(gaToday())+', to match the waiver. Choose another reason to unlock it.';
+  else if(why==='eow') msg='Valid through is locked to '+fmtDate(gaWeekEnd())+', to match the waiver. Choose another reason to unlock it.';
   w.style.display=msg?'block':'none'; w.textContent=msg;
   return g;
 }
@@ -1423,7 +1438,9 @@ function render(){
   fillSig(src,'q',repSig);
 
   const prep=el('dPrep').value?new Date(el('dPrep').value+'T12:00:00'):new Date();
-  const valid=new Date(prep);valid.setDate(valid.getDate()+Math.max(1,parseInt(el('dValid').value||30)));
+  gaLock();
+  let valid=gaValidThrough();
+  if(!valid){ valid=new Date(prep); valid.setDate(valid.getDate()+Math.max(1,parseInt(el('dValid').value||30))); }
   src.querySelector('#oPrep').textContent=fmtDate(prep);
   src.querySelector('#oValid').textContent=fmtDate(valid);
   const tm=T();
@@ -1819,8 +1836,8 @@ function applyFields(f){
   if(!f||!f.term) el('term').value='mtm';
   // quotes saved before Guided Activation had a fee: charged, no waiver
   ['gaWaive','gaWhyExt','gaWhyInt','pay12'].forEach(k=>{ if(!f||!(k in f)) el(k).value=''; });
-  if(el('gaWaive').value==='fastclose') el('gaWaive').value='today';
-  GA_AUTO='';
+  if(el('gaWaive').value==='fastclose') el('gaWaive').value='eow';
+  GA_AUTO=''; el('dValid').disabled=false; delete el('dValid').dataset.prev;   // the opened quote's own Valid (days)
 }
 
 function drawList(){
@@ -1936,7 +1953,7 @@ function newQuote(){
   });
   el('dValid').value=30;
   el('term').value='mtm';
-  GA_AUTO='';
+  GA_AUTO=''; el('dValid').disabled=false; delete el('dValid').dataset.prev;
   CURRENT=null; DIRTY=false;
   render(); drawList(); setState('Not saved yet.');
   el('cName').focus();
