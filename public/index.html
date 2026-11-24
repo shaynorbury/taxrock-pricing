@@ -96,6 +96,15 @@ textarea{min-height:54px;resize:vertical;}
 .pill.hs{background:#fff;border:1px solid var(--line);}
 .pill.hs .v{font-size:19px;letter-spacing:.02em;}
 .warn{background:#FFF1DE;border-radius:10px;padding:9px 11px;font-size:11.5px;color:#7a4c0d;margin-top:10px;display:none;}
+/* Guided Activation fee and waiver */
+#gaBox [hidden]{display:none!important;}
+.ga-amt{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:4px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#FBFCFF;font-size:12px;color:var(--muted);}
+.ga-amt b{font-family:'Inter Tight';font-weight:600;color:var(--ink);font-size:14px;white-space:nowrap;}
+.ga-amt.off b{text-decoration:line-through;color:var(--muted);}
+.extbadge{display:inline-block;margin-left:4px;background:#EAF3FF;color:#0a5bd6;font-size:9px;font-family:'Inter Tight';font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 7px;vertical-align:1px;}
+table.t tr.tot td{border-top:1px solid var(--navy);border-bottom:none;font-family:'Inter Tight';font-weight:600;color:var(--navy);}
+table.t td.r s{color:var(--muted);font-weight:400;margin-right:6px;}
+table.t td .gax{display:block;margin-top:3px;color:var(--muted);font-style:italic;}
 
 /* ---------------- export check ---------------- */
 .needbox{background:#FFF1F3;border:1px solid #F6D4DA;color:#8a2236;border-radius:14px;padding:12px 16px;
@@ -272,6 +281,8 @@ ol.tl b{font-family:'Inter Tight';color:var(--navy);}
 /* Term variants. Month-to-month and 12-month language both live in the document
    sources; body[data-term] shows one and hides the other before pagination. */
 body:not([data-term="12"]) .t-12{display:none!important;}
+body:not([data-pay="pp"]) .p-pp{display:none!important;}
+body[data-pay="pp"] .p-mo{display:none!important;}
 body[data-term="12"] .t-mtm{display:none!important;}
 /* MSA clause type */
 p.cl{font-size:11.6px;line-height:1.55;margin:0 0 6px;color:var(--body);}
@@ -435,11 +446,29 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
       <option value="mtm" selected>Month to month</option>
       <option value="12">12 months</option>
     </select>
+    <div id="ppWrap" style="display:none"><label>Payment</label><select id="pay12">
+      <option value="">Billed monthly</option>
+      <option value="prepay">Paid up front, 10% off the year</option>
+    </select></div>
     <div class="hint">12 months adds the term commitment and price lock to both documents. Set the 12-month price with the fee override below.</div>
     <label>Monthly fee override</label><input id="override" type="number" min="0" placeholder="Standard price applies">
     <label>Override reason <span class="intbadge" style="margin-left:4px;vertical-align:1px;">Internal only</span></label><input id="ovrWhy" placeholder="Why this price? Required with an override.">
     <div class="hint">Saved with the quote for the team. Never printed on any document the customer sees.</div>
     <div class="warn" id="warnBox"></div>
+    <div id="gaBox">
+    <label style="margin-top:14px">Guided Activation fee</label>
+    <div class="ga-amt" id="gaAmt"><b>&mdash;</b><span>One month of subscription, charged once</span></div>
+    <label>Waive the fee?</label>
+    <select id="gaWaive">
+      <option value="">No, charge the fee</option>
+      <option value="12mo">Waive: 12-month commitment</option>
+      <option value="today">Waive: signed today</option>
+      <option value="other">Waive: other reason (needs Ron&rsquo;s approval)</option>
+    </select>
+    <div id="gaExtWrap" hidden><label>Note to the customer <span class="extbadge">On the Pricing Proposal</span></label><input id="gaWhyExt" placeholder="Why the fee is waived. The customer sees this."></div>
+    <div id="gaIntWrap" hidden><label>Internal note <span class="intbadge" style="margin-left:4px;vertical-align:1px;">Internal only</span></label><textarea id="gaWhyInt" rows="2" placeholder="What was traded for the waiver, and when Ron approved it. Required."></textarea></div>
+    <div class="warn" id="gaWarn"></div>
+    </div>
   </div>
 
   <div class="fs">
@@ -571,11 +600,12 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
 
 <h2 class="sec">Key terms</h2>
 <ol class="tl">
-  <li><b>Billing.</b> The Subscription Fee is charged on execution of the MSA and monthly thereafter on the same day<span class="t-12"> throughout the term</span>, to the payment method on file. Fees are exclusive of applicable taxes. All amounts are in USD.</li>
+  <li class="p-pp"><b>Billing.</b> The Subscription Fee for the full twelve (12)-month term, <span id="oPpAmt"></span> after a ten percent (10%) annual payment discount, is charged on execution of the MSA to the payment method on file.<span id="oBillGaPp"></span> Each renewal term is billed annually in advance at the annual rate then in effect. Fees are exclusive of applicable taxes. All amounts are in USD.</li>
+  <li class="p-mo"><b>Billing.</b> The Subscription Fee is charged on execution of the MSA and monthly thereafter on the same day<span class="t-12"> throughout the term</span>, to the payment method on file.<span id="oBillGa"></span> Fees are exclusive of applicable taxes. All amounts are in USD.</li>
   <li class="t-mtm"><b>Term.</b> Month to month. No minimum term and no renewal date. Either party may cancel on thirty (30) days&rsquo; written notice. TaxRock may update the Subscription Fee on thirty (30) days&rsquo; written notice, and Customer may cancel without penalty before the change takes effect.</li>
-  <li class="t-12"><b>Term.</b> Twelve (12) months from the Effective Date. The Subscription Fee is fixed for the term, and Customer commits to all twelve (12) monthly payments. The subscription then renews for successive twelve (12)-month terms unless either party gives thirty (30) days&rsquo; written notice before the current term ends. TaxRock may update the Subscription Fee for a renewal term on thirty (30) days&rsquo; written notice before it begins.</li>
+  <li class="t-12"><b>Term.</b> Twelve (12) months from the Effective Date. The Subscription Fee is fixed for the term, and Customer <span class="p-mo">commits to all twelve (12) monthly payments</span><span class="p-pp">pays it for the full term in advance</span>. The subscription then renews for successive twelve (12)-month terms unless either party gives thirty (30) days&rsquo; written notice before the current term ends. TaxRock may update the Subscription Fee for a renewal term on sixty (60) days&rsquo; written notice before it begins.</li>
   <li><b>Included capacity.</b> The Subscription Fee includes up to the number of Active Client Relationships stated above, which Customer may provision at any time. If needs grow beyond that capacity, TaxRock and Customer will establish revised capacity and pricing through an updated Pricing Proposal, and the additional capacity becomes available on execution.<span class="t-12"> The revised Subscription Fee applies for the remainder of the term, and the term&rsquo;s end date does not change.</span></li>
-  <li><b>Guided Implementation.</b> The subscription includes a 60-day Guided Implementation beginning on the Effective Date. TaxRock will work with Customer to configure its account, begin client provisioning, and train its team on use of the platform. Customer may continue provisioning clients within its included capacity after the Guided Implementation. <span id="oImplTerm"></span></li>
+  <li><b>Guided Activation.</b> <span id="oGaTerm"></span> Customer may continue provisioning clients within its included capacity after the Guided Activation. <span id="oImplTerm"></span></li>
   <li><b>Precedence.</b> In the event of a conflict, this Pricing Proposal controls with respect to the Subscription Fee, included capacity, and other expressly stated commercial terms. The MSA controls in all other respects. The terms of this Pricing Proposal are confidential.</li>
 </ol>
 
@@ -625,7 +655,7 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
 <p class="cl"><b>4.3 User-Level Acceptance of TOS:</b> Customer&rsquo;s Authorized Users and Customer&rsquo;s clients must accept the TOS upon first login. Acceptance forms a direct agreement between the user and TaxRock governing platform use.</p>
 <p class="cl"><b>4.4 Restrictions:</b> Customer may not sublicense, resell, assign, or transfer access to the Services without TaxRock&rsquo;s prior written consent, except as permitted by Section 9.8; use the Services to build or benchmark a competing product; reverse engineer or attempt to derive the source code or underlying models of the Services; access the Services by automated means other than TaxRock-provided features; or circumvent any security or access controls. TaxRock may suspend access to the Services, with notice where practicable, to the extent reasonably necessary to address a breach of this Section or a threat to the security or integrity of the Services, and will restore access once the issue is resolved.</p>
 <p class="cl"><b>4.5 Customer Support:</b> TaxRock will provide support via email and in-platform messaging during normal business hours (Monday&ndash;Friday, 9:00 a.m. to 5:00 p.m. PST). TaxRock does not provide live phone support or custom consulting unless otherwise agreed in writing. Response times are provided on a commercially reasonable basis.</p>
-<p class="cl"><b>4.6 Guided Implementation:</b> Customer&rsquo;s subscription includes a guided sixty (60)-day implementation period beginning on the Effective Date (the &ldquo;Guided Implementation&rdquo;). During the Guided Implementation, TaxRock will work with Customer to configure its account, begin client provisioning, and train its team on use of the Services. Following the Guided Implementation, Customer may continue to provision clients within its included capacity. Additional TaxRock-led implementation or training services requested by Customer may be subject to additional fees as set forth in the applicable Pricing Proposal.</p>
+<p class="cl"><b>4.6 Guided Activation:</b> TaxRock will provide a guided sixty (60)-day activation period beginning on the Effective Date (the &ldquo;Guided Activation&rdquo;) for the one-time fee, if any, stated in the Pricing Proposal. During the Guided Activation, TaxRock will work with Customer to configure its account, begin client provisioning, and train its team on use of the Services. Following the Guided Activation, Customer may continue to provision clients within its included capacity. Additional TaxRock-led implementation or training services requested by Customer may be subject to additional fees as set forth in the applicable Pricing Proposal.</p>
 <p class="cl"><b>4.7 Client Relationship Changes:</b> Customer may provision Monitored Clients and Monitored Taxpayers up to the number of Active Client Relationships included in its subscription, and may deactivate them at any time. Adding capacity beyond that number is governed by Section 6.3. Deactivation or cancellation stops monitoring and related Services. Form 8821 and equivalent authorizations remain on file to allow for streamlined reactivation of Services, unless Customer requests their withdrawal.</p>
 <p class="cl"><b>4.8 Disclaimer:</b> Except as expressly stated in this Agreement, the Services are provided &ldquo;as is&rdquo; and TaxRock disclaims all other warranties, express or implied, including merchantability and fitness for a particular purpose. TaxRock does not warrant that the Services will be uninterrupted or error-free or that data provided by the IRS or other third parties will be accurate or complete. Outputs of AI-enabled features, including Rocky, may contain errors and must be reviewed by Customer&rsquo;s professionals before being relied upon. TaxRock is a technology provider and does not provide tax, legal, or financial advice.</p>
 
@@ -648,9 +678,9 @@ body[data-mode="draft"] #rwSheet .draftmark{display:flex;}
 <p class="cl"><b>6.3 Included Capacity and Pricing Adjustments:</b> The Subscription Fee includes up to the number of Active Client Relationships specified in the applicable Pricing Proposal, which Customer may provision at any time. The Subscription Fee is based on that included capacity and does not vary based on the number of Active Client Relationships provisioned at any particular time, whether Customer provisions its capacity gradually or all at once. If Customer&rsquo;s needs grow beyond that capacity, TaxRock and Customer will establish revised capacity and pricing through an updated Pricing Proposal, and the additional capacity becomes available for provisioning upon execution of the updated Pricing Proposal. Any revised Subscription Fee will take effect beginning with the first billing cycle following that execution and will not decrease based on reductions in Customer&rsquo;s actual usage. <span class="t-12">If Customer&rsquo;s capacity increases during a term, the revised Subscription Fee applies for the remainder of that term, and the term&rsquo;s end date does not change. </span>This Section governs changes arising from Customer requiring capacity beyond the amount included in its Pricing Proposal; Section 6.7 governs changes initiated by TaxRock to the Subscription Fee for Customer&rsquo;s existing capacity.</p>
 <p class="cl t-mtm"><b>6.4 Pricing Structure:</b> There are no platform fees, seat-based fees, or minimum commitments unless otherwise agreed in writing.</p>
 <p class="cl t-12"><b>6.4 Pricing Structure:</b> There are no platform fees or seat-based fees. Customer&rsquo;s term commitment is set out in Section 3.3.</p>
-<p class="cl"><b>6.5 Billing &amp; Payment:</b> Subscription Fees are invoiced and charged monthly in advance on Customer&rsquo;s Billing Date and are due upon receipt. Customer will maintain a valid payment method on file and authorizes TaxRock to charge that method for all undisputed amounts on each Billing Date. Fees are exclusive of sales, use, VAT, GST, and similar taxes, which are Customer&rsquo;s responsibility where applicable. All amounts are in USD.</p>
+<p class="cl"><b>6.5 Billing &amp; Payment:</b> Subscription Fees are invoiced and charged in advance on Customer&rsquo;s Billing Date, monthly or, where the Pricing Proposal provides for payment of the full term up front, annually, and are due upon receipt. Customer will maintain a valid payment method on file and authorizes TaxRock to charge that method for all undisputed amounts on each Billing Date. Fees are exclusive of sales, use, VAT, GST, and similar taxes, which are Customer&rsquo;s responsibility where applicable. All amounts are in USD.</p>
 <p class="cl"><b>6.6 Suspension for Non-Payment:</b> If payment fails, TaxRock may suspend access to the Services until all outstanding amounts are paid in full. Suspension does not relieve Customer of its obligation to pay fees due.</p>
-<p class="cl t-12"><b>6.7 Price Changes:</b> Subject to Section 6.3, which governs capacity increases, the Subscription Fee for Customer&rsquo;s existing capacity is fixed for the Initial Term. TaxRock may update it for any Renewal Term on at least thirty (30) days&rsquo; written notice before that Renewal Term begins, and Customer may give notice of non-renewal under Section 3.3 before the updated pricing takes effect.</p>
+<p class="cl t-12"><b>6.7 Price Changes:</b> Subject to Section 6.3, which governs capacity increases, the Subscription Fee for Customer&rsquo;s existing capacity is fixed for the Initial Term. TaxRock may update it for any Renewal Term on at least sixty (60) days&rsquo; written notice before that Renewal Term begins, and Customer may give notice of non-renewal under Section 3.3 before the updated pricing takes effect.</p>
 <p class="cl t-mtm"><b>6.7 Price Changes:</b> Subject to Section 6.3, which governs capacity increases, TaxRock may update the Subscription Fee for Customer&rsquo;s existing capacity upon at least thirty (30) days&rsquo; written notice to Customer. Updated pricing takes effect at the start of the first billing cycle following the close of the notice period. Customer may terminate this Agreement without penalty by providing written notice of cancellation in accordance with Section 3 prior to the effective date of the price change.</p>
 <p class="cl"><b>6.8 No Refunds:</b> All subscription fees are non-refundable except as expressly stated in this Agreement.</p>
 
@@ -1083,11 +1113,14 @@ const FACTOR_BANDS=[[10,99],[25,199],[50,399],[100,499],[150,599],[300,899],[500
    Nov 2026: MSA updated in place with counsel's BTR review edits (disclaimer,
    restrictions, consents, confidentiality, insolvency, assignment, San Diego
    arbitration). Numbers kept because no document at these versions had been sent.
+   Nov 23 2026: Guided Activation fee (MSA 4.6), 12-month paid up front at 10% off, and 60 days'
+   notice for renewal price changes. Material, so new numbers: 16/17 (LN 17/18), skipping the
+   Deal Builder's own series (TP/FA 14-15, LN 15-16) so no two different documents share a code.
    Bump a vertical's number here whenever its contract language changes. */
 const VERTICALS={
-  taxpro:{label:'Tax Pro', code:'TP', ver:11, termVer:13, bands:TAXPRO_BANDS, implFee:null, inherits:null},
-  factor:{label:'Factor', code:'FA', ver:11, termVer:13, bands:FACTOR_BANDS, implFee:null, inherits:null},
-  lender:{label:'Lender', code:'LN', ver:12, termVer:14, bands:FACTOR_BANDS, implFee:null, inherits:'Factor'}
+  taxpro:{label:'Tax Pro', code:'TP', ver:16, termVer:17, bands:TAXPRO_BANDS, implFee:null, inherits:null},
+  factor:{label:'Factor', code:'FA', ver:16, termVer:17, bands:FACTOR_BANDS, implFee:null, inherits:null},
+  lender:{label:'Lender', code:'LN', ver:17, termVer:18, bands:FACTOR_BANDS, implFee:null, inherits:'Factor'}
 };
 /* termVer: the version stamped when Term is 12 months. The 12-month documents carry
    different contract language, so they get their own number. It skips the numbers
@@ -1284,6 +1317,58 @@ window.addEventListener('beforeprint',()=>{
 });
 
 /* ---------- render ---------- */
+/* ---------- paid up front ----------
+   A 12-month term paid up front takes 10% off the year. This is separate from the Guided
+   Activation waiver: a 12-month term may waive the fee, and paying up front adds the discount. */
+const PREPAY_OFF=0.10;
+const PP=()=>IS12()&&el('pay12').value==='prepay';
+const ppYear=mo=>Math.round(mo*12*(1-PREPAY_OFF)*100)/100;
+
+/* ---------- Guided Activation ----------
+   Standard deals carry a one-time Guided Activation fee equal to one month of the quoted
+   subscription (after any override), charged with the first month. A rep may waive it for a
+   12-month commitment or a signature the same day or by the end of the week. Any other reason
+   needs Ron's approval and an internal note. Every waiver carries a note the customer sees.
+   The amount is never typed: it always follows the subscription. */
+const GA_EXT={
+  '12mo':()=>'Waiver given in exchange for Customer’s 12-month commitment.',
+  today:()=>'Waiver applies only if the MSA is signed on '+fmtDate(gaToday())+'.',
+  other:()=>''
+};
+const m2=v=>'$'+Number(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const gaEsc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// a sign-today waiver is good for the date the proposal is prepared, and that day only
+function gaToday(){ return el('dPrep').value?new Date(el('dPrep').value+'T12:00:00'):new Date(); }
+let GA_AUTO='';   // the customer note last filled in for the rep: a new reason replaces it, never the rep's own words
+function gaState(mo){
+  const fee=mo>0?Math.round(mo*100)/100:null, why=el('gaWaive').value;
+  return { fee, why, waived:!!why, ext:el('gaWhyExt').value.trim(), due:fee==null?null:(why?0:fee) };
+}
+function gaSync(mo){
+  const why=el('gaWaive').value, x=el('gaWhyExt'), want=why&&GA_EXT[why]?GA_EXT[why]():'';
+  if(x.value.trim()===''||x.value===GA_AUTO){ x.value=want; GA_AUTO=want; }
+  el('gaExtWrap').hidden=!why; el('gaIntWrap').hidden=why!=='other';
+  const g=gaState(mo), a=el('gaAmt');
+  a.classList.toggle('off',g.waived&&g.fee!=null);
+  a.querySelector('b').textContent=g.fee==null?'—':money(g.fee);
+  a.querySelector('span').textContent=g.fee==null?'One month of subscription, once priced':g.waived?'Waived':'One time, with the first month';
+  const w=el('gaWarn'); let msg='';
+  if(why==='12mo'&&!IS12()) msg='This reason needs a 12-month term. Set Term to 12 months, or choose another reason.';
+  else if(why==='other') msg='Ron must approve this waiver before it is offered to the customer.';
+  else if(why==='today') msg='The waiver holds only if the MSA is signed on '+fmtDate(gaToday())+'. Signed later, the fee applies.';
+  w.style.display=msg?'block':'none'; w.textContent=msg;
+  return g;
+}
+function gaMissing(){
+  const why=el('gaWaive').value; if(!why) return [];
+  const m=[];
+  if(!el('gaWhyExt').value.trim()) m.push(['gaWhyExt','Guided Activation note to the customer']);
+  if(why==='other'&&!el('gaWhyInt').value.trim()) m.push(['gaWhyInt','Internal note for the Guided Activation waiver']);
+  if(why==='12mo'&&!IS12()) m.push(['term','12-month term for the Guided Activation waiver']);
+  return m;
+}
+
+/* ---------- render ---------- */
 function render(){
   // the practice size starts blank, so nothing is priced until it is entered
   const rawCount=el('count').value.trim();
@@ -1294,6 +1379,9 @@ function render(){
   const is12=IS12();
   document.body.dataset.term=is12?'12':'mtm';   // shows the matching term language before pagination
   const mo=hasOv?ov:p.mo;
+  el('ppWrap').style.display=is12?'':'none';
+  const pp=PP()&&mo!=null, yr=pp?ppYear(mo):null;
+  document.body.dataset.pay=PP()?'pp':'mo';
   const DASH='—';
 
   const w=el('warnBox'); const sizeWord=T().metaLab.toLowerCase();
@@ -1349,22 +1437,35 @@ function render(){
 
   const planName=n===null?DASH:isEnt?'Enterprise':'Up to '+p.cap.toLocaleString()+' Active Client Relationships';
   src.querySelector('#qPlan').textContent=isEnt?'TaxRock Enterprise':'TaxRock Subscription';
-  src.querySelector('#qPlanSub').textContent=n===null?'Enter the '+tm.metaLab.toLowerCase()+' to price this proposal':planName+(is12?'  ·  12-month term':'  ·  month to month');
-  src.querySelector('#qPrice').innerHTML=mo==null?(n===null?DASH:'Custom'):money(mo)+' <span>/ month</span>';
+  src.querySelector('#qPlanSub').textContent=n===null?'Enter the '+tm.metaLab.toLowerCase()+' to price this proposal':planName+(is12?(PP()?'  ·  12-month term, paid up front':'  ·  12-month term'):'  ·  month to month');
+  src.querySelector('#qPrice').innerHTML=mo==null?(n===null?DASH:'Custom'):pp?m2(yr)+' <span>/ year</span>':money(mo)+' <span>/ month</span>';
   const capCell=n===null?DASH:isEnt?'As scoped with Customer':'Up to '+p.cap.toLocaleString();
   const feeCell=mo==null?(n===null?DASH:'Quoted to scope'):money(mo)+'.00 per month';
   const impl=V().implFee;
   const implCell = impl==null ? 'Quoted to scope' : money(impl)+' per engagement';
+  const ga=gaSync(mo);
+  const gaCell=ga.fee==null?(n===null?DASH:'One month of subscription'):ga.waived?'<s>'+m2(ga.fee)+'</s>Waived':m2(ga.fee)+' one time';
   src.querySelector('#qTable').innerHTML=
     '<tr><td class="u">Active Client Relationship</td><td>'+capCell+'</td><td class="r">'+feeCell+'</td></tr>'+
-    (is12&&mo!=null?'<tr><td class="u">12-month commitment</td><td>Twelve monthly payments of '+money(mo)+'.00, billed monthly</td><td class="r">'+money(mo*12)+'.00</td></tr>':'')+
+    (is12&&mo!=null?(pp
+      ?'<tr><td class="u">12-month commitment</td><td>Twelve months at '+m2(mo)+', paid up front</td><td class="r">'+m2(mo*12)+'</td></tr>'+
+       '<tr><td class="u">Annual payment discount</td><td>10% for paying annually in advance</td><td class="r">&minus;'+m2(Math.round((mo*12-yr)*100)/100)+'</td></tr>'
+      :'<tr><td class="u">12-month commitment</td><td>Twelve monthly payments of '+money(mo)+'.00, billed monthly</td><td class="r">'+money(mo*12)+'.00</td></tr>'):'')+
     '<tr><td class="u">Authorized Users</td><td>Unlimited</td><td class="r">No charge</td></tr>'+
-    '<tr><td class="u">Guided Implementation</td><td>60 days to configure your account, provision your clients, and prepare your team to use TaxRock.</td><td class="r">Included</td></tr>'+
-    '<tr><td class="u">Additional implementation services</td><td>Additional TaxRock-led implementation or training requested after the Guided Implementation.</td><td class="r">'+implCell+'</td></tr>';
+    '<tr><td class="u">Guided Activation</td><td>60 days to configure your account, activate your clients, and prepare your team to use TaxRock.'+(ga.waived&&ga.ext?'<span class="gax">'+gaEsc(ga.ext)+'</span>':'')+'</td><td class="r">'+gaCell+'</td></tr>'+
+    '<tr><td class="u">Additional implementation services</td><td>Additional TaxRock-led implementation or training requested after the Guided Activation.</td><td class="r">'+implCell+'</td></tr>'+
+    (mo!=null?'<tr class="tot"><td class="u">Due on execution</td><td>'+(pp?'Full 12-month term':'First month')+(ga.due>0?' plus the Guided Activation fee':'')+'</td><td class="r">'+m2((pp?yr:mo)+(ga.due||0))+'</td></tr>':'');
+  const gaDur='A 60-day Guided Activation begins on the Effective Date, during which TaxRock will work with Customer to configure its account, activate its clients, and train its team on use of the platform.';
+  src.querySelector('#oGaTerm').textContent=gaDur+' '+(ga.fee==null?'The Guided Activation fee equals one month of the Subscription Fee and is charged once on execution.'
+    :ga.waived?'The Guided Activation fee of '+m2(ga.fee)+' is waived.'+(ga.ext?' '+ga.ext:'')
+    :'The Guided Activation fee is '+m2(ga.fee)+', charged once on execution.');
+  src.querySelector('#oBillGa').textContent=ga.due>0?' The one-time Guided Activation fee of '+m2(ga.due)+' is charged with the first Subscription Fee.':'';
+  src.querySelector('#oBillGaPp').textContent=ga.due>0?' The one-time Guided Activation fee of '+m2(ga.due)+' is charged at the same time.':'';
+  src.querySelector('#oPpAmt').textContent=yr!=null?m2(yr):'the annual amount stated above';
 
   src.querySelector('#oImplTerm').textContent = impl==null
-    ? 'Additional TaxRock-led implementation or training requested by Customer may be quoted separately based on scope.'
-    : 'Additional TaxRock-led implementation or training requested by Customer is '+money(impl)+' per engagement.';
+    ? 'Additional TaxRock-led implementation or training requested by Customer after the Guided Activation may be quoted separately based on scope.'
+    : 'Additional TaxRock-led implementation or training requested by Customer after the Guided Activation is '+money(impl)+' per engagement.';
 
   const sp=el('special').value.trim();
   src.querySelector('#specialBox').style.display=sp?'block':'none';
@@ -1408,7 +1509,7 @@ function render(){
     ? vv.label+' currently uses '+vv.inherits+' pricing. Documents are coded TR-…-'+vv.code+'-'+(is12?vv.termVer:vv.ver)+'.'
     : 'Documents are coded TR-…-'+vv.code+'-'+(is12?vv.termVer:vv.ver)+'.';
   el('pillPrice').textContent=mo==null?(n===null?DASH:'Custom'):money(mo)+' / month';
-  el('pillPlan').textContent=(n===null?'No '+sizeWord+' entered':planName)+(is12?'  ·  12-month term':'')+(hasOv?'  ·  override applied':'');
+  el('pillPlan').textContent=(n===null?'No '+sizeWord+' entered':planName)+(is12?'  ·  12-month term':'')+(hasOv?'  ·  override applied':'')+(pp?'  ·  paid up front, '+m2(yr)+' / year':'')+(ga.fee==null?'':ga.waived?'  ·  Guided Activation waived':'  ·  plus '+money(ga.fee)+' Guided Activation');
   // what Mike adds to the HubSpot quote so the line item matches this PDF
   if(n===null){el('hsSku').textContent=DASH;el('hsNote').textContent='Enter the '+sizeWord+' to get the product code.';}
   else{
@@ -1417,6 +1518,8 @@ function render(){
     el('hsNote').textContent=(isEnt||hasOv)
       ? (mo==null?'Add '+sku+' and type the monthly price agreed.':'Add '+sku+' and change its price to '+money(mo)+' / month to match this proposal.')
       : 'Add '+sku+' to the quote. Its price, '+money(mo)+' / month, matches this proposal.';
+    if(pp) el('hsNote').textContent+=' Paid up front: bill '+m2(yr)+' for the year (10% off).';
+    if(ga.due>0) el('hsNote').textContent+=' Add a one-time line, Guided Activation, at '+money(ga.due)+'.';
   }
 
   paginate(el('partSheet'), rp, {docId:'TR-RPA-02', runHead:'Referral Partner Agreement', runRight:nm,
@@ -1546,7 +1649,7 @@ function missingFor(pkg){
     const ov=el('override').value.trim();
     if(ov!=='') need.push(['ovrWhy','Override reason']);
   }
-  return need.filter(([id])=>!el(id).value.trim());
+  return need.filter(([id])=>!el(id).value.trim()).concat(onP?[]:gaMissing());
 }
 function checkExport(pkg){
   document.querySelectorAll('.builder .need').forEach(n=>n.classList.remove('need'));
@@ -1633,6 +1736,8 @@ phoneEl.addEventListener('blur',()=>{
 document.querySelectorAll('input,textarea').forEach(i=>i.addEventListener('input',render));
 el('vertical').addEventListener('change',()=>{render();buildMatrix();});
 el('term').addEventListener('change',render);
+el('gaWaive').addEventListener('change',render);
+el('pay12').addEventListener('change',render);
 if(document.fonts&&document.fonts.ready){document.fonts.ready.then(render);}
 /* ---------- saved quotes ----------
    Records live in a Netlify Blobs store behind /.netlify/functions/quotes and are
@@ -1712,6 +1817,10 @@ function applyFields(f){
   if(el('tSignerEmail').value.trim().toLowerCase()==='ron@taxrock.com') el('tSignerEmail').value='ron.jost@taxrock.com';
   // quotes saved before the Term setting existed are month to month
   if(!f||!f.term) el('term').value='mtm';
+  // quotes saved before Guided Activation had a fee: charged, no waiver
+  ['gaWaive','gaWhyExt','gaWhyInt','pay12'].forEach(k=>{ if(!f||!(k in f)) el(k).value=''; });
+  if(el('gaWaive').value==='fastclose') el('gaWaive').value='today';
+  GA_AUTO='';
 }
 
 function drawList(){
@@ -1827,6 +1936,7 @@ function newQuote(){
   });
   el('dValid').value=30;
   el('term').value='mtm';
+  GA_AUTO='';
   CURRENT=null; DIRTY=false;
   render(); drawList(); setState('Not saved yet.');
   el('cName').focus();
