@@ -1115,18 +1115,18 @@ const FACTOR_BANDS=[[10,99],[25,199],[50,399],[100,499],[150,599],[300,899],[500
    Nov 2026: MSA updated in place with counsel's BTR review edits (disclaimer,
    restrictions, consents, confidentiality, insolvency, assignment, San Diego
    arbitration). Numbers kept because no document at these versions had been sent.
-   Nov 23 2026: Guided Activation fee (MSA 4.6), 12-month paid up front at 10% off, and 60 days'
-   notice for renewal price changes. Material, so new numbers: 16/17 (LN 17/18), skipping the
-   Deal Builder's own series (TP/FA 14-15, LN 15-16) so no two different documents share a code.
+   Nov 24 2026: Guided Activation fee (MSA 4.6), 12-month paid up front at 10% off (MSA 6.5), and
+   60 days' notice for renewal price changes (MSA 6.7). Material, so each moves up one: TP and FA
+   12/14, LN 13/15. The HubSpot agreement PDFs that used TP-12, FA-12 and LN-13 only ever went on
+   practice quotes, so those numbers are free.
    Bump a vertical's number here whenever its contract language changes. */
 const VERTICALS={
-  taxpro:{label:'Tax Pro', code:'TP', ver:16, termVer:17, bands:TAXPRO_BANDS, implFee:null, inherits:null},
-  factor:{label:'Factor', code:'FA', ver:16, termVer:17, bands:FACTOR_BANDS, implFee:null, inherits:null},
-  lender:{label:'Lender', code:'LN', ver:17, termVer:18, bands:FACTOR_BANDS, implFee:null, inherits:'Factor'}
+  taxpro:{label:'Tax Pro', code:'TP', ver:12, termVer:14, bands:TAXPRO_BANDS, implFee:null, inherits:null},
+  factor:{label:'Factor', code:'FA', ver:12, termVer:14, bands:FACTOR_BANDS, implFee:null, inherits:null},
+  lender:{label:'Lender', code:'LN', ver:13, termVer:15, bands:FACTOR_BANDS, implFee:null, inherits:'Factor'}
 };
 /* termVer: the version stamped when Term is 12 months. The 12-month documents carry
-   different contract language, so they get their own number. It skips the numbers
-   already used by the HubSpot agreement PDFs (TP-12, FA-12, LN-13). */
+   different contract language, so they get their own number. */
 const IS12=()=>((document.getElementById('term')||{}).value==='12');
 /* full document code, e.g. TR-MSA-LN-12 */
 const DOC=kind=>'TR-'+kind+'-'+V().code+'-'+(IS12()?V().termVer:V().ver);
